@@ -1,5 +1,5 @@
 //Created By : Lorenzo Leonardo
-//Example : nul=[player,300,50,1000] execvm "dropSupportTeam.sqf"; 
+//Example : nul=[player,300,30,1000,500] execvm "dropSupportTeam.sqf"; 
 //nul=[calling unit = player,altitude = 300, planespeed = 50, plane yDistance From caller = 1000, startdropping radius = 100, _seizemarkerName] execvm "dropSupportTeam.sqf";
 //parameters
 _caller = _this select 0;
@@ -40,19 +40,25 @@ _plane setVelocity [( sin _planeDefaultDirection * _planeSpeed),( cos _planeDefa
 
 //create a support team
 _groupSupportTeam = createGroup west; 
-"B_soldier_PG_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "LIEUTENANT"];
-"B_soldier_PG_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "SERGEANT"];
-"B_soldier_PG_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "SERGEANT"];
-"B_soldier_PG_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "SERGEANT"];
-"B_soldier_PG_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "SERGEANT"];
-"B_soldier_PG_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "SERGEANT"];
-"B_soldier_PG_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "SERGEANT"];
-"B_soldier_PG_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "SERGEANT"];
-"B_soldier_PG_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "SERGEANT"];
-"B_soldier_PG_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "SERGEANT"];
-"B_soldier_PG_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
+"B_Soldier_TL_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "LIEUTENANT"];
+"B_Soldier_SL_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "SERGEANT"];
+"B_soldier_M_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
+"B_soldier_M_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
+"B_soldier_M_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
+"B_Soldier_GL_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
+"B_Soldier_GL_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
+"B_Soldier_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
+"B_Soldier_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
+"B_Soldier_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
+"B_medic_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
+"B_medic_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
 
 _supportTeamArray = units _groupSupportTeam;
+
+{
+	_x addBackpack "B_parachute";
+} foreach _supportTeamArray;
+
 _total = count _supportTeamArray;
 addSwitchableUnit (_supportTeamArray select 1);
 //set plane waypoint yDistance ahead of the caller.
@@ -77,7 +83,7 @@ _distance = sqrt ((_distance * _distance)  - ( _planeAltitude * _planeAltitude) 
 [West, "HQ"] sideChat format["Copy that %1. Reinforcements coming your way. ETA %2 secs. Out!", _caller, _distance/_planeSpeed];
 
 //Wait and Check the plane distance to the marker before starting unloading troops
-hint "Support plane is approaching.";
+hint "Paradrop is approaching.";
 
 waitUntil 
 {
@@ -88,12 +94,11 @@ waitUntil
 };
 _plane animateDoor ['Door_1_source', 1];
 uiSleep 3;
-hint "Support plane is dropping reinforcements.";
+hint "November is dropping reinforcements.";
 	
 {
 	unassignvehicle _x;
 	_x action ["EJECT", _plane];
-	unassignvehicle _x;
 } foreach _supportTeamArray;
 
 //set waypoint for the reinforcements
@@ -105,7 +110,7 @@ _supportTeamWP setWaypointBehaviour "AWARE";
 
 //10 second sleep before deleting plane and pilot
 uiSleep 10; 
-_planeSpeed = _planeSpeed * 5;
+_planeSpeed = _planeSpeed * 2;
 _plane setVelocity [( sin _planeDefaultDirection * _planeSpeed),( cos _planeDefaultDirection * _planeSpeed),0];
 _planeWPPos =  [ _callerPosition select 0, (_callerPosition select 1) + (_yDistance * 500), _planeAltitude];
 _planeWP = _groupC130J addWaypoint [_planeWPPos, 0]; // Add way point to caller's position
