@@ -50,6 +50,9 @@ _groupSupportTeam = createGroup west;
 "B_Soldier_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
 "B_Soldier_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
 "B_Soldier_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
+"B_Soldier_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
+"B_Soldier_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
+"B_Soldier_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
 "B_medic_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
 "B_medic_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
 
@@ -110,7 +113,7 @@ _supportTeamWP setWaypointBehaviour "AWARE";
 
 //10 second sleep before deleting plane and pilot
 uiSleep 10; 
-_planeSpeed = _planeSpeed * 2;
+_planeSpeed = _planeSpeed;
 _plane setVelocity [( sin _planeDefaultDirection * _planeSpeed),( cos _planeDefaultDirection * _planeSpeed),0];
 _planeWPPos =  [ _callerPosition select 0, (_callerPosition select 1) + (_yDistance * 500), _planeAltitude];
 _planeWP = _groupC130J addWaypoint [_planeWPPos, 0]; // Add way point to caller's position
