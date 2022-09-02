@@ -7,6 +7,7 @@ _planeAltitude = _this select 1;
 _planeSpeed = _this select 2;
 _yDistance = _this select 3;
 _yDroppingRadius = _this select 4;
+_objectivePosition = position (_this select 5);
 
 _caller sideChat format["Come in Papa Bear. We need reinforcements in this area. Over?"];
 _callerTexMarker = str format["%1 : Requesting Reinforcements.",_caller];
@@ -17,7 +18,6 @@ _callerMarker setMarkerTypeLocal "hd_destroy";
 _callerMarker setMarkerDirLocal 45;
 _callerMarker setMarkerTextLocal _callerTexMarker;
 _callerPosition = getMarkerPos _callerMarker;
-
 
 //create a group of the plane
 _groupC130J = createGroup west;
@@ -57,9 +57,6 @@ _groupSupportTeam setGroupIdGlobal ["Alpha Team"];
 "B_Soldier_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
 "B_medic_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
 "B_medic_F" createUnit [[0,0,1], _groupSupportTeam, "this moveInCargo _plane", 1, "PRIVATE"];
-player moveInCargo _plane;
-[player] joinSilent _groupSupportTeam;
-
 
 _supportTeamArray = units _groupSupportTeam;
 
@@ -101,7 +98,7 @@ waitUntil
 	_distance <= _yDroppingRadius 
 };
 _plane animateDoor ['Door_1_source', 1];
-uiSleep 3;
+sleep 3;
 hint "November is dropping reinforcements.";
 	
 {
@@ -117,20 +114,43 @@ _supportTeamWP setWaypointFormation "DIAMOND";
 _supportTeamWP setWaypointBehaviour "AWARE";
 
 //10 second sleep before deleting plane and pilot
-uiSleep 10; 
+sleep 10; 
 _planeSpeed = _planeSpeed;
 _plane setVelocity [( sin _planeDefaultDirection * _planeSpeed),( cos _planeDefaultDirection * _planeSpeed),0];
-_planeWPPos =  [ _callerPosition select 0, (_callerPosition select 1) + (_yDistance * 500), _planeAltitude];
+_planeWPPos =  [ _callerPosition select 0, (_callerPosition select 1) + (_yDistance + 2000), _planeAltitude];
 _planeWP = _groupC130J addWaypoint [_planeWPPos, 0]; // Add way point to caller's position
 _planeWP setWaypointSpeed "FULL";
 _planeWP setWaypointType "MOVE"; 
 _planeWP setWaypointFormation "DIAMOND";
 _planeWP setWaypointBehaviour "CARELESS";
 
-uiSleep 20; 
+sleep 20; 
 
 deleteVehicle _plane;
 deleteVehicle _pilot;
 deleteMarkerLocal _callerMarker;
 
+_squadLeader = leader _groupSupportTeam;
+_supportTeamArray = units _groupSupportTeam;
+
+{
+	waitUntil { unitReady _x } 
+} foreach _supportTeamArray;
+
+_groupSupportTeam addWaypoint [position _caller, 0]; // Add way point to caller's position
+_planeWP setWaypointSpeed "FULL";
+_planeWP setWaypointType "MOVE"; 
+_planeWP setWaypointFormation "DIAMOND";
+_planeWP setWaypointBehaviour "AWARE";
+
 [_caller] join _groupSupportTeam;
+
+{
+	waitUntil { unitReady _x } 
+} foreach _supportTeamArray;
+
+_groupSupportTeam addWaypoint [_objectivePosition, 0]; // Add way point to the mission target
+_planeWP setWaypointSpeed "FULL";
+_planeWP setWaypointType "SAD"; 
+_planeWP setWaypointFormation "DIAMOND";
+_planeWP setWaypointBehaviour "AWARE";
