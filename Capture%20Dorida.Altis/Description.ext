@@ -1,0 +1,23 @@
+class CfgDebriefing
+{  
+	class end1
+	{
+		title = "Mission Accomplished!";
+		subtitle = "We captured Dorida";
+		description = "";
+	};
+
+	class lose1
+	{
+		title = "Mission Failed!";
+		subtitle = "All your team are dead";
+		description = "";
+	};
+
+	class lose2
+	{
+		title = "Mission Failed!";
+		subtitle = "You have died";
+		description = "";
+	};
+};

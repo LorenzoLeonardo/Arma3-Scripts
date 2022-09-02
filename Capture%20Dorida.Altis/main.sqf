@@ -64,6 +64,12 @@ _supportTeamArray = units _groupSupportTeam;
 	_x addBackpack "B_parachute";
 } foreach _supportTeamArray;
 
+
+["lose1"] execVM "monitorMission.sqf";
+["lose2"] execVM "monitorMission.sqf";
+["end1"] execVM "monitorMission.sqf";
+
+
 _total = count _supportTeamArray;
 addSwitchableUnit (_supportTeamArray select 1);
 //set plane waypoint yDistance ahead of the caller.
@@ -154,3 +160,4 @@ _planeWP setWaypointSpeed "FULL";
 _planeWP setWaypointType "SAD"; 
 _planeWP setWaypointFormation "DIAMOND";
 _planeWP setWaypointBehaviour "AWARE";
+
