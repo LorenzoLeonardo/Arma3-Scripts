@@ -67,12 +67,6 @@ _groupSupportTeam setGroupIdGlobal ["Alpha Team"];
 "CUP_B_US_Soldier_ACOG_OCP" createUnit [[0,0,0], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
 "CUP_B_US_Soldier_OCP" createUnit [[0,0,0], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
 "CUP_B_US_Soldier_OCP" createUnit [[0,0,0], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
-"CUP_B_US_Soldier_OCP" createUnit [[0,0,0], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
-"CUP_B_US_Soldier_OCP" createUnit [[0,0,0], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
-"CUP_B_US_Soldier_Backpack_OCP" createUnit [[0,0,0], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
-"CUP_B_US_Soldier_Backpack_OCP" createUnit [[0,0,0], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
-"CUP_B_US_Soldier_Backpack_OCP" createUnit [[0,0,0], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
-"CUP_B_US_Soldier_Backpack_OCP" createUnit [[0,0,0], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
 "CUP_B_US_Medic_OCP" createUnit [[0,0,0], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
 "CUP_B_US_Medic_OCP" createUnit [[0,0,0], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
 
