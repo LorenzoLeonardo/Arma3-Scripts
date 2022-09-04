@@ -40,7 +40,7 @@ _plane flyInHeight _planeAltitude;
 _planeDefaultVelocity = velocity _plane;
 _planeDefaultDirection = direction _plane;
 _plane setVelocity [( sin _planeDefaultDirection * _planeSpeed),( cos _planeDefaultDirection * _planeSpeed),0];
-//[_plane, _planeAltitude] execVM "flyinheightasl.sqf";
+[_plane, _planeAltitude] execVM "flyinheightasl.sqf";
  _pilot action ["lightOff", _plane];
 
 //set plane waypoint yDistance ahead of the caller.
