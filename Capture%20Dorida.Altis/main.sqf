@@ -48,7 +48,7 @@ _planeWPPos =  [ _callerPosition select 0, (_callerPosition select 1) + 30000, _
 _planeWP = _groupC130J addWaypoint [_planeWPPos, 0]; // Add way point to caller's position
 _planeWP setWaypointSpeed "LIMITED";
 _planeWP setWaypointType "MOVE"; 
-_planeWP setWaypointFormation "LINE";
+_planeWP setWaypointFormation "DIAMOND";
 _planeWP setWaypointBehaviour "SAFE";
 
 //create a support team
@@ -113,7 +113,7 @@ hint "November is dropping reinforcements.";
 } foreach _supportTeamArray;
 
 //set waypoint for the reinforcements
-_supportTeamWP = _groupSupportTeam addWaypoint [_callerPosition, 0]; // Add way point to caller's position
+_supportTeamWP = _groupSupportTeam addWaypoint [position _caller, 0]; // Add way point to caller's position
 _supportTeamWP setWaypointSpeed "FULL";
 _supportTeamWP setWaypointType "MOVE"; 
 _supportTeamWP setWaypointFormation "DIAMOND";
@@ -139,7 +139,7 @@ _supportTeamWP setWaypointType "MOVE";
 _supportTeamWP setWaypointFormation "DIAMOND";
 _supportTeamWP setWaypointBehaviour "AWARE";
 
-[_caller] join _groupSupportTeam;
+(units (group _caller)) join _groupSupportTeam;
 
 {
 	waitUntil { unitReady _x } 
@@ -148,6 +148,5 @@ _supportTeamWP setWaypointBehaviour "AWARE";
 _supportTeamWP = _groupSupportTeam addWaypoint [_objectivePosition, 0]; // Add way point to the mission target
 _supportTeamWP setWaypointSpeed "FULL";
 _supportTeamWP setWaypointType "SAD"; 
-_supportTeamWP setWaypointFormation "DIAMOND";
+_supportTeamWP setWaypointFormation "LINE";
 _supportTeamWP setWaypointBehaviour "AWARE";
-
