@@ -9,5 +9,3 @@ while {alive _flying_vehicle} do {
 	_flying_vehicle flyInHeight (_height - _diff);
 	sleep 0.1;
 };
-
-hint format ["PLANE GONE"];

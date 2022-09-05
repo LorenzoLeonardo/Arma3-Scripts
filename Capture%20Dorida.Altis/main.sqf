@@ -24,7 +24,7 @@ _copilot = _groupC130J createUnit ["CUP_B_US_Pilot", [0,0,0], [], 0, "CARGO"];
 //move Pilot as plane driver
 _pilot moveInDriver _plane; //move pilot as driver of the plane
 _copilot moveInAny _plane;
-addSwitchableUnit (_copilot);
+_groupC130J setGroupID ["November"];
 
 //initialize the position of the plane. With respect to the caller
 _plane setpos [ _dropPosition select 0, (_dropPosition select 1) - _yDistance, _planeAltitude];
@@ -77,15 +77,18 @@ _supportTeamArray = units _groupSupportTeam;
 
 _total = count _supportTeamArray;
 
+hint format["The plane is coming"];
+
 waitUntil 
 {
 	_distance = (_dropPosition select 1) - (getpos _plane select 1);
 
 	_distance <= _yDroppingRadius 
 };
-_plane animateDoor ['Door_1_source', 1];
-sleep 3;
 
+hint format["Dropping paratroopers"];
+
+_pilot sideRadio "RadioAirbaseDropPackage";
 {
 	unassignvehicle _x;
 	_x action ["getOut", _plane];
