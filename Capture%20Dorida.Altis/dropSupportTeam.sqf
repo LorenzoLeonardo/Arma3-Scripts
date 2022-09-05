@@ -10,6 +10,7 @@ _yDroppingRadius = _this select 4;
 _seizeMarkerName = _this select 5;
 _callerPosition = getMarkerPos _seizeMarkerName;
 
+hint format ["Reinforcements is coming your way."];
 //create a group of the plane
 _groupC130J = createGroup west;
 //create Pilot
@@ -88,7 +89,7 @@ waitUntil
 
 	_distance <= _yDroppingRadius
 };
-
+hint format ["Paratroopers are now jumping from the air"];
 _pilotC130J sideRadio "RadioAirbaseDropPackage";
   
 {
@@ -104,5 +105,6 @@ deleteVehicle _planeC130J;
 deleteVehicle _pilotC130J;
 deleteMarkerLocal _seizeMarkerName;
 
+hint format ["Reinforcements will join your group"];
 _groupSupportTeam copyWaypoints (group _caller);
-_supportTeamArray joinSilent (group _caller);
+_supportTeamArray join (group _caller);

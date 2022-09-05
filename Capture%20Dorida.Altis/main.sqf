@@ -12,7 +12,7 @@ _objectivePosition = getMarkerPos (_this select 6);
 _groupName = _this select 7;
 _group setGroupID [_groupName];
 
-hint format ["drop position: %1, %2", _dropPosition select 0, _dropPosition select 1];
+hint format ["Wait for your unit"];
 //create a group of the plane
 _groupC130J = createGroup west;
 //create C130
@@ -77,7 +77,7 @@ _supportTeamArray = units _groupSupportTeam;
 
 _total = count _supportTeamArray;
 
-hint format["The plane is coming"];
+hint format["The plane with your unit is coming."];
 
 waitUntil 
 {
@@ -86,7 +86,7 @@ waitUntil
 	_distance <= _yDroppingRadius 
 };
 
-hint format["Dropping paratroopers"];
+hint format["The plane is dropping paratroopers."];
 
 _pilot sideRadio "RadioAirbaseDropPackage";
 {
@@ -96,6 +96,7 @@ _pilot sideRadio "RadioAirbaseDropPackage";
 
 } foreach _supportTeamArray;
 
+hint format["Your leader will come to you. Wait for him."];
 //set waypoint for the reinforcements
 _supportTeamWP = _groupSupportTeam addWaypoint [_dropPosition, 0]; // Add way point to caller's position
 _supportTeamWP setWaypointSpeed "FULL";
@@ -118,11 +119,15 @@ _supportTeamWP setWaypointBehaviour "AWARE";
 _supportTeamArray = units _groupSupportTeam;
 
 waitUntil {unitReady (leader _groupSupportTeam)};
+
+hint format ["Join alpha team"];
 [player] join _groupSupportTeam;
 
 {
-	waitUntil { ((getPos _x) distance _dropPosition) < 50 } 
+	waitUntil { ((getPos _x) distance _dropPosition) <= 50 } 
 } foreach _supportTeamArray;
+
+hint format ["Assault Dorida at all cost."];
 
 _supportTeamWP = _groupSupportTeam addWaypoint [_objectivePosition, 0]; // Add way point to the mission target
 _supportTeamWP setWaypointSpeed "FULL";
