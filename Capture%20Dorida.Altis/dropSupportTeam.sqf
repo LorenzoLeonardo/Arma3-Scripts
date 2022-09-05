@@ -9,7 +9,7 @@ _yDistance = _this select 3;
 _yDroppingRadius = _this select 4;
 _seizeMarkerName = _this select 5;
 _callerPosition = getMarkerPos _seizeMarkerName;
-	
+
 //create a group of the plane
 _groupC130J = createGroup west;
 //create Pilot

@@ -1,24 +1,18 @@
 //Created By : Lorenzo Leonardo
-//Example : nul=[player,300,30,1000,500] execvm "dropSupportTeam.sqf"; 
-//nul=[calling unit = player,altitude = 300, planespeed = 50, plane yDistance From caller = 1000, startdropping radius = 100, _seizemarkerName] execvm "dropSupportTeam.sqf";
+//Example : nul=[player,300,30,1000,500,"drop position","objective marker name", "Alpha"] execvm "main.sqf"; 
+//nul=[calling unit = player,altitude = 300, planespeed = 50, plane yDistance From caller = 1000, startdropping radius = 100, _seizemarkerName] execvm "main.sqf";
 //parameters
 _caller = _this select 0;
 _planeAltitude = _this select 1;
 _planeSpeed = _this select 2;
 _yDistance = _this select 3;
 _yDroppingRadius = _this select 4;
-_objectivePosition = position (_this select 5);
+_dropPosition = getMarkerPos (_this select 5);
+_objectivePosition = getMarkerPos (_this select 6);
+_groupName = _this select 7;
+_group setGroupID [_groupName];
 
-_caller sideChat format["Come in Papa Bear. We need reinforcements in this area. Over?"];
-_callerTexMarker = str format["%1 : Requesting Reinforcements.",_caller];
-_callerMarker = createMarkerLocal [_callerTexMarker, position _caller];
-_callerMarker setMarkerSizeLocal [1,1];
-_callerMarker setMarkerShapeLocal "ICON";
-_callerMarker setMarkerTypeLocal "hd_destroy";
-_callerMarker setMarkerDirLocal 45;
-_callerMarker setMarkerTextLocal _callerTexMarker;
-_callerPosition = getMarkerPos _callerMarker;
-
+hint format ["drop position: %1, %2", _dropPosition select 0, _dropPosition select 1];
 //create a group of the plane
 _groupC130J = createGroup west;
 //create C130
@@ -33,7 +27,7 @@ _copilot moveInAny _plane;
 addSwitchableUnit (_copilot);
 
 //initialize the position of the plane. With respect to the caller
-_plane setpos [ _callerPosition select 0, (_callerPosition select 1) - _yDistance, _planeAltitude];
+_plane setpos [ _dropPosition select 0, (_dropPosition select 1) - _yDistance, _planeAltitude];
 _plane flyInHeight _planeAltitude;
 
 //Set velocity and direction of the plane
@@ -44,7 +38,7 @@ _plane setVelocity [( sin _planeDefaultDirection * _planeSpeed),( cos _planeDefa
  _pilot action ["lightOff", _plane];
 
 //set plane waypoint yDistance ahead of the caller.
-_planeWPPos =  [ _callerPosition select 0, (_callerPosition select 1) + 30000, _planeAltitude];
+_planeWPPos =  [ _dropPosition select 0, (_dropPosition select 1) + 30000, _planeAltitude];
 _planeWP = _groupC130J addWaypoint [_planeWPPos, 0]; // Add way point to caller's position
 _planeWP setWaypointSpeed "LIMITED";
 _planeWP setWaypointType "MOVE"; 
@@ -70,6 +64,7 @@ _groupSupportTeam setGroupIdGlobal ["Alpha Team"];
 "CUP_B_US_Medic_OCP" createUnit [[0,0,0], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
 "CUP_B_US_Medic_OCP" createUnit [[0,0,0], _groupSupportTeam, "this moveInCargo _plane", 1, "CORPORAL"];
 
+
 _supportTeamArray = units _groupSupportTeam;
 
 {
@@ -81,24 +76,16 @@ _supportTeamArray = units _groupSupportTeam;
 ["end1"] execVM "monitorMission.sqf";
 
 _total = count _supportTeamArray;
-addSwitchableUnit (_supportTeamArray select 1);
-_distance = _callerPosition distance _plane;
-_distance = sqrt ((_distance * _distance)  - ( _planeAltitude * _planeAltitude) );
-[West, "HQ"] sideChat format["Copy that %1. Reinforcements coming your way. ETA %2 secs. Out!", _caller, _distance/_planeSpeed];
-
-//Wait and Check the plane distance to the marker before starting unloading troops
-hint "Paradrop is approaching.";
 
 waitUntil 
 {
-	_distance = _callerPosition distance _plane;
-	_distance = sqrt ((_distance * _distance)  - ( _planeAltitude * _planeAltitude) ); // check the horizontal distance of plane from the marker, start dropping at given yRadius
+	_distance = (_dropPosition select 1) - (getpos _plane select 1);
 
 	_distance <= _yDroppingRadius 
 };
 _plane animateDoor ['Door_1_source', 1];
 sleep 3;
-hint "November is dropping reinforcements.";
+
 {
 	unassignvehicle _x;
 	_x action ["getOut", _plane];
@@ -107,36 +94,31 @@ hint "November is dropping reinforcements.";
 } foreach _supportTeamArray;
 
 //set waypoint for the reinforcements
-_supportTeamWP = _groupSupportTeam addWaypoint [position _caller, 0]; // Add way point to caller's position
+_supportTeamWP = _groupSupportTeam addWaypoint [_dropPosition, 0]; // Add way point to caller's position
 _supportTeamWP setWaypointSpeed "FULL";
 _supportTeamWP setWaypointType "MOVE"; 
 _supportTeamWP setWaypointFormation "DIAMOND";
 _supportTeamWP setWaypointBehaviour "AWARE";
 
-sleep 40; 
+sleep 60; 
 
 deleteVehicle _plane;
 deleteVehicle _copilot;
 deleteVehicle _pilot;
-deleteMarkerLocal _callerMarker;
 
-_squadLeader = leader _groupSupportTeam;
-_supportTeamArray = units _groupSupportTeam;
-
-{
-	waitUntil { unitReady _x } 
-} foreach _supportTeamArray;
-
-_supportTeamWP = _groupSupportTeam addWaypoint [position _caller, 0]; // Add way point to caller's position
+_supportTeamWP = _groupSupportTeam addWaypoint [_dropPosition, 0]; // Add way point to caller's position
 _supportTeamWP setWaypointSpeed "FULL";
 _supportTeamWP setWaypointType "MOVE"; 
 _supportTeamWP setWaypointFormation "DIAMOND";
 _supportTeamWP setWaypointBehaviour "AWARE";
 
-(units (group _caller)) join _groupSupportTeam;
+_supportTeamArray = units _groupSupportTeam;
+
+waitUntil {unitReady (leader _groupSupportTeam)};
+[player] join _groupSupportTeam;
 
 {
-	waitUntil { unitReady _x } 
+	waitUntil { ((getPos _x) distance _dropPosition) < 50 } 
 } foreach _supportTeamArray;
 
 _supportTeamWP = _groupSupportTeam addWaypoint [_objectivePosition, 0]; // Add way point to the mission target
