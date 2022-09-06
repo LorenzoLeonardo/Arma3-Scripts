@@ -422,6 +422,17 @@ class CfgRadio
 		// radio caption
 		title	= "Copy that November! We are holding at the moment. Waiting for the ammunitions. Alpha out!";	
 	}
+	class RadioPapaBearToAlphaTeamDoridaIntro
+	{
+		// display name
+		name	= "RadioPapaBearToAlphaTeamDoridaIntro";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\RadioPapaBearToAlphaTeamDoridaIntro.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Papa bear to Alpha team. Your job is to capture Dorida at all costs. One of our boys is already at the field. Meet him and let him join your team. Papa bear out!";
+	};
 };
 
 
