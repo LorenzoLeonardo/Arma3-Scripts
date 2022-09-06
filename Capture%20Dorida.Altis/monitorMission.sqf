@@ -11,10 +11,11 @@ switch (_caseoption) do
 	};
 	case "end1": {
 		waitUntil {({(side _x) == east} count allUnits) == 0};
-		["end1", false, true] call BIS_fnc_endMission;
+		(leader (group player)) sideRadio "RadioGroundToPapaBearVictory";
+		sleep 10;
 		[west, "Base"] sideRadio "RadioPapaBearVictory";
 		sleep 10;
-		(leader (group player)) sideRadio "RadioGroundToPapaBearVictory";
+		["end1", false, true] call BIS_fnc_endMission;
 	};
 	default { hint "default" };
 };
