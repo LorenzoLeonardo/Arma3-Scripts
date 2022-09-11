@@ -28,7 +28,7 @@ if( alive player ) then
 	_callerMarker = createMarkerLocal[_callerTexMarker, position _radioUnit];
 	_callerMarker setMarkerSizeLocal[1,1];
 	_callerMarker setMarkerShapeLocal "ICON";
-	_callerMarker setMarkerTypeLocal "AirTeam";
+	_callerMarker setMarkerTypeLocal "hd_flag";
 	_callerMarker setMarkerDirLocal 0;
 	_callerMarker setMarkerTextLocal _callerTexMarker;
 			
@@ -38,7 +38,7 @@ if( alive player ) then
 		{
 			_callerMarker setMarkerColorLocal "ColorBlue";
 			_radioUnit sideRadio "RadioAlphaWipedOut";
-			sleep 10;
+			sleep 5;
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
 		};
 
@@ -46,7 +46,7 @@ if( alive player ) then
 		{
 			_callerMarker setMarkerColorLocal "ColorRed";
 			_radioUnit sideRadio "RadioBravoWipedOut";
-			sleep 10;
+			sleep 5;
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
 		};
 
@@ -54,7 +54,7 @@ if( alive player ) then
 		{
 			_callerMarker setMarkerColorLocal "ColorYellow";
 			_radioUnit sideRadio "RadioCharlieWipedOut";
-			sleep 10;
+			sleep 5;
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
 		};
 
@@ -62,7 +62,7 @@ if( alive player ) then
 		{
 			_callerMarker setMarkerColorLocal "ColorOrange";
 			_radioUnit sideRadio "RadioDeltaWipedOut";
-			sleep 10;
+			sleep 5;
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
 		};
 
@@ -81,6 +81,6 @@ if( alive player ) then
 				_radioUnit = _Array select 0;
 			}
 		}foreach _Array;
-		_handle=[_radioUnit, 1000, 50, 3000, 500, _callerTexMarker] execvm "dropSupportTeam.sqf";
+		[_radioUnit, 500, 100, 6000, 500, _callerTexMarker] execvm "dropSupportTeam.sqf";
 	};
 };

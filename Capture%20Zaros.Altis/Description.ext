@@ -3,7 +3,7 @@ class CfgDebriefing
 	class end1
 	{
 		title = "Mission Accomplished!";
-		subtitle = "We captured Dorida";
+		subtitle = "We captured Zaros";
 		description = "";
 	};
 

@@ -12,8 +12,9 @@ create_waypoint =
 	private _wayPointSpeed = _this select 2;
 	private _wayPointType = _this select 3;
 	private _wayPointFormation = _this select 4;
-	private _wayPointBehaviour = _this select 5;		
-	private _supportTeamWP = _group addWaypoint [_destinationPosition, 0];
+	private _wayPointBehaviour = _this select 5;
+	private _wayPointNumber = _this select 6;
+	private _supportTeamWP = _group addWaypoint [_destinationPosition, _wayPointNumber];
 	_supportTeamWP setWaypointSpeed _wayPointSpeed;
 	_supportTeamWP setWaypointType _wayPointType; 
 	_supportTeamWP setWaypointFormation _wayPointFormation;
@@ -27,6 +28,7 @@ initialize_plane =
 	private _dropPosition = _this select 1;
 	private _initLocation = _this select 2;
 	private _planeSpeed = _this select 3;
+	private _planeGroupName = _this select 4;
 	//create a group of the plane
 	private _groupC130J = createGroup west;
 	//create C130
@@ -38,13 +40,13 @@ initialize_plane =
 	//move Pilot as plane driver
 	_pilot moveInDriver _returnPlane; //move pilot as driver of the plane
 	_copilot moveInAny _returnPlane;
-	_groupC130J setGroupID ["November"];
+	_groupC130J setGroupID [_planeGroupName];
 	// initialize plane in the right altitude
 	_returnPlane flyInHeightASL [(_initLocation select 2), (_initLocation select 2), (_initLocation select 2)];
 	_returnPlane setVelocity [( sin (direction _returnPlane) * _planeSpeed),( cos (direction _returnPlane) * _planeSpeed),0];
 	//set plane waypoint yDistance ahead of the dropzone position.
 	_planeWPPos =  [ _dropPosition select 0, (_dropPosition select 1) + 30000, _planeAltitude];
-	[_groupC130J, _planeWPPos, "LIMITED", "MOVE", "DIAMOND", "SAFE"] call create_waypoint;
+	[_groupC130J, _planeWPPos, "LIMITED", "MOVE", "DIAMOND", "COMBAT", 0] call create_waypoint;
 
 	_returnPlane
 };
@@ -125,7 +127,7 @@ eject_from_plane =
 	{
 		unassignvehicle _x;
 		moveout _x;
-		sleep 0.5;
+		sleep 0.25;
 	} foreach units _groupPlatoon;
 };
 
@@ -149,7 +151,31 @@ if (_groupName == "Alpha") then
 	playMusic "LeadTrack01_F";
 	[west, "Base"] sideRadio "RadioPapaBearToAlphaTeamDoridaIntro";
 };
-_plane = ["CUP_B_C47_USA",_dropPosition, _initLocation, _planeSpeed] call initialize_plane;
+
+_planeGroupName = "";
+switch (_groupName) do
+{
+	case "Alpha":
+	{
+		_planeGroupName = "November 1";
+	};
+	case "Bravo":
+	{
+		_planeGroupName = "November 2";
+	};
+	case "Charlie":
+	{
+		_planeGroupName = "November 3";
+	};
+	case "Delta":
+	{
+		_planeGroupName = "November 4";
+	};
+	default
+	{
+	};
+};
+_plane = ["CUP_B_C47_USA",_dropPosition, _initLocation, _planeSpeed, _planeGroupName] call initialize_plane;
 _groupPlusBackpack = [_groupName, _initLocation, _plane] call initialize_group_to_plane;
 _groupPlatoon = _groupPlusBackpack select 0;
 _oldBackPack = _groupPlusBackpack select 1;
@@ -189,9 +215,8 @@ _i = 0;
 } foreach _oldBackPack;
 
 // Add way point to the dropzone position
-[_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE"] call create_waypoint;
 [_plane] call uninitialize_plane;
-[_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE"] call create_waypoint;
+[_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE", 0] call create_waypoint;
 waitUntil
 {
 	unitReady (leader _groupPlatoon)
@@ -202,7 +227,7 @@ if (_groupName == "Alpha") then
 	hint format ["Commence main assault!"];
 	playMusic "LeadTrack01_F";
 };
-[_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE"] call create_waypoint;
-[_groupPlatoon, _objectivePosition, "FULL", "GUARD", "LINE", "COMBAT"] call create_waypoint;
+[_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", 1] call create_waypoint;
+[_groupPlatoon, _objectivePosition, "FULL", "GUARD", "LINE", "COMBAT", 2] call create_waypoint;
 
 /***********END SCRIPT*******************************************************************************************************/

@@ -20,7 +20,7 @@ _groupC130J setGroupID ["November"];
 _pilotC130J sideRadio "RadioAirbaseSupport";
 
 //create C130
-_planeC130J = createVehicle ["CUP_B_C130J_USMC",[0,0,_planeAltitude], [], 0, "FLY"];
+_planeC130J = createVehicle ["CUP_B_C47_USA",[0,0,_planeAltitude], [], 0, "FLY"];
 //move Pilot as plane driver
 _pilotC130J moveInDriver _planeC130J; //move pilot as driver of the C130
 _planeC130J setDir 0;
@@ -33,25 +33,17 @@ _planeC130J flyInHeight _planeAltitude;
 //Set velocity and direction of the plane
 _planeDefaultVelocity = velocity _planeC130J;
 _planeDefaultDirection = direction _planeC130J;
+_planeC130J flyInHeightASL [_planeAltitude, _planeAltitude, _planeAltitude];
 _planeC130J setVelocity [( sin _planeDefaultDirection * _planeSpeed),( cos _planeDefaultDirection * _planeSpeed),0];
-_handle=[_planeC130J,_planeAltitude] execvm "flyinheightasl.sqf";
 
 //set plane waypoint yDistance ahead of the caller.
-_planeWPPos =  [ _callerPosition select 0, (_callerPosition select 1), _planeAltitude];
+_planeWPPos =  [ _callerPosition select 0, (_callerPosition select 1) + 30000, _planeAltitude];
 _planeWP = _groupC130J addWaypoint [_planeWPPos, 0]; // Add way point to caller's position
 _planeWP setWaypointSpeed "LIMITED";
 _planeWP setWaypointType "MOVE"; 
 _planeWP setWaypointFormation "LINE";
-_planeWP setWaypointBehaviour "AWARE";
+_planeWP setWaypointBehaviour "COMBAT";
 
-_planeWPPos =  [ _callerPosition select 0, (_callerPosition select 1) + _yDistance, _planeAltitude];
-_planeWP = _groupC130J addWaypoint [_planeWPPos, 0]; // Add way point to caller's position
-
-_planeWPPos =  [ _callerPosition select 0, (_callerPosition select 1) + (_yDistance * 2), _planeAltitude];
-_planeWP = _groupC130J addWaypoint [_planeWPPos, 0]; // Add way point to caller's position
-
-_planeWPPos =  [ _callerPosition select 0, (_callerPosition select 1) + (_yDistance * 3), _planeAltitude];
-_planeWP = _groupC130J addWaypoint [_planeWPPos, 0]; // Add way point to caller's position
 
 //create a support team
 _groupSupportTeam = createGroup west; 
@@ -95,16 +87,15 @@ _pilotC130J sideRadio "RadioAirbaseDropPackage";
 {
 	unassignvehicle _x;
 	_x action ["getOut", _planeC130J];
-	sleep 0.5;
+	sleep 0.25;
 } foreach _supportTeamArray;
-
-//10 second sleep before deleting plane and pilot
-sleep 20; 
-terminate _handle;
-deleteVehicle _planeC130J;
-deleteVehicle _pilotC130J;
-deleteMarkerLocal _seizeMarkerName;
 
 hint format ["Reinforcements will join your group"];
 _groupSupportTeam copyWaypoints (group _caller);
 _supportTeamArray join (group _caller);
+
+//10 second sleep before deleting plane and pilot
+sleep 60; 
+deleteVehicle _planeC130J;
+deleteVehicle _pilotC130J;
+deleteMarkerLocal _seizeMarkerName;
