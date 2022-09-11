@@ -82,5 +82,6 @@ if( alive player ) then
 			}
 		}foreach _Array;
 		[_radioUnit, 500, 50, 6000, 500, _callerTexMarker] execvm "dropSupportTeam.sqf";
+		saveGame;
 	};
 };
