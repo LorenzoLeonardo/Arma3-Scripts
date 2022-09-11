@@ -225,8 +225,9 @@ waitUntil
 if (_groupName == "Alpha") then 
 {
 	hint format ["Commence main assault!"];
-	playMusic "LeadTrack01_F";
 	saveGame;
+	[west, "Base"] sideRadio "RadioPapaBearCommenceTheAssault";
+	playMusic "LeadTrack01_F";
 };
 
 
