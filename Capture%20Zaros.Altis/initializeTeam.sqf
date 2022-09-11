@@ -19,17 +19,18 @@ create_waypoint =
 	_supportTeamWP setWaypointFormation _wayPointFormation;
 	_supportTeamWP setWaypointBehaviour _wayPointBehaviour;
 };
-
-//_plane = [_dropPosition, _initLocation, _planeSpeed] call initialize_plane;
+// CUP_B_C47_USA
+//_plane = ["CUP_B_C130J_USMC", _dropPosition, _initLocation, _planeSpeed] call initialize_plane;
 initialize_plane =
 {	
-	private _dropPosition = _this select 0;
-	private _initLocation = _this select 1;
-	private _planeSpeed = _this select 2;
+	private _planeModel = _this select 0;
+	private _dropPosition = _this select 1;
+	private _initLocation = _this select 2;
+	private _planeSpeed = _this select 3;
 	//create a group of the plane
 	private _groupC130J = createGroup west;
 	//create C130
-	private _returnPlane = createVehicle ["CUP_B_C130J_USMC", _initLocation, [], 0, "FLY"];
+	private _returnPlane = createVehicle [_planeModel, _initLocation, [], 0, "FLY"];
 	//create Pilot
 	private _pilot = _groupC130J createUnit ["CUP_B_US_Pilot", _initLocation, [], 0, "CARGO"];
 	private _copilot = _groupC130J createUnit ["CUP_B_US_Pilot", _initLocation, [], 0, "CARGO"];
@@ -39,9 +40,10 @@ initialize_plane =
 	_copilot moveInAny _returnPlane;
 	_groupC130J setGroupID ["November"];
 	// initialize plane in the right altitude
-	_returnPlane flyInHeight _planeAltitude;
+	//_returnPlane flyInHeight (_initLocation select 2);
+	_returnPlane flyInHeightASL [(_initLocation select 2), (_initLocation select 2), (_initLocation select 2)];
 	_returnPlane setVelocity [( sin (direction _returnPlane) * _planeSpeed),( cos (direction _returnPlane) * _planeSpeed),0];
-	[_returnPlane, _planeAltitude] execVM "flyinheightasl.sqf";
+	//_returnPlane, _planeAltitude] execVM "flyinheightasl.sqf";
 	//set plane waypoint yDistance ahead of the dropzone position.
 	_planeWPPos =  [ _dropPosition select 0, (_dropPosition select 1) + 30000, _planeAltitude];
 	[_groupC130J, _planeWPPos, "LIMITED", "MOVE", "DIAMOND", "SAFE"] call create_waypoint;
@@ -60,15 +62,18 @@ uninitialize_plane =
 };
 initialize_group_to_plane =
 {
-	private _initLocation = _this select 0;
-	private _plane = _this select 1;
+	private _groupName = _this select 0;
+	private _initLocation = _this select 1;
+	private _plane = _this select 2;
 	private _groupPlatoon = createGroup west; 
-	private _initializeMen = "this moveInCargo _plane;this setAmmo [primaryWeapon this, 1000000];this setAmmo [handgunWeapon this, 10];";
+	private _initializeMen = "this moveInCargo _plane;";
 	
-	_groupPlatoon setGroupId ["Alpha"];
+	_groupPlatoon setGroupId [_groupName];
 	"CUP_B_US_Soldier_TL_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "LIEUTENANT"];
 	"CUP_B_US_Soldier_Marksman_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "SERGEANT"];
 	"CUP_B_US_Soldier_Marksman_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "SERGEANT"];
+	"CUP_B_US_Soldier_MG_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "SERGEANT"];
+	"CUP_B_US_Soldier_MG_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
 	"CUP_B_US_Soldier_MG_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "SERGEANT"];
 	"CUP_B_US_Soldier_MG_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
 	"CUP_B_US_Soldier_GL_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
@@ -83,18 +88,33 @@ initialize_group_to_plane =
 	"CUP_B_US_Soldier_ACOG_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
 	"CUP_B_US_Soldier_ACOG_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
 	"CUP_B_US_Soldier_ACOG_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
-	"CUP_B_US_Soldier_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
-	"CUP_B_US_Soldier_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_US_Soldier_Backpack_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_US_Soldier_Backpack_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
 	"CUP_B_US_Medic_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
 	"CUP_B_US_Medic_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
 	"CUP_B_US_Medic_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
-	player moveInCargo _plane;
-	[player] joinSilent _groupPlatoon;
-	// give each men their parachute bag
+	addSwitchableUnit ((units _groupPlatoon) select 17);
+	private _oldbackPacks=[];
 	{
+		_oldbackPacks  pushBack (backpack _x);
 		_x addBackpack "B_parachute";
 	} foreach units _groupPlatoon;
-	_groupPlatoon
+
+	private _groupPlusBackpack = [];
+
+	 _groupPlusBackpack pushBack _groupPlatoon;
+	 _groupPlusBackpack pushBack _oldbackPacks;
+
+	 _groupPlusBackpack
+};
+
+initialize_player =
+{
+	private _plane = _this select 0;
+	private _groupPlatoon = _this select 1;
+	player moveInCargo _plane;
+	player addBackpack "B_parachute";
+	[player] joinSilent _groupPlatoon;
 };
 
 eject_from_plane =
@@ -103,38 +123,50 @@ eject_from_plane =
 	private _plane = _this select 1;
 	{
 		unassignvehicle _x;
-		_x action ["getOut", _plane];
+		moveout _x;
 		sleep 0.5;
 	} foreach units _groupPlatoon;
 };
+
+
+player addEventHandler ["AnimChanged", { 
+    if ((_this select 1) == "para_pilot") then {
+        ("SmokeShell" createVehicle (position player)) attachto [(vehicle player)];
+    }; 
+}];
 /***********END FUNCTIONS******************************************************************************************************/
 
-//[player,300,30,1000,500,"drop position","objective marker name", "Alpha"] execvm "main.sqf"; 
+// [300,30,1000,500,"alpha_dropzone","target_1", "Alpha"] execvm "initializeTeam.sqf"; 
+// [300,30,1000,500,"bravo_dropzone","target_1", "Bravo"] execvm "initializeTeam.sqf"; 
 /***********START SCRIPT*******************************************************************************************************/
-_caller = _this select 0;
-_planeAltitude = _this select 1;
-_planeSpeed = _this select 2;
-_yDistance = _this select 3;
-_yDroppingRadius = _this select 4;
-_dropPosition = getMarkerPos (_this select 5);
-_objectivePosition = getMarkerPos (_this select 6);
-_groupName = _this select 7;
+_planeAltitude = _this select 0;
+_planeSpeed = _this select 1;
+_yDistance = _this select 2;
+_yDroppingRadius = _this select 3;
+_dropPosition = getMarkerPos (_this select 4);
+_objectivePosition = getMarkerPos (_this select 5);
+_groupName = _this select 6;
 _initLocation = [_dropPosition select 0,(_dropPosition select 1) - _yDistance, _planeAltitude];
 
-if (_groupName == "Alpha") then {
+if (_groupName == "Alpha") then 
+{
 	hint format ["Your team will start from the air."];
 	playMusic "LeadTrack01_F";
 	[west, "Base"] sideRadio "RadioPapaBearToAlphaTeamDoridaIntro";
 };
+_plane = ["CUP_B_C47_USA",_dropPosition, _initLocation, _planeSpeed] call initialize_plane;
+_groupPlusBackpack = [_groupName, _initLocation, _plane] call initialize_group_to_plane;
+_groupPlatoon = _groupPlusBackpack select 0;
+_oldBackPack = _groupPlusBackpack select 1;
+if (_groupName == "Alpha") then 
+{
+	[_plane, _groupPlatoon]call initialize_player;
+	["lose1"] execVM "monitorMission.sqf";
+	["lose2"] execVM "monitorMission.sqf";
+	["end1"] execVM "monitorMission.sqf";
+};
 
-_plane = [_dropPosition, _initLocation, _planeSpeed] call initialize_plane;
-_groupPlatoon = [_initLocation, _plane] call initialize_group_to_plane;
-["lose1"] execVM "monitorMission.sqf";
-["lose2"] execVM "monitorMission.sqf";
-["end1"] execVM "monitorMission.sqf";
-// start monitoring your team
 [_groupPlatoon] execVM "checkCompanyStatus.sqf";
-// return this group
 
 waitUntil 
 {
@@ -142,13 +174,14 @@ waitUntil
 	_distance <= _yDroppingRadius 
 };
 
-if (_groupName == "Alpha") then {
+if (_groupName == "Alpha") then 
+{
 	hint format["The plane is dropping paratroopers."];
 	playMusic "LeadTrack01_F";
 	((crew _plane) select 0) sideRadio "RadioAirbaseDropPackage";
 };
-
 [_groupPlatoon, _plane] call eject_from_plane;
+
 sleep 60; 
 // Add way point to the dropzone position
 [_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE"] call create_waypoint;
@@ -159,6 +192,16 @@ waitUntil
 	unitReady (leader _groupPlatoon)
 };
 
-[_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "COMBAT"] call create_waypoint;
+hint format ["Commence main assault!"];
+playMusic "LeadTrack01_F";
+
+[_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE"] call create_waypoint;
+
+_groupArray = units _groupPlatoon;
+_i = 0;
+{
+	(_groupArray select _i) addBackpack _x;
+	_i = _i + 1;
+} foreach _oldBackPack;
 
 /***********END SCRIPT*******************************************************************************************************/
