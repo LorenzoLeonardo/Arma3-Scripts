@@ -227,7 +227,7 @@ if (_groupName == "Alpha") then
 	hint format ["Commence main assault!"];
 	playMusic "LeadTrack01_F";
 };
-[_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", 1] call create_waypoint;
-[_groupPlatoon, _objectivePosition, "FULL", "GUARD", "LINE", "COMBAT", 2] call create_waypoint;
+saveGame;
 
+[_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", 1] call create_waypoint;
 /***********END SCRIPT*******************************************************************************************************/

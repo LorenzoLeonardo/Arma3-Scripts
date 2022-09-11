@@ -9,6 +9,30 @@ _yDistance = _this select 3;
 _yDroppingRadius = _this select 4;
 _seizeMarkerName = _this select 5;
 _callerPosition = getMarkerPos _seizeMarkerName;
+_planeGroupName = "";
+
+switch (groupId (group _caller)) do
+{
+	case "Alpha":
+	{
+		_planeGroupName = "November 1";
+	};
+	case "Bravo":
+	{
+		_planeGroupName = "November 2";
+	};
+	case "Charlie":
+	{
+		_planeGroupName = "November 3";
+	};
+	case "Delta":
+	{
+		_planeGroupName = "November 4";
+	};
+	default
+	{
+	};
+};
 
 hint format ["Reinforcements is coming your way."];
 //create a group of the plane
@@ -16,7 +40,7 @@ _groupC130J = createGroup west;
 //create Pilot
 _pilotC130J = _groupC130J createUnit ["CUP_B_US_Pilot", [0,0,1], [], 0, "CARGO"];
 //Set Group ID For Plane Drop Support
-_groupC130J setGroupID ["November"];
+_groupC130J setGroupID [_planeGroupName];
 _pilotC130J sideRadio "RadioAirbaseSupport";
 
 //create C130
@@ -24,7 +48,6 @@ _planeC130J = createVehicle ["CUP_B_C47_USA",[0,0,_planeAltitude], [], 0, "FLY"]
 //move Pilot as plane driver
 _pilotC130J moveInDriver _planeC130J; //move pilot as driver of the C130
 _planeC130J setDir 0;
-sleep 6;
 
 //initialize the position of the plane. With respect to the caller
 _planeC130J setpos [ _callerPosition select 0, (_callerPosition select 1) - _yDistance, _planeAltitude];
@@ -43,7 +66,6 @@ _planeWP setWaypointSpeed "LIMITED";
 _planeWP setWaypointType "MOVE"; 
 _planeWP setWaypointFormation "LINE";
 _planeWP setWaypointBehaviour "COMBAT";
-
 
 //create a support team
 _groupSupportTeam = createGroup west; 
