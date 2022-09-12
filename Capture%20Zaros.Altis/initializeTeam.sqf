@@ -120,6 +120,20 @@ initialize_player =
 	_backPack
 };
 
+switch_back_default_backpack =
+{
+	private _groupArray = _this select 0;
+	private _oldBackPack = _this select 1;
+	private _index = 0;
+	{
+		_men = (_groupArray select _index);
+		if (alive _men) then {
+			_men addBackpack _x;
+		};
+		_index = _index + 1;
+	} foreach _oldBackPack;
+};
+
 eject_from_plane =
 {
 	private _groupPlatoon = _this select 0;
@@ -129,8 +143,37 @@ eject_from_plane =
 		moveout _x;
 		sleep 0.25;
 	} foreach units _groupPlatoon;
+	sleep 60; 
 };
 
+get_assigned_plane =
+{
+	private _teamName = _this select 0;
+	private _planeAssigned="";
+	switch (_teamName) do
+	{
+		case "Alpha":
+		{
+			_planeAssigned = "November 1";
+		};
+		case "Bravo":
+		{
+			_planeAssigned = "November 2";
+		};
+		case "Charlie":
+		{
+			_planeAssigned = "November 3";
+		};
+		case "Delta":
+		{
+			_planeAssigned = "November 4";
+		};
+		default
+		{
+		};
+	};
+	_planeAssigned
+};
 /***********END FUNCTIONS******************************************************************************************************/
 
 // [300,30,1000,500,"alpha_dropzone","target_1", "Alpha"] execvm "initializeTeam.sqf"; 
@@ -149,32 +192,10 @@ if (_groupName == "Alpha") then
 {
 	hint format ["Your team will start from the air."];
 	playMusic "LeadTrack01_F";
-	[west, "Base"] sideRadio "RadioPapaBearToAlphaTeamDoridaIntro";
+	[west, "Base"] sideRadio "RadioPapaBearIntroZaros";
 };
 
-_planeGroupName = "";
-switch (_groupName) do
-{
-	case "Alpha":
-	{
-		_planeGroupName = "November 1";
-	};
-	case "Bravo":
-	{
-		_planeGroupName = "November 2";
-	};
-	case "Charlie":
-	{
-		_planeGroupName = "November 3";
-	};
-	case "Delta":
-	{
-		_planeGroupName = "November 4";
-	};
-	default
-	{
-	};
-};
+_planeGroupName = [_groupName] call get_assigned_plane;
 _plane = ["CUP_B_C47_USA",_dropPosition, _initLocation, _planeSpeed, _planeGroupName] call initialize_plane;
 _groupPlusBackpack = [_groupName, _initLocation, _plane] call initialize_group_to_plane;
 _groupPlatoon = _groupPlusBackpack select 0;
@@ -204,15 +225,9 @@ if (_groupName == "Alpha") then
 	((crew _plane) select 0) sideRadio "RadioAirbaseDropPackage";
 };
 [_groupPlatoon, _plane] call eject_from_plane;
-
-sleep 60; 
-
 _groupArray = units _groupPlatoon;
-_i = 0;
-{
-	(_groupArray select _i) addBackpack _x;
-	_i = _i + 1;
-} foreach _oldBackPack;
+
+[_groupArray, _oldBackPack] call switch_back_default_backpack;
 
 // Add way point to the dropzone position
 [_plane] call uninitialize_plane;

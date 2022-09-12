@@ -87,8 +87,9 @@ _groupSupportTeam = createGroup west;
 
 _supportTeamArray = units _groupSupportTeam;
 _total = count _supportTeamArray;
-
+_oldbackPacks = [];
 {
+	_oldbackPacks  pushBack (backpack _x);
 	_x addBackpack "B_parachute";
 } foreach _supportTeamArray;
 
@@ -108,7 +109,7 @@ _pilotC130J sideRadio "RadioAirbaseDropPackage";
   
 {
 	unassignvehicle _x;
-	_x action ["getOut", _planeC130J];
+	moveout _x;
 	sleep 0.25;
 } foreach _supportTeamArray;
 
@@ -118,6 +119,15 @@ _supportTeamArray join (group _caller);
 
 //10 second sleep before deleting plane and pilot
 sleep 60; 
+_i = 0;
+{
+	_men = (_supportTeamArray select _i);
+	if (alive _men) then {
+		_men addBackpack _x;
+	};
+	_i = _i + 1;
+} foreach _oldbackPacks;
+
 deleteVehicle _planeC130J;
 deleteVehicle _pilotC130J;
 deleteMarkerLocal _seizeMarkerName;
