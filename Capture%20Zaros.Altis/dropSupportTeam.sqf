@@ -96,6 +96,10 @@ _oldbackPacks = [];
 _distance = _callerPosition distance _planeC130J;//hypotenuse
 _distance = sqrt ((_distance * _distance)  - ( _planeAltitude * _planeAltitude) ); // horizontal distance
 
+hint format ["Reinforcements will join your group"];
+_groupSupportTeam copyWaypoints (group _caller);
+_supportTeamArray join (group _caller);
+
 //Wait and Check the plane distance to the marker before starting unloading troops
 waitUntil 
 {
@@ -112,10 +116,6 @@ _pilotC130J sideRadio "RadioAirbaseDropPackage";
 	moveout _x;
 	sleep 0.25;
 } foreach _supportTeamArray;
-
-hint format ["Reinforcements will join your group"];
-_groupSupportTeam copyWaypoints (group _caller);
-_supportTeamArray join (group _caller);
 
 //10 second sleep before deleting plane and pilot
 sleep 60; 
