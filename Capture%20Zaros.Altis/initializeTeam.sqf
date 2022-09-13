@@ -100,7 +100,7 @@ initialize_group_to_plane =
 	{
 		 
 		_oldbackPacks  pushBack (getUnitLoadout _x);
-		_x addBackpack "CUP_T10_Parachute_backpack";
+		_x addBackpack "B_parachute";
 	} foreach units _groupPlatoon;
 
 	private _groupPlusBackpack = [];
@@ -117,7 +117,7 @@ initialize_player =
 	private _groupPlatoon = _this select 1;
 	private _backPack = getUnitLoadout player;
 	player moveInCargo _plane;
-	player addBackpack "CUP_T10_Parachute_backpack";
+	player addBackpack "B_parachute";
 	[player] joinSilent _groupPlatoon;
 
 	_backPack
@@ -235,6 +235,10 @@ _groupArray = units _groupPlatoon;
 // Add way point to the dropzone position
 [_plane] call uninitialize_plane;
 _teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE", 0] call create_waypoint;
+waitUntil
+{
+	unitReady (leader _groupPlatoon)
+};
 
 if (_groupName == "Alpha") then 
 {
@@ -243,5 +247,5 @@ if (_groupName == "Alpha") then
 };
 
 
-_teamWP = [_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", 1] call create_waypoint;
+[_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", 1] call create_waypoint;
 /***********END SCRIPT*******************************************************************************************************/

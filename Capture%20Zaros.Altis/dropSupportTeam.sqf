@@ -90,7 +90,7 @@ _total = count _supportTeamArray;
 _oldbackPacks = [];
 {
 	_oldbackPacks  pushBack (getUnitLoadout _x);
-	_x addBackpack "CUP_T10_Parachute_backpack";
+	_x addBackpack "B_Parachute";
 } foreach _supportTeamArray;
 
 _distance = _callerPosition distance _planeC130J;//hypotenuse
