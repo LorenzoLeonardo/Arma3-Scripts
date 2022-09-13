@@ -81,7 +81,7 @@ if( alive player ) then
 				_radioUnit = _Array select 0;
 			}
 		}foreach _Array;
-		[_radioUnit, 500, 30, 6000, 500, _callerTexMarker] execvm "dropSupportTeam.sqf";
+		[_radioUnit, 1000, 30, 6000, 500, _callerTexMarker] execvm "dropSupportTeam.sqf";
 		saveGame;
 	};
 };

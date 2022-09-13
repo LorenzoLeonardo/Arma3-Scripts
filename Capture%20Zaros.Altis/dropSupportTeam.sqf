@@ -65,7 +65,7 @@ _planeWP = _groupC130J addWaypoint [_planeWPPos, 0]; // Add way point to caller'
 _planeWP setWaypointSpeed "LIMITED";
 _planeWP setWaypointType "MOVE"; 
 _planeWP setWaypointFormation "LINE";
-_planeWP setWaypointBehaviour "COMBAT";
+_planeWP setWaypointBehaviour "AWARE";
 
 //create a support team
 _groupSupportTeam = createGroup west; 
@@ -89,8 +89,8 @@ _supportTeamArray = units _groupSupportTeam;
 _total = count _supportTeamArray;
 _oldbackPacks = [];
 {
-	_oldbackPacks  pushBack (backpack _x);
-	_x addBackpack "B_parachute";
+	_oldbackPacks  pushBack (getUnitLoadout _x);
+	_x addBackpack "CUP_T10_Parachute_backpack";
 } foreach _supportTeamArray;
 
 _distance = _callerPosition distance _planeC130J;//hypotenuse
@@ -123,7 +123,7 @@ _i = 0;
 {
 	_men = (_supportTeamArray select _i);
 	if (alive _men) then {
-		_men addBackpack _x;
+		_men setUnitLoadout _x;
 	};
 	_i = _i + 1;
 } foreach _oldbackPacks;

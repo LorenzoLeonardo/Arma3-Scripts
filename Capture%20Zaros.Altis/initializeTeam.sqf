@@ -14,11 +14,13 @@ create_waypoint =
 	private _wayPointFormation = _this select 4;
 	private _wayPointBehaviour = _this select 5;
 	private _wayPointNumber = _this select 6;
-	private _supportTeamWP = _group addWaypoint [_destinationPosition, _wayPointNumber];
-	_supportTeamWP setWaypointSpeed _wayPointSpeed;
-	_supportTeamWP setWaypointType _wayPointType; 
-	_supportTeamWP setWaypointFormation _wayPointFormation;
-	_supportTeamWP setWaypointBehaviour _wayPointBehaviour;
+	private _teamWP = _group addWaypoint [_destinationPosition, _wayPointNumber];
+	_teamWP setWaypointSpeed _wayPointSpeed;
+	_teamWP setWaypointType _wayPointType; 
+	_teamWP setWaypointFormation _wayPointFormation;
+	_teamWP setWaypointBehaviour _wayPointBehaviour;
+
+	_teamWP
 };
 // CUP_B_C47_USA
 //_plane = ["CUP_B_C130J_USMC", _dropPosition, _initLocation, _planeSpeed] call initialize_plane;
@@ -46,7 +48,7 @@ initialize_plane =
 	_returnPlane setVelocity [( sin (direction _returnPlane) * _planeSpeed),( cos (direction _returnPlane) * _planeSpeed),0];
 	//set plane waypoint yDistance ahead of the dropzone position.
 	_planeWPPos =  [ _dropPosition select 0, (_dropPosition select 1) + 30000, _planeAltitude];
-	[_groupC130J, _planeWPPos, "LIMITED", "MOVE", "DIAMOND", "COMBAT", 0] call create_waypoint;
+	[_groupC130J, _planeWPPos, "LIMITED", "MOVE", "DIAMOND", "AWARE", 0] call create_waypoint;
 
 	_returnPlane
 };
@@ -96,8 +98,9 @@ initialize_group_to_plane =
 
 	private _oldbackPacks=[];
 	{
-		_oldbackPacks  pushBack (backpack _x);
-		_x addBackpack "B_parachute";
+		 
+		_oldbackPacks  pushBack (getUnitLoadout _x);
+		_x addBackpack "CUP_T10_Parachute_backpack";
 	} foreach units _groupPlatoon;
 
 	private _groupPlusBackpack = [];
@@ -112,9 +115,9 @@ initialize_player =
 {
 	private _plane = _this select 0;
 	private _groupPlatoon = _this select 1;
-	private _backPack = backpack player;
+	private _backPack = getUnitLoadout player;
 	player moveInCargo _plane;
-	player addBackpack "B_parachute";
+	player addBackpack "CUP_T10_Parachute_backpack";
 	[player] joinSilent _groupPlatoon;
 
 	_backPack
@@ -128,7 +131,7 @@ switch_back_default_backpack =
 	{
 		_men = (_groupArray select _index);
 		if (alive _men) then {
-			_men addBackpack _x;
+			_men setUnitLoadout _x;
 		};
 		_index = _index + 1;
 	} foreach _oldBackPack;
@@ -141,7 +144,7 @@ eject_from_plane =
 	{
 		unassignvehicle _x;
 		moveout _x;
-		sleep 0.25;
+		sleep 0.5;
 	} foreach units _groupPlatoon;
 	sleep 60; 
 };
@@ -231,20 +234,14 @@ _groupArray = units _groupPlatoon;
 
 // Add way point to the dropzone position
 [_plane] call uninitialize_plane;
-[_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE", 0] call create_waypoint;
-waitUntil
-{
-	unitReady (leader _groupPlatoon)
-};
+_teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE", 0] call create_waypoint;
 
 if (_groupName == "Alpha") then 
 {
-	hint format ["Commence main assault!"];
-	saveGame;
-	[west, "Base"] sideRadio "RadioPapaBearCommenceTheAssault";
-	playMusic "LeadTrack01_F";
+	_teamWP setWaypointStatements ["true", "hint format [""Commence main assault!""];
+	saveGame; [west, ""Base""] sideRadio ""RadioPapaBearCommenceTheAssault"";playMusic ""LeadTrack01_F"";"];
 };
 
 
-[_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", 1] call create_waypoint;
+_teamWP = [_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", 1] call create_waypoint;
 /***********END SCRIPT*******************************************************************************************************/
