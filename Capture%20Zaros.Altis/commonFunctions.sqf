@@ -7,13 +7,14 @@ create_waypoint =
 	private _wayPointType = _this select 3;
 	private _wayPointFormation = _this select 4;
 	private _wayPointBehaviour = _this select 5;
-	private _wayPointNumber = _this select 6;
+	private _wayPointCombatMode = _this select 6;
+	private _wayPointNumber = _this select 7;
 	private _teamWP = _group addWaypoint [_destinationPosition, _wayPointNumber];
 	_teamWP setWaypointSpeed _wayPointSpeed;
 	_teamWP setWaypointType _wayPointType; 
 	_teamWP setWaypointFormation _wayPointFormation;
 	_teamWP setWaypointBehaviour _wayPointBehaviour;
-
+	_teamWP setWaypointStatements ["true", format["_group setCombatMode %1", _wayPointCombatMode]];
 	_teamWP
 };
 // CUP_B_C47_USA
@@ -32,7 +33,7 @@ initialize_plane =
 	//create Pilot
 	private _pilot = _groupC130J createUnit ["CUP_B_US_Pilot", _initLocation, [], 0, "CARGO"];
 	private _copilot = _groupC130J createUnit ["CUP_B_US_Pilot", _initLocation, [], 0, "CARGO"];
-
+	_returnPlane setPosASL [(_initLocation select 0), (_initLocation select 1), (_initLocation select 2)];
 	//move Pilot as plane driver
 	_pilot moveInDriver _returnPlane; //move pilot as driver of the plane
 	_copilot moveInAny _returnPlane;
@@ -42,7 +43,7 @@ initialize_plane =
 	_returnPlane setVelocity [( sin (direction _returnPlane) * _planeSpeed),( cos (direction _returnPlane) * _planeSpeed),0];
 	//set plane waypoint yDistance ahead of the dropzone position.
 	_planeWPPos =  [ _dropPosition select 0, (_dropPosition select 1) + 30000, _planeAltitude];
-	[_groupC130J, _planeWPPos, "LIMITED", "MOVE", "DIAMOND", "AWARE", 0] call create_waypoint;
+	[_groupC130J, _planeWPPos, "LIMITED", "MOVE", "DIAMOND", "AWARE", "BLUE", 0] call create_waypoint;
 
 	_returnPlane
 };
@@ -57,6 +58,7 @@ uninitialize_plane =
 	} foreach crew _plane;
 	deleteVehicle _plane;
 };
+
 initialize_group_to_plane =
 {
 	private _groupName = _this select 0;
@@ -99,12 +101,8 @@ initialize_player =
 	private _plane = _this select 0;
 	private _groupPlatoon = _this select 1;
 
-	private _backPack = getUnitLoadout player;
 	player moveInCargo _plane;
-	player addBackpack "B_parachute";
 	[player] joinSilent _groupPlatoon;
-
-	_backPack
 };
 
 set_parachute_backpack =
@@ -136,10 +134,13 @@ reload_inventory_when_hit_Ground =
     private _paraPlayer = _this select 0;
 	private _backPack = _this select 1;
 
-    waitUntil { isTouchingGround _paraPlayer };
-	sleep 2;
-	_paraPlayer allowDamage true;
+    waitUntil { 
+		sleep 0.1;
+		isTouchingGround _paraPlayer
+	};
+	sleep 1;
 	[_paraPlayer, _backPack] call get_backpack;
+	_paraPlayer allowDamage true;
 };
 
 eject_from_plane =
@@ -194,6 +195,7 @@ wait_until_reach_dropzone =
 
 	waitUntil 
 	{
+		sleep 0.1;
 		_distance = sqrt(abs((_dropPosition select 1) - (getpos _plane select 1))^2 + abs ((_dropPosition select 0) - (getpos _plane select 0))^2);
 		_distance <= _droppingRadius 
 	};
@@ -212,3 +214,57 @@ fire_artillery =
 			_gun setVehicleAmmo 1;
 	};
 };
+
+start_monitoring_mission_status =
+{
+	_caseoption = _this select 0;
+	switch (_caseoption) do
+	{
+		case "lose1": {
+			waitUntil {
+				sleep 1;
+				({(side _x) == west} count allUnits) <= 1
+			};
+			["lose1", false, true] call BIS_fnc_endMission;
+		};
+		case "lose2": {
+			waitUntil { 
+				sleep 1;
+				!(alive player) 
+			};
+			["lose2", false, true] call BIS_fnc_endMission;	 
+		};
+		case "end1": {
+			waitUntil {
+				sleep 1;
+				({(side _x) == east} count allUnits) == 0
+			};
+			(leader (group player)) sideRadio "RadioGroundToPapaBearVictory";
+			sleep 10;
+			[west, "Base"] sideRadio "RadioPapaBearVictory";
+			sleep 10;
+			["end1", false, true] call BIS_fnc_endMission;
+		};
+		default { hint "default" };
+	};
+};
+
+start_monitoring_killed_units =
+{
+	callback_killed_unit =
+	{
+		_killed = _this select 0;
+		_killer = _this select 1;
+		systemChat format["(%1) %2 %3 ======> (%4) %5 %6", side (group _killer), rank _killer, name _killer, side (group _killed), rank _killed, name _killed];
+		[_killed] spawn {
+			sleep 60;
+			deleteVehicle (_this select 0);
+		};
+	};
+
+	{
+		_x setSkill 1;
+		_x addEventHandler ["Killed", callback_killed_unit];
+	} foreach allUnits;
+};
+

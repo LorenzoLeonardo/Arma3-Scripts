@@ -10,16 +10,17 @@ private _planeSpeed = _this select 2;
 private _yDistance = _this select 3;
 private _yDroppingRadius = _this select 4;
 private _seizeMarkerName = _this select 5;
+private _groupCaller = (group _caller);
 private _callerPosition = getMarkerPos _seizeMarkerName;
-private _planeGroupName = [groupId (group _caller)] call get_assigned_plane;
+private _planeGroupName = [groupId _groupCaller] call get_assigned_plane;
 private _initLocation = [_callerPosition select 0,(_callerPosition select 1) - _yDistance, _planeAltitude];
 private _plane = ["CUP_B_C47_USA",_callerPosition, _initLocation, _planeSpeed, _planeGroupName] call initialize_plane;
-private _groupPlatoon = ["Alpha", _initLocation, _plane] call initialize_group_to_plane;
+private _groupPlatoon = ["Support", _initLocation, _plane] call initialize_group_to_plane;
 private _backPack = [_groupPlatoon] call set_parachute_backpack;
 private _groupArrayBeforeJoin = units _groupPlatoon;
 
 hint format ["Reinforcements is coming your way."];
-_groupPlatoon copyWaypoints (group _caller);
+_groupPlatoon copyWaypoints _groupCaller;
 
 //Wait and Check the plane distance to the marker before starting unloading troops
 [_plane, _callerPosition, _yDroppingRadius, _planeAltitude] call wait_until_reach_dropzone;
@@ -27,9 +28,7 @@ _groupPlatoon copyWaypoints (group _caller);
 //hint format ["Paratroopers are now jumping from the air"];
 ((crew _plane) select 0) sideRadio "RadioAirbaseDropPackage";
 [_groupPlatoon, _plane, _backPack] call eject_from_plane;
+(units _groupPlatoon) join _groupCaller;
 
 deleteMarkerLocal _seizeMarkerName;
 [_plane] call uninitialize_plane;
-
-(units _groupPlatoon) join (group _caller);
-

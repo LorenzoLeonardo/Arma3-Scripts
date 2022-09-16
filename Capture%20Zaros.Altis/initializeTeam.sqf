@@ -29,17 +29,16 @@ private _groupPlatoon = [_groupName, _initLocation, _plane] call initialize_grou
 
 if (_groupName == "Alpha") then 
 {
-	_playerBackPack = [_plane, _groupPlatoon] call initialize_player;
-
-	["lose1"] execVM "monitorMission.sqf";
-	["lose2"] execVM "monitorMission.sqf";
-	["end1"] execVM "monitorMission.sqf";
+	[_plane, _groupPlatoon] call initialize_player;
+	["lose1"] spawn start_monitoring_mission_status;
+	["lose2"] spawn start_monitoring_mission_status;
+	["end1"] spawn start_monitoring_mission_status;
+	[] call start_monitoring_killed_units;
 };
 
 private _defaultBackpacks = [_groupPlatoon] call set_parachute_backpack;
 
 [_groupPlatoon] execVM "checkCompanyStatus.sqf";
-_teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE", 0] call create_waypoint;
 
 [_plane, _dropPosition, _yDroppingRadius] call wait_until_reach_dropzone;
 
@@ -51,14 +50,10 @@ if (_groupName == "Alpha") then
 };
 [_groupPlatoon, _plane, _defaultBackpacks] call eject_from_plane;
 _groupArray = units _groupPlatoon;
+_teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE", "GREEN", 0] call create_waypoint;
 
 // Add way point to the dropzone position
 [_plane] call uninitialize_plane;
-
-waitUntil
-{
-	unitReady (leader _groupPlatoon)
-};
 
 if (_groupName == "Alpha") then 
 {
@@ -66,6 +61,5 @@ if (_groupName == "Alpha") then
 	saveGame; [west, ""Base""] sideRadio ""RadioPapaBearCommenceTheAssault"";playMusic ""LeadTrack01_F"";"];
 };
 
-
-[_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", 1] call create_waypoint;
+[_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", "RED", 1] call create_waypoint;
 /***********END SCRIPT*******************************************************************************************************/
