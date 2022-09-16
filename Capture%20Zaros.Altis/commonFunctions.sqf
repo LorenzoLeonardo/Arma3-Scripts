@@ -1,4 +1,25 @@
-// Sample Usage: [_groupPlatoon, _objectivePosition, "LIMITED", "MOVE", "DIAMOND", "SAFE"] call create_waypoint;
+/*
+ * Author: Lorenzo Leonardo
+ * Email: enzotechcomputersolutions@gmail.com
+ * This will create dynamic way points for your units/groups
+ *
+ * Arguments:
+ * 0: _group this is a group or unit object <OBJECT>
+ * 1: _destinationPosition is a [x,y,z] coordinates of the destination <ARRAY>
+ * 2: _wayPointSpeed this could be "FULL" "LIMITED" "NORMAL" <STRING>
+ * 3: _wayPointType this is a waypont type "MOVE" "SAD" <STRING>
+ * 4: _wayPointFormation this is a waypoint formation "LINE "DIAMOND" <STRING>
+ * 5: _wayPointBehaviour this is a behaviour of the units "AWARE" "CARELESS" "DANGER" <STRING>
+ * 6: _wayPointCombatMode this is a combat mode of the group/unit "GREEN" "RED" "BLUE" <STRING>
+ * 7: _wayPointNumber this is the waypoint number, you can set from 0 to n waypoints <INTEGER>
+ * Return Value:
+ * The return value Array format Waypoint - [Group, index]
+ *
+ * Example:
+ * _wayPoint = [_group, [0,0,0], "LIMITED", "MOVE", "DIAMOND", "AWARE", "BLUE", 0] call create_waypoint;
+ *
+ * Public: [Yes/No]
+ */
 create_waypoint =
 {
 	private _group = _this select 0;
@@ -17,8 +38,26 @@ create_waypoint =
 	_teamWP setWaypointStatements ["true", format["_group setCombatMode %1", _wayPointCombatMode]];
 	_teamWP
 };
-// CUP_B_C47_USA
-//_plane = ["CUP_B_C130J_USMC", _dropPosition, _initLocation, _planeSpeed] call initialize_plane;
+
+/*
+ * Author: Lorenzo Leonardo
+ * Email: enzotechcomputersolutions@gmail.com
+ * This will initialize the plane to use for paradrop.
+ *
+ * Arguments:
+ * 0: _planeModel mode of the plane. Example: "CUP_B_C47_USA" <STRING>
+ * 1: _dropPosition is a [x,y,z] coordinates of the paradrop destination <ARRAY>
+ * 2: _initLocation is a [x,y,z] coordinates of the plane's initial position <ARRAY>
+ * 3: _planeSpeed is the speed of the plan <INTEGER>
+ * 4: _planeGroupName is the name of the plane group <STRING>
+ * Return Value:
+ * The return value Object
+ *
+ * Example:
+ * _plane = ["CUP_B_C47_USA", [0,0,0], [0,0,0], 100, "November"] call initialize_plane;
+ *
+ * Public: [Yes/No]
+ */
 initialize_plane =
 {	
 	private _planeModel = _this select 0;
@@ -48,6 +87,21 @@ initialize_plane =
 	_returnPlane
 };
 
+/*
+ * Author: Lorenzo Leonardo
+ * Email: enzotechcomputersolutions@gmail.com
+ * This will delete the plane and its crew members.
+ *
+ * Arguments:
+ * 0: _plane is the plane's object <OBJECT>
+ * Return Value:
+ * The return value None
+ *
+ * Example:
+ * [_plane] call uninitialize_plane;
+ *
+ * Public: [Yes/No]
+ */
 uninitialize_plane =
 {	
 	sleep 15; 
@@ -59,6 +113,23 @@ uninitialize_plane =
 	deleteVehicle _plane;
 };
 
+/*
+ * Author: Lorenzo Leonardo
+ * Email: enzotechcomputersolutions@gmail.com
+ * This will initialize the group/troops inside the plane for paradrop.
+ *
+ * Arguments:
+ * 0: _groupName is a group or platoon name assignment <OBJECT>
+ * 1: _initLocation is a [x,y,z] initial location of the group/unit <ARRAY>
+ * 2: _plane is a plane object where the group/platoon will be loaded <OBJECT>
+ * Return Value:
+ * The return value Group object
+ *
+ * Example:
+ * _groupPlatoon = [_groupName, _initLocation, _plane] call initialize_group_to_plane;
+ *
+ * Public: [Yes/No]
+ */
 initialize_group_to_plane =
 {
 	private _groupName = _this select 0;
@@ -96,6 +167,22 @@ initialize_group_to_plane =
 	 _groupPlatoon
 };
 
+/*
+ * Author: Lorenzo Leonardo
+ * Email: enzotechcomputersolutions@gmail.com
+ * This will initialize the player to join the group for paradrop missions.
+ *
+ * Arguments:
+ * 0: _plane is a plane object where the group/platoon will be loaded <OBJECT>
+ * 1: _groupPlatoon is a group where player will join.
+ * Return Value:
+ * The return value none
+ *
+ * Example:
+ * [_plane, _groupPlatoon] call initialize_player;
+ *
+ * Public: [Yes/No]
+ */
 initialize_player =
 {
 	private _plane = _this select 0;
