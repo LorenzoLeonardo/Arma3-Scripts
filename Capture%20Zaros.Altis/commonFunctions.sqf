@@ -174,7 +174,7 @@ initialize_group_to_plane =
  *
  * Arguments:
  * 0: _plane is a plane object where the group/platoon will be loaded <OBJECT>
- * 1: _groupPlatoon is a group where player will join.
+ * 1: _groupPlatoon is a group where player will join. <OBJECT>
  * Return Value:
  * The return value none
  *
@@ -221,6 +221,22 @@ set_parachute_backpack =
 	_backPack
 };
 
+/*
+ * Author: Lorenzo Leonardo
+ * Email: enzotechcomputersolutions@gmail.com
+ * This will retrieve the default back pack of the units after paradrop.
+ *
+ * Arguments:
+ * 0: _unit is a unit of the group to be given by their default back pack. <OBJECT>
+ * 1: _backPack is an array of units and corresponding backpack return by set_parachute_backpack. <ARRAY>
+ * Return Value:
+ * The return value None.
+ *
+ * Example:
+ * _defaultBackpacks = [_groupPlatoon] call set_parachute_backpack;
+ *
+ * Public: [Yes/No]
+ */
 get_backpack =
 {
 	private _unit = _this select 0;
@@ -233,6 +249,22 @@ get_backpack =
 	} foreach _backPack;
 };
 
+/*
+ * Author: Lorenzo Leonardo
+ * Email: enzotechcomputersolutions@gmail.com
+ * This will reload back the original backpack of the unit after paradrop and hitting the ground.
+ *
+ * Arguments:
+ * 0: _paraPlayer is a unit of the group to be given by their default back pack. <OBJECT>
+ * 1: _backPack is an array of units and corresponding backpack return by set_parachute_backpack. <ARRAY>
+ * Return Value:
+ * The return value None.
+ *
+ * Example:
+ * [_paraPlayer, _backPack] spawn reload_inventory_when_hit_Ground;
+ *
+ * Public: [Yes/No]
+ */
 reload_inventory_when_hit_Ground =
 {
     private _paraPlayer = _this select 0;
@@ -247,6 +279,23 @@ reload_inventory_when_hit_Ground =
 	_paraPlayer allowDamage true;
 };
 
+/*
+ * Author: Lorenzo Leonardo
+ * Email: enzotechcomputersolutions@gmail.com
+ * This will eject the group/platoon from the assigned plane.
+ *
+ * Arguments:
+ * 0: _groupPlatoon is a unit of the group to be given by their default back pack. <OBJECT>
+ * 1: _plane is a plane object where the group/platoon will be ejected <OBJECT>
+ * 2: _backPack is an array of units and corresponding backpack return by set_parachute_backpack. <ARRAY>
+ * Return Value:
+ * The return value None.
+ *
+ * Example:
+ * [_groupPlatoon, _plane, _defaultBackpacks] call eject_from_plane;
+ *
+ * Public: [Yes/No]
+ */
 eject_from_plane =
 {
 	private _groupPlatoon = _this select 0;
@@ -261,6 +310,22 @@ eject_from_plane =
 	} foreach units _groupPlatoon;
 };
 
+/*
+ * Author: Lorenzo Leonardo
+ * Email: enzotechcomputersolutions@gmail.com
+ * This will be used when naming for specific plane name of a specific group that needs
+ * reinforcements.
+ *
+ * Arguments:
+ * 0: _teamName is a team name of the group that need support/reinforcements <STRING>
+ * Return Value:
+ * The return value <STRING> name of the plane group.
+ *
+ * Example:
+ * ["ALPHA"] call get_assigned_plane;
+ *
+ * Public: [Yes/No]
+ */
 get_assigned_plane =
 {
 	private _teamName = _this select 0;
@@ -291,6 +356,25 @@ get_assigned_plane =
 	_planeAssigned
 };
 
+/*
+ * Author: Lorenzo Leonardo
+ * Email: enzotechcomputersolutions@gmail.com
+ * This will wait before executing eject_from_plane function to eject the units
+ * at the target dropzone location.
+ *
+ * Arguments:
+ * 0: _plane is a plane object where the group/platoon will be ejected <OBJECT>
+ * 1: _dropPosition is a [x,y,z] coordinates of the marker where the units will be paradropped <ARRAY>
+ * 2: _droppingRadius is a distance between _dropPosition center to the horizontal position of the plane. <NUMBER>
+ *
+ * Return Value:
+ * The return value <STRING> name of the plane group.
+ *
+ * Example:
+ * [_plane, [0,0,0], 300] call wait_until_reach_dropzone;
+ *
+ * Public: [Yes/No]
+ */
 wait_until_reach_dropzone =
 {
 	private _plane = _this select 0;
@@ -305,6 +389,26 @@ wait_until_reach_dropzone =
 	};
 };
 
+/*
+ * Author: Lorenzo Leonardo
+ * Email: enzotechcomputersolutions@gmail.com
+ * This will help the AI artillery/mortar fire at the specified destination.
+
+ *
+ * Arguments:
+ * 0: _gun is a unit/mortar/artillery object <OBJECT>
+ * 1: _weaponIndex is a index of the muzzle used <INTEGER>
+ * 2: _targetPos is a marker target position in [x,y,z] cooridnates <ARRAY>
+ * 3: _rounds is the number of rounds per call <INTEGER>
+ *
+ * Return Value:
+ * The return value None
+ *
+ * Example:
+ * [_gune, 0, [0,0,0], 3] call wait_until_reach_dropzone;
+ *
+ * Public: [Yes/No]
+ */
 fire_artillery =
 {
 	private _gun = _this select 0;
