@@ -192,6 +192,23 @@ initialize_player =
 	[player] joinSilent _groupPlatoon;
 };
 
+/*
+ * Author: Lorenzo Leonardo
+ * Email: enzotechcomputersolutions@gmail.com
+ * This will give each units of the group with parachute bag and save its
+ * default bag so that we could switch it back later after paradrop.
+ *
+ * Arguments:
+ * 0: _groupPlatoon is a group object where we add a parachute bag. <OBJECT>
+ * Return Value:
+ * The return value ARRAY of unit object and its corresponding loadout to save
+ * so that we could switch back later after using the parachute.
+ *
+ * Example:
+ * _defaultBackpacks = [_groupPlatoon] call set_parachute_backpack;
+ *
+ * Public: [Yes/No]
+ */
 set_parachute_backpack =
 {
 	private _groupPlatoon = _this select 0;
