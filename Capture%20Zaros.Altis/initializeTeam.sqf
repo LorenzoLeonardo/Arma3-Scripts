@@ -31,6 +31,7 @@ private _groupPlatoon = [_groupName, _initLocation, _plane] call initialize_grou
 
 if (_groupName == "Alpha") then 
 {
+
 	if (_hasPlayer == true) then {
 		[_plane, _groupPlatoon] call initialize_player;
 	};
@@ -38,6 +39,8 @@ if (_groupName == "Alpha") then
 	["lose2"] spawn start_monitoring_mission_status;
 	["end1"] spawn start_monitoring_mission_status;
 	[] call start_monitoring_killed_units;
+	sleep 1;
+	(leader _groupPlatoon) sideRadio "RadioAlphaReplyIntroZaros";
 };
 
 private _defaultBackpacks = [_groupPlatoon] call set_parachute_backpack;

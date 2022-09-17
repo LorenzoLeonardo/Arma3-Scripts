@@ -34,7 +34,7 @@ class CfgRadio
 		sound[]	= { "\sounds\RadioPapaBearReplyWipedOut.ogg", db + 100, 1.0 };
 
 		// radio caption
-		title	= "Damn! This is Papa Bear, Keep it up back up on the run. Please stick together with remaining forces in the vicinity. Papa Bear out!";
+		title	= "Understood! additional reinforcements will be there soon. Keep your asses alive. Goodluck and God be with you!";
 	};
 	class RadioPapaBearVictory
 	{
@@ -190,6 +190,19 @@ class CfgRadio
 		// radio caption
 		title	= "Papa bear to alpha, bravo, charlie, and delta. You must capture the town of Zaros with full force. This town is a very strategic location to strengthen our invasion in Altis. Godspeed and Goodluck to all. Papa bear Out!";
 	};
+
+	class RadioAlphaReplyIntroZaros
+	{
+		// display name Tom
+		name	= "RadioAlphaReplyIntroZaros";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\RadioAlphaReplyIntroZaros.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Copy that papa bear, we will do our best. Out!";
+	};
+
 	class RadioPapaBearCommenceTheAssault
 	{
 		// display name Nolan
