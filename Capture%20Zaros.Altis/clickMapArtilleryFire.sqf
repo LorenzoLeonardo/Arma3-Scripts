@@ -55,6 +55,7 @@ addMissionEventHandler ["MapSingleClick", {
 	if (_isReady == true) then {
 		[_pos] spawn fire_artillery_thread;
 	} else {
-		hint format ["Artillery is busy at the moment!!"];
+		player sideRadio "RadioArtillerySupportAlpha";
+		[west, "Base"] sideRadio "RadioArtillerySupportReplyAlphaImpossible";
 	};
 }];

@@ -267,4 +267,16 @@ class CfgRadio
 		// radio caption
 		title	= "Roger that alpha, 10 rounds of HE barrage now firing. Please stay away from the area. Out!";	
 	}
+	class RadioArtillerySupportReplyAlphaImpossible
+	{
+		// display name NOLAN(US)
+		name	= "RadioArtillerySupportReplyAlphaImpossible";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\RadioArtillerySupportReplyAlphaImpossible.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "That's a negative Alpha, all guns are busy at the moment. Please try again later!";	
+	}
+	
 };
