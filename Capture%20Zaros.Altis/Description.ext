@@ -104,18 +104,18 @@ class CfgRadio
 	};
 	class RadioAirbaseSupport
 	{
-		// display name Steven (US)
+		// display name Evan (US)
 		name	= "RadioAirbaseSupport";
 
 		// filename, volume, pitch
 		sound[]	= { "\sounds\RadioAirbaseSupport.ogg", db + 100, 1.0 };
 
 		// radio caption
-		title	= "This is November. Our air support division is coming to support our guys below. November out!";
+		title	= "This is November. Paratroopers are now enroute to your location. November out!";
 	};
 	class RadioAirbaseDropPackage
 	{
-		// display name
+		// display name Evan (US)
 		name	= "RadioAirbaseDropPackage";
 
 		// filename, volume, pitch
@@ -214,7 +214,7 @@ class CfgRadio
 	};
 	class RadioArtilleryRoundsComplete
 	{
-		// display name Simon (UK)
+		// display name NOLAN(US)
 		name	= "RadioArtilleryRoundsComplete";
 
 		// filename, volume, pitch
@@ -243,7 +243,7 @@ class CfgRadio
 		sound[]	= { "\sounds\RadioArtillerySupportAlpha.ogg", db + 100, 1.0 };
 
 		// radio caption
-		title	= "This is Alpha team. Requesting for immediate artillery fire support. Over?";	
+		title	= "Alpha to Papa bear, requesting artillery fire support in this area. Over?";	
 	}
 	class RadioArtilleryAdjustAlpha
 	{
@@ -258,13 +258,13 @@ class CfgRadio
 	}
 	class RadioArtillerySupportReplyAlpha
 	{
-		// display name
+		// display name NOLAN(US)
 		name	= "RadioArtillerySupportReplyAlpha";
 
 		// filename, volume, pitch
 		sound[]	= { "\sounds\RadioArtillerySupportReplyAlpha.ogg", db + 100, 1.0 };
 
 		// radio caption
-		title	= "Roger Alpha team! Artillery firing. Out!";	
+		title	= "Roger that alpha, 10 rounds of HE barrage now firing. Please stay away from the area. Out!";	
 	}
 };
