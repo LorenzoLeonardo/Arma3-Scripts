@@ -10,8 +10,8 @@ fire_artillery_thread =
 	private _callerMarker = createMarkerLocal[_callerTexMarker, _pos];
 	_callerMarker setMarkerSizeLocal[1,1];
 	_callerMarker setMarkerShapeLocal "ICON";
-	_callerMarker setMarkerTypeLocal "hd_warning";
-	_callerMarker setMarkerDirLocal 0;
+	_callerMarker setMarkerTypeLocal "mil_destroy";
+	_callerMarker setMarkerDirLocal 45;
 	_callerMarker setMarkerTextLocal _callerTexMarker;
 	_callerMarker setMarkerColorLocal "ColorBlue";
 	player sideRadio "RadioArtillerySupportAlpha";
@@ -42,6 +42,19 @@ fire_artillery_thread =
 
 addMissionEventHandler ["MapSingleClick", {
 	params ["_units", "_pos", "_alt", "_shift"];
-	private _group = _this select 0;
-	[_pos] spawn fire_artillery_thread;
+	private _group =  missionNamespace getVariable "_artillery_group";
+	private _isReady = true;
+
+	{
+		if ((unitReady _x) == false) then {
+			_isReady = false;
+			break;
+		};
+	} foreach units _group;
+
+	if (_isReady == true) then {
+		[_pos] spawn fire_artillery_thread;
+	} else {
+		hint format ["Artillery is busy at the moment!!"];
+	};
 }];

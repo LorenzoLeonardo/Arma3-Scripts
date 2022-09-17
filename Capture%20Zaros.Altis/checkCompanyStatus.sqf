@@ -28,7 +28,7 @@ if( alive player ) then
 	_callerMarker = createMarkerLocal[_callerTexMarker, position _radioUnit];
 	_callerMarker setMarkerSizeLocal[1,1];
 	_callerMarker setMarkerShapeLocal "ICON";
-	_callerMarker setMarkerTypeLocal "hd_flag";
+	_callerMarker setMarkerTypeLocal "hd_warning";
 	_callerMarker setMarkerDirLocal 0;
 	_callerMarker setMarkerTextLocal _callerTexMarker;
 			
