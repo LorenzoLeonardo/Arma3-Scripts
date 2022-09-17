@@ -417,9 +417,9 @@ fire_artillery =
 	private _rounds = _this select 3;
 
 	if (alive _gun) then {
-			private _ammo = getArtilleryAmmo [_gun] select _weaponIndex; 
-			_gun doArtilleryFire[ _targetPos, _ammo, _rounds];
-			_gun setVehicleAmmo 1;
+		private _ammo = getArtilleryAmmo [_gun] select _weaponIndex; 
+		_gun doArtilleryFire[ _targetPos, _ammo, _rounds];
+		_gun setVehicleAmmo 1;
 	};
 };
 

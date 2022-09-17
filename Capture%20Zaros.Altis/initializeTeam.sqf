@@ -15,6 +15,7 @@ private _yDroppingRadius = _this select 3;
 private _dropPosition = getMarkerPos (_this select 4);
 private _objectivePosition = getMarkerPos (_this select 5);
 private _groupName = _this select 6;
+private _hasPlayer = _this select 7;
 private _initLocation = [_dropPosition select 0,(_dropPosition select 1) - _yDistance, _planeAltitude];
 
 if (_groupName == "Alpha") then 
@@ -30,7 +31,9 @@ private _groupPlatoon = [_groupName, _initLocation, _plane] call initialize_grou
 
 if (_groupName == "Alpha") then 
 {
-	[_plane, _groupPlatoon] call initialize_player;
+	if (_hasPlayer == true) then {
+		[_plane, _groupPlatoon] call initialize_player;
+	};
 	["lose1"] spawn start_monitoring_mission_status;
 	["lose2"] spawn start_monitoring_mission_status;
 	["end1"] spawn start_monitoring_mission_status;

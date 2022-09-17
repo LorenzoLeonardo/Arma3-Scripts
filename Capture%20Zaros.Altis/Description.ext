@@ -201,5 +201,70 @@ class CfgRadio
 		// radio caption
 		title	= "Papa bear to all units, commence the assault. Alpha, bravo, charlie, and delta, you are weapons-free, kill them all!";
 	};
-	
+	class RadioArtilleryFiring
+	{
+		// display name Simon (UK)
+		name	= "RadioArtilleryFiring";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\RadioArtilleryFiring.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Shots fired!";
+	};
+	class RadioArtilleryRoundsComplete
+	{
+		// display name Simon (UK)
+		name	= "RadioArtilleryRoundsComplete";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\RadioArtilleryRoundsComplete.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Rounds complete!";
+	};
+	class RadioArtilleryOutOfAmmo
+	{
+		// display name Simon (UK)
+		name	= "RadioArtilleryOutOfAmmo";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\RadioArtilleryOutOfAmmo.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Artillery is now out of ammo!";
+	};
+	class RadioArtillerySupportAlpha
+	{
+		// display name TOM(US)
+		name	= "RadioArtillerySupportAlpha";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\RadioArtillerySupportAlpha.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "This is Alpha team. Requesting for immediate artillery fire support. Over?";	
+	}
+	class RadioArtilleryAdjustAlpha
+	{
+		// display name TOM(US)
+		name	= "RadioArtilleryAdjustAlpha";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\RadioArtilleryAdjustAlpha.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Adjust coordinates!";	
+	}
+	class RadioArtillerySupportReplyAlpha
+	{
+		// display name
+		name	= "RadioArtillerySupportReplyAlpha";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\RadioArtillerySupportReplyAlpha.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Roger Alpha team! Artillery firing. Out!";	
+	}
 };
