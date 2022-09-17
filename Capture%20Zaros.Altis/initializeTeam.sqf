@@ -1,9 +1,10 @@
 
 //Created By : Lorenzo Leonardo
-// [300,40,6000,250,"alpha_dropzone","target_1", "Alpha"] execvm "initializeTeam.sqf"; 
-// [300,40,6000,250,"bravo_dropzone","target_1", "Bravo"] execvm "initializeTeam.sqf"; 
-
-//
+/* [300,100,6000,250,"alpha_dropzone","target_1", "Alpha"] execvm "initializeTeam.sqf"; 
+   [300,100,6000,250,"bravo_dropzone","target_1", "Bravo"] execvm "initializeTeam.sqf"; 
+   [300,100,6000,250,"charlie_dropzone","target_1", "Charlie"] execvm "initializeTeam.sqf"; 
+   [300,100,6000,250,"delta_dropzone","target_1", "Delta"] execvm "initializeTeam.sqf"; 
+*/
 /***********START SCRIPT*******************************************************************************************************/
 #include "commonFunctions.sqf";
 

@@ -36,6 +36,7 @@ if( alive player ) then
 	{
 		case "Alpha":
 		{
+			"SmokeShellBlue" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorBlue";
 			_radioUnit sideRadio "RadioAlphaWipedOut";
 			sleep 5;
@@ -44,6 +45,7 @@ if( alive player ) then
 
 		case "Bravo":
 		{
+			"SmokeShellRed" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorRed";
 			_radioUnit sideRadio "RadioBravoWipedOut";
 			sleep 5;
@@ -52,6 +54,7 @@ if( alive player ) then
 
 		case "Charlie":
 		{
+			"SmokeShellYellow" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorYellow";
 			_radioUnit sideRadio "RadioCharlieWipedOut";
 			sleep 5;
@@ -60,6 +63,7 @@ if( alive player ) then
 
 		case "Delta":
 		{
+			"SmokeShellOrange" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorOrange";
 			_radioUnit sideRadio "RadioDeltaWipedOut";
 			sleep 5;
