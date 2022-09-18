@@ -28,7 +28,7 @@ _groupPlatoon copyWaypoints _groupCaller;
 
 //hint format ["Paratroopers are now jumping from the air"];
 ((crew _plane) select 0) sideRadio "RadioAirbaseDropPackage";
-[_groupPlatoon, _plane, _backPack] call eject_from_plane;
+[_groupPlatoon, _plane, _backPack, 0.25] call eject_from_plane;
 (units _groupPlatoon) join _groupCaller;
 
 deleteMarkerLocal _seizeMarkerName;
