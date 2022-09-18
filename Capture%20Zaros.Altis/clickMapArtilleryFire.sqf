@@ -6,7 +6,7 @@ fire_artillery_thread =
 {
 	private _group = missionNamespace getVariable "_artillery_group";
 	private _pos = _this select 0;
-	private _callerTexMarker = str format["Requesting Artillery Fire Support"];
+	private _callerTexMarker = str format["Requesting Artillery Fire Mission"];
 	private _callerMarker = createMarkerLocal[_callerTexMarker, _pos];
 	_callerMarker setMarkerSizeLocal[1,1];
 	_callerMarker setMarkerShapeLocal "ICON";

@@ -256,7 +256,7 @@ class CfgRadio
 		sound[]	= { "\sounds\RadioArtillerySupportAlpha.ogg", db + 100, 1.0 };
 
 		// radio caption
-		title	= "Alpha to Papa bear, requesting artillery fire support in this area. Over?";	
+		title	= "Alpha to Papa bear, requesting artillery fire mission in this area. Over?";	
 	}
 	class RadioArtilleryAdjustAlpha
 	{
@@ -278,7 +278,7 @@ class CfgRadio
 		sound[]	= { "\sounds\RadioArtillerySupportReplyAlpha.ogg", db + 100, 1.0 };
 
 		// radio caption
-		title	= "Roger that alpha, 10 rounds of HE barrage now firing. Please stay away from the area. Out!";	
+		title	= "Roger that alpha, 10 rounds of super-charged H.E. artillery barrage. Fire for effect!";	
 	}
 	class RadioArtillerySupportReplyAlphaImpossible
 	{
