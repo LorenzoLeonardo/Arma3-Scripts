@@ -67,7 +67,7 @@ class CfgRadio
 		sound[]	= { "\sounds\RadioAlphaWipedOut.ogg", db + 100, 1.0 };
 
 		// radio caption
-		title	= "Papa bear, we are suffering heavy losses and casualties in this area. Immediate assistance is required. Please send backup, we cannot hold on much longer. Over?!";
+		title	= "Papa bear, this is alpha team. We are suffering heavy resistance and casualties in this area. Immediate assistance is required. Please send backup, we cannot hold on much longer. Please respond! Over?";
 	};
 	class RadioBravoWipedOut
 	{
@@ -78,7 +78,7 @@ class CfgRadio
 		sound[]	= { "\sounds\RadioBravoWipedOut.ogg", db + 100, 1.0 };
 
 		// radio caption
-		title	= "This is Bravo team. We are under heavy fire at this location. We received heavy resistance and casualties. Ordering an urgent assistance over?";
+		title	= "Papa bear, this is bravo team. We are suffering heavy resistance and casualties in this area. Immediate assistance is required. Please send backup, we cannot hold on much longer. Please respond! Over?";
 	};
 	class RadioCharlieWipedOut
 	{
@@ -89,7 +89,7 @@ class CfgRadio
 		sound[]	= { "\sounds\RadioCharlieWipedOut.ogg", db + 100, 1.0 };
 
 		// radio caption
-		title	= "This is Charlie team. We are under heavy fire at this location. We received heavy resistance and casualties. Ordering an urgent assistance over?";
+		title	= "Papa bear, this is charlie team. We are suffering heavy resistance and casualties in this area. Immediate assistance is required. Please send backup, we cannot hold on much longer. Please respond! Over?";
 	};
 	class RadioDeltaWipedOut
 	{
@@ -100,7 +100,7 @@ class CfgRadio
 		sound[]	= { "\sounds\RadioDeltaWipedOut.ogg", db + 100, 1.0 };
 
 		// radio caption
-		title	= "This is Delta team. We are under heavy fire at this location. We received heavy resistance and casualties. Ordering an urgent assistance over?";
+		title	= "Papa bear, this is delta team. We are suffering heavy resistance and casualties in this area. Immediate assistance is required. Please send backup, we cannot hold on much longer. Please respond! Over?";
 	};
 	class RadioAirbaseSupport
 	{
