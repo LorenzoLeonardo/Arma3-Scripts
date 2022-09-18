@@ -284,16 +284,26 @@ class CfgRadio
 		// radio caption
 		title	= "Roger that alpha, 10 rounds of super-charged H.E. artillery barrage. Fire for effect!";	
 	}
-	class RadioArtillerySupportReplyAlphaImpossible
+	class RadioArtillerySupportReplyAlphaBusy
 	{
 		// display name NOLAN(US)
-		name	= "RadioArtillerySupportReplyAlphaImpossible";
+		name	= "RadioArtillerySupportReplyAlphaBusy";
 
 		// filename, volume, pitch
-		sound[]	= { "\sounds\RadioArtillerySupportReplyAlphaImpossible.ogg", db + 100, 1.0 };
+		sound[]	= { "\sounds\RadioArtillerySupportReplyAlphaBusy.ogg", db + 100, 1.0 };
 
 		// radio caption
 		title	= "That's a negative Alpha, all guns are busy at the moment. Please try again later!";	
 	}
-	
+	class RadioArtillerySupportReplyAlphaTargetOutOfRange
+	{
+		// display name NOLAN(US)
+		name	= "RadioArtillerySupportReplyAlphaTargetOutOfRange";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\RadioArtillerySupportReplyAlphaTargetOutOfRange.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "That's a negative Alpha, the target is out of range!";	
+	}	
 };

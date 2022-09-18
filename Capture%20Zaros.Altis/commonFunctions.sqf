@@ -398,10 +398,10 @@ wait_until_reach_dropzone =
  * 3: _rounds is the number of rounds per call <INTEGER>
  *
  * Return Value:
- * The return value None
+ * The return value true/false if can hit the target or not
  *
  * Example:
- * [_gune, 0, [0,0,0], 3] call wait_until_reach_dropzone;
+ * [_gun, 0, [0,0,0], 3] call wait_until_reach_dropzone;
  *
  * Public: [Yes/No]
  */
@@ -417,6 +417,25 @@ fire_artillery =
 		_gun doArtilleryFire[ _targetPos, _ammo, _rounds];
 		_gun setVehicleAmmo 1;
 	};
+};
+
+is_artillery_target_in_range =
+{
+	private _group = _this select 0;
+	private _ammoIndex = _this select 1;
+	private _isFeasible = true;
+	{
+		if ( _theLeader != _x) then {
+			private _gun = vehicle _x;
+			private _timeToImpact = _gun getArtilleryETA [_targetPos, getArtilleryAmmo [_gun] select _ammoIndex];
+			if (_timeToImpact < 0) then {
+				_isFeasible = false;
+				break;
+			};
+		};
+	} foreach units _group;
+
+	_isFeasible
 };
 
 start_monitoring_mission_status =

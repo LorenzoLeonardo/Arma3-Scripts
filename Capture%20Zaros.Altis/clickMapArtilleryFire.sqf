@@ -6,6 +6,7 @@ fire_artillery_thread =
 {
 	private _group = missionNamespace getVariable "_artillery_group";
 	private _pos = _this select 0;
+	private _ammoIndex = _this select 1;
 	private _callerTexMarker = str format["Requesting Artillery Fire Mission"];
 	private _callerMarker = createMarkerLocal[_callerTexMarker, _pos];
 	_callerMarker setMarkerSizeLocal[1,1];
@@ -23,7 +24,7 @@ fire_artillery_thread =
 	private _fireInterval = 1;
 	{
 		if ( _theLeader != _x) then {
-			[vehicle _x, 0, _pos, _rounds] call fire_artillery;
+			[vehicle _x, _ammoIndex, _pos, _rounds] call fire_artillery;
 		};
 		sleep _fireInterval;
 	} foreach units _group;
@@ -34,7 +35,6 @@ fire_artillery_thread =
 			unitReady _x;
 		};
 	} foreach units _group;
-
 	[west, "Base"] sideRadio "RadioArtilleryRoundsComplete";
 
 	deleteMarkerLocal _callerMarker;
@@ -44,7 +44,7 @@ addMissionEventHandler ["MapSingleClick", {
 	params ["_units", "_pos", "_alt", "_shift"];
 	private _group =  missionNamespace getVariable "_artillery_group";
 	private _isReady = true;
-
+	private _ammoIndex = 0;
 	{
 		if ((unitReady _x) == false) then {
 			_isReady = false;
@@ -53,9 +53,14 @@ addMissionEventHandler ["MapSingleClick", {
 	} foreach units _group;
 
 	if (_isReady == true) then {
-		[_pos] spawn fire_artillery_thread;
+		if (([_pos, _ammoIndex] call is_artillery_target_in_range) == true) then {
+			[_pos, _ammoIndex] spawn fire_artillery_thread;
+		} else {
+			[west, "Base"] sideRadio "RadioArtillerySupportReplyAlphaTargetOutOfRange";
+		};
+
 	} else {
 		player sideRadio "RadioArtillerySupportAlpha";
-		[west, "Base"] sideRadio "RadioArtillerySupportReplyAlphaImpossible";
+		[west, "Base"] sideRadio "RadioArtillerySupportReplyAlphaBusy";
 	};
 }];
