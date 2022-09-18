@@ -393,36 +393,57 @@ wait_until_reach_dropzone =
  *
  * Arguments:
  * 0: _gun is a unit/mortar/artillery object <OBJECT>
- * 1: _weaponIndex is a index of the muzzle used <INTEGER>
- * 2: _targetPos is a marker target position in [x,y,z] cooridnates <ARRAY>
+ * 1: _targetPos is a marker target position in [x,y,z] cooridnates <ARRAY>
+ * 2: _ammoIndex is a index of the muzzle used <INTEGER>
  * 3: _rounds is the number of rounds per call <INTEGER>
  *
  * Return Value:
- * The return value true/false if can hit the target or not
+ * The return value None
  *
  * Example:
- * [_gun, 0, [0,0,0], 3] call wait_until_reach_dropzone;
+ * [_gun, [0,0,0], 0, 10] call fire_artillery;
  *
  * Public: [Yes/No]
  */
 fire_artillery =
 {
 	private _gun = _this select 0;
-	private _weaponIndex = _this select 1;
-	private _targetPos = _this select 2;
+	private _targetPos = _this select 1;
+	private _ammoIndex = _this select 2;
 	private _rounds = _this select 3;
 
 	if (alive _gun) then {
-		private _ammo = getArtilleryAmmo [_gun] select _weaponIndex; 
+		private _ammo = getArtilleryAmmo [_gun] select _ammoIndex; 
 		_gun doArtilleryFire[ _targetPos, _ammo, _rounds];
 		_gun setVehicleAmmo 1;
 	};
 };
 
+/*
+ * Author: Lorenzo Leonardo
+ * Email: enzotechcomputersolutions@gmail.com
+ * This will check if artillery target is in range.
+
+ *
+ * Arguments:
+ * 0: _group is a group of mortar/artillery object <OBJECT>
+ * 1: _ammoIndex is a index of the muzzle used <INTEGER>
+ * 2: _targetPos is a marker target position in [x,y,z] cooridnates <ARRAY>
+ *
+ * Return Value:
+ * The return value true/false if can hit the target or not
+ *
+ * Example:
+ * [group gun, [0,0,0], 0, 10] call is_artillery_target_in_range;
+ *
+ * Public: [Yes/No]
+ */
 is_artillery_target_in_range =
 {
 	private _group = _this select 0;
-	private _ammoIndex = _this select 1;
+	private _targetPos = _this select 1;
+	private _ammoIndex = _this select 2;
+
 	private _isFeasible = true;
 	{
 		if ( _theLeader != _x) then {

@@ -4,9 +4,9 @@ missionNamespace setVariable ["_artillery_group", _this select 0];
 
 fire_artillery_thread =
 {
-	private _group = missionNamespace getVariable "_artillery_group";
-	private _pos = _this select 0;
-	private _ammoIndex = _this select 1;
+	private _group = _this select 0;
+	private _pos = _this select 1;
+	private _ammoIndex = _this select 2;
 	private _callerTexMarker = str format["Requesting Artillery Fire Mission"];
 	private _callerMarker = createMarkerLocal[_callerTexMarker, _pos];
 	_callerMarker setMarkerSizeLocal[1,1];
@@ -24,7 +24,7 @@ fire_artillery_thread =
 	private _fireInterval = 1;
 	{
 		if ( _theLeader != _x) then {
-			[vehicle _x, _ammoIndex, _pos, _rounds] call fire_artillery;
+			[vehicle _x, _pos, _ammoIndex, _rounds] call fire_artillery;
 		};
 		sleep _fireInterval;
 	} foreach units _group;
@@ -53,8 +53,8 @@ addMissionEventHandler ["MapSingleClick", {
 	} foreach units _group;
 
 	if (_isReady == true) then {
-		if (([_pos, _ammoIndex] call is_artillery_target_in_range) == true) then {
-			[_pos, _ammoIndex] spawn fire_artillery_thread;
+		if (([_group, _pos, _ammoIndex] call is_artillery_target_in_range) == true) then {
+			[_group, _pos, _ammoIndex] spawn fire_artillery_thread;
 		} else {
 			[west, "Base"] sideRadio "RadioArtillerySupportReplyAlphaTargetOutOfRange";
 		};
