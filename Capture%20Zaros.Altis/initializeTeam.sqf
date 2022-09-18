@@ -57,7 +57,7 @@ if (_groupName == "Alpha") then
 };
 [_groupPlatoon, _plane, _defaultBackpacks] call eject_from_plane;
 _groupArray = units _groupPlatoon;
-_teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE", "GREEN", 0] call create_waypoint;
+_teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE", "RED", 0] call create_waypoint;
 
 // Add way point to the dropzone position
 [_plane] call uninitialize_plane;
