@@ -61,6 +61,7 @@ class CfgRadio
 	class RadioAlphaWipedOut
 	{
 		// display name  TOM(US)
+		// https://www.nuance.com/omni-channel-customer-engagement/voice-and-ivr/text-to-speech.html
 		name	= "RadioAlphaWipedOut";
 
 		// filename, volume, pitch
@@ -71,7 +72,8 @@ class CfgRadio
 	};
 	class RadioBravoWipedOut
 	{
-		// display name  Hugh (UK)
+		// display name  Evan (US)
+		// https://www.nuance.com/omni-channel-customer-engagement/voice-and-ivr/text-to-speech.html
 		name	= "RadioBravoWipedOut";
 
 		// filename, volume, pitch
@@ -82,7 +84,8 @@ class CfgRadio
 	};
 	class RadioCharlieWipedOut
 	{
-		// display name Alan (Austratian)
+		// display name Lee (Australia)
+		// https://www.nuance.com/omni-channel-customer-engagement/voice-and-ivr/text-to-speech.html
 		name	= "RadioCharlieWipedOut";
 
 		// filename, volume, pitch
@@ -93,7 +96,8 @@ class CfgRadio
 	};
 	class RadioDeltaWipedOut
 	{
-		// display name Paul (US)
+		// display name Daniel (Great Britain)
+		// https://www.nuance.com/omni-channel-customer-engagement/voice-and-ivr/text-to-speech.html
 		name	= "RadioDeltaWipedOut";
 
 		// filename, volume, pitch
