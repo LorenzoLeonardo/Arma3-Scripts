@@ -16,27 +16,29 @@ fire_artillery_thread =
 	_callerMarker setMarkerTextLocal _callerTexMarker;
 	_callerMarker setMarkerColorLocal "ColorBlue";
 	player sideRadio "RadioArtillerySupportAlpha";
-	[west, "Base"] sideRadio "RadioArtillerySupportReplyAlpha";
 	hint _callerTexMarker;
-
 	private _theLeader = leader _group;
 	private _rounds = 10;
 	private _fireInterval = 1;
-	{
-		if ( _theLeader != _x) then {
-			[vehicle _x, _pos, _ammoIndex, _rounds] call fire_artillery;
-		};
-		sleep _fireInterval;
-	} foreach units _group;
-
-	{
-		waitUntil {
-			sleep 1;
-			unitReady _x;
-		};
-	} foreach units _group;
-	[west, "Base"] sideRadio "RadioArtilleryRoundsComplete";
-
+	private _isInRange = [_group, _pos, _ammoIndex] call is_artillery_target_in_range;
+	if (_isInRange == true) then {
+		[west, "Base"] sideRadio "RadioArtillerySupportReplyAlpha";
+		{
+			if ( _theLeader != _x) then {
+				[vehicle _x, _pos, _ammoIndex, _rounds] call fire_artillery;
+			};
+			sleep _fireInterval;
+		} foreach units _group;
+		{
+			waitUntil {
+				sleep 1;
+				unitReady _x;
+			};
+		} foreach units _group;
+		[west, "Base"] sideRadio "RadioArtilleryRoundsComplete";
+	} else {
+		[west, "Base"] sideRadio "RadioArtillerySupportReplyAlphaTargetOutOfRange";
+	};
 	deleteMarkerLocal _callerMarker;
 };
 
@@ -53,12 +55,7 @@ addMissionEventHandler ["MapSingleClick", {
 	} foreach units _group;
 
 	if (_isReady == true) then {
-		if (([_group, _pos, _ammoIndex] call is_artillery_target_in_range) == true) then {
-			[_group, _pos, _ammoIndex] spawn fire_artillery_thread;
-		} else {
-			[west, "Base"] sideRadio "RadioArtillerySupportReplyAlphaTargetOutOfRange";
-		};
-
+		[_group, _pos, _ammoIndex] spawn fire_artillery_thread;
 	} else {
 		player sideRadio "RadioArtillerySupportAlpha";
 		[west, "Base"] sideRadio "RadioArtillerySupportReplyAlphaBusy";

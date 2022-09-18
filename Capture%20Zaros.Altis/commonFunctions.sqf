@@ -427,9 +427,9 @@ fire_artillery =
  *
  * Arguments:
  * 0: _group is a group of mortar/artillery object <OBJECT>
- * 1: _ammoIndex is a index of the muzzle used <INTEGER>
- * 2: _targetPos is a marker target position in [x,y,z] cooridnates <ARRAY>
- *
+ * 1: _targetPos is a marker target position in [x,y,z] cooridnates <ARRAY>
+ * 2: _ammoIndex is a index of the muzzle used <INTEGER>
+*
  * Return Value:
  * The return value true/false if can hit the target or not
  *
@@ -443,20 +443,22 @@ is_artillery_target_in_range =
 	private _group = _this select 0;
 	private _targetPos = _this select 1;
 	private _ammoIndex = _this select 2;
-
-	private _isFeasible = true;
+	private _isInRange = true;
+	private _artilleryRange = 12000;
 	{
 		if ( _theLeader != _x) then {
 			private _gun = vehicle _x;
-			private _timeToImpact = _gun getArtilleryETA [_targetPos, getArtilleryAmmo [_gun] select _ammoIndex];
-			if (_timeToImpact < 0) then {
-				_isFeasible = false;
+			private _thisGunPos = getPos _gun;
+			private _distance = sqrt(abs((_targetPos select 0) - (_thisGunPos select 0))^2 + 
+									abs((_targetPos select 1) - (_thisGunPos select 1))^2);
+			if (_artilleryRange < _distance) then {
+				_isInRange = false;
 				break;
 			};
-		};
+		}
 	} foreach units _group;
 
-	_isFeasible
+	_isInRange
 };
 
 start_monitoring_mission_status =
