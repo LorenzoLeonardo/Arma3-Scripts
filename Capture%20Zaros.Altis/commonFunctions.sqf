@@ -274,8 +274,9 @@ reload_inventory_when_hit_Ground =
 		sleep 0.1;
 		isTouchingGround _paraPlayer
 	};
-	sleep 1;
+	unassignVehicle _paraPlayer;
 	[_paraPlayer, _backPack] call get_backpack;
+	sleep 1;
 	_paraPlayer allowDamage true;
 };
 
@@ -288,6 +289,7 @@ reload_inventory_when_hit_Ground =
  * 0: _groupPlatoon is a unit of the group to be given by their default back pack. <OBJECT>
  * 1: _plane is a plane object where the group/platoon will be ejected <OBJECT>
  * 2: _backPack is an array of units and corresponding backpack return by set_parachute_backpack. <ARRAY>
+ * 3: _jumpIntervalTime is the delay in seconds between each unit when jumping from the plane. <FLOAT>
  * Return Value:
  * The return value None.
  *
@@ -301,12 +303,13 @@ eject_from_plane =
 	private _groupPlatoon = _this select 0;
 	private _plane = _this select 1;
 	private _backPack = _this select 2;
+	private _jumpIntervalTime = _this select 3;
 	{
 		_x allowDamage false;
 		unassignvehicle _x;
 		moveOut _x;
 		[_x, _backPack] spawn reload_inventory_when_hit_Ground;
-		sleep 0.5;
+		sleep _jumpIntervalTime;
 	} foreach units _groupPlatoon;
 };
 
@@ -330,26 +333,20 @@ get_assigned_plane =
 {
 	private _teamName = _this select 0;
 	private _planeAssigned="";
-	switch (_teamName) do
-	{
-		case "Alpha":
-		{
+	switch (_teamName) do {
+		case "Alpha": {
 			_planeAssigned = "November 1";
 		};
-		case "Bravo":
-		{
+		case "Bravo": {
 			_planeAssigned = "November 2";
 		};
-		case "Charlie":
-		{
+		case "Charlie": {
 			_planeAssigned = "November 3";
 		};
-		case "Delta":
-		{
+		case "Delta": {
 			_planeAssigned = "November 4";
 		};
-		default
-		{
+		default {
 			hint format["%1 is not a valid squad name. Please use Alpha, Bravo, Charlie, Delta", _teamName];
 		};
 	};
@@ -381,8 +378,7 @@ wait_until_reach_dropzone =
 	private _dropPosition = _this select 1;
 	private _droppingRadius = _this select 2;
 
-	waitUntil 
-	{
+	waitUntil {
 		sleep 0.1;
 		_distance = sqrt(abs((_dropPosition select 1) - (getpos _plane select 1))^2 + abs ((_dropPosition select 0) - (getpos _plane select 0))^2);
 		_distance <= _droppingRadius 
@@ -425,54 +421,53 @@ fire_artillery =
 
 start_monitoring_mission_status =
 {
-	_caseoption = _this select 0;
-	switch (_caseoption) do
-	{
-		case "lose1": {
-			waitUntil {
-				sleep 1;
-				({(side _x) == west} count allUnits) <= 1
+	private _caseoption = _this select 0;
+	[_caseoption] spawn {
+		params ["_caseoption"];
+		switch (_caseoption) do	{
+			case "lose1": {
+				waitUntil {
+					sleep 1;
+					({(side _x) == west} count allUnits) <= 1
+				};
+				["lose1", false, true] call BIS_fnc_endMission;
 			};
-			["lose1", false, true] call BIS_fnc_endMission;
-		};
-		case "lose2": {
-			waitUntil { 
-				sleep 1;
-				!(alive player) 
+			case "lose2": {
+				waitUntil { 
+					sleep 1;
+					(alive player) == false
+				};
+				["lose2", false, true] call BIS_fnc_endMission;	 
 			};
-			["lose2", false, true] call BIS_fnc_endMission;	 
-		};
-		case "end1": {
-			waitUntil {
-				sleep 1;
-				({(side _x) == east} count allUnits) == 0
+			case "end1": {
+				waitUntil {
+					sleep 1;
+					({(side _x) == east} count allUnits) == 0
+				};
+				(leader (group player)) sideRadio "RadioGroundToPapaBearVictory";
+				sleep 10;
+				[west, "Base"] sideRadio "RadioPapaBearVictory";
+				sleep 10;
+				["end1", false, true] call BIS_fnc_endMission;
 			};
-			(leader (group player)) sideRadio "RadioGroundToPapaBearVictory";
-			sleep 10;
-			[west, "Base"] sideRadio "RadioPapaBearVictory";
-			sleep 10;
-			["end1", false, true] call BIS_fnc_endMission;
+			default { hint "default" };
 		};
-		default { hint "default" };
 	};
 };
 
 start_monitoring_killed_units =
 {
-	callback_killed_unit =
-	{
-		_killed = _this select 0;
-		_killer = _this select 1;
-		systemChat format["(%1) %2 %3 ======> (%4) %5 %6", side (group _killer), rank _killer, name _killer, side (group _killed), rank _killed, name _killed];
-		[_killed] spawn {
-			sleep 60;
-			deleteVehicle (_this select 0);
-		};
-	};
-
 	{
 		_x setSkill 1;
-		_x addEventHandler ["Killed", callback_killed_unit];
+		_x addEventHandler ["Killed", {
+			_killed = _this select 0;
+			_killer = _this select 1;
+			systemChat format["(%1) %2 %3 ======> (%4) %5 %6", side (group _killer), rank _killer, name _killer, side (group _killed), rank _killed, name _killed];
+			[_killed] spawn {
+				sleep 60;
+				deleteVehicle (_this select 0);
+			};
+		}];
 	} foreach allUnits;
 };
 

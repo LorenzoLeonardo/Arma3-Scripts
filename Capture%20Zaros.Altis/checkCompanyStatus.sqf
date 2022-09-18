@@ -10,16 +10,14 @@ _text set[1,"**DELETE**"];
 _text = _text - ["**DELETE**"];
 _grpName = toString(_text);
 
-while{ (count _Array > (_totalUnits/3)) && (alive player) } do
-{
-  {
-     if(!alive _x)then
-     {
-    	_Array = _Array - [_x];
-		_radioUnit = _Array select 0;
-     }
-   }foreach _Array;
-   sleep 1;
+while{ (count _Array > (_totalUnits/3)) && (alive player) } do {
+	{
+		if(!alive _x) then {
+			_Array = _Array - [_x];
+			_radioUnit = _Array select 0;
+		};
+	} foreach _Array;
+	sleep 1;
 };
 
 if( alive player ) then
@@ -32,56 +30,47 @@ if( alive player ) then
 	_callerMarker setMarkerDirLocal 0;
 	_callerMarker setMarkerTextLocal _callerTexMarker;
 			
-	switch (_grpName) do
-	{
-		case "Alpha":
-		{
+	switch (_grpName) do {
+		case "Alpha": {
 			"SmokeShellBlue" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorBlue";
 			_radioUnit sideRadio "RadioAlphaWipedOut";
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
 		};
 
-		case "Bravo":
-		{
+		case "Bravo": {
 			"SmokeShellRed" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorRed";
 			_radioUnit sideRadio "RadioBravoWipedOut";
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
 		};
 
-		case "Charlie":
-		{
+		case "Charlie":	{
 			"SmokeShellYellow" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorYellow";
 			_radioUnit sideRadio "RadioCharlieWipedOut";
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
 		};
 
-		case "Delta":
-		{
+		case "Delta": {
 			"SmokeShellOrange" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorOrange";
 			_radioUnit sideRadio "RadioDeltaWipedOut";
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
 		};
 
-		default
-		{
+		default	{
 		};
 	};
 
 	sleep 15;
-	if( count _Array > 0) then
-	{
+	if( count _Array > 0) then {
 		{
-			if(!alive _x)then
-			{
+			if(!alive _x) then {
 				_Array = _Array - [_x];
 				_radioUnit = _Array select 0;
-			}
+			};
 		}foreach _Array;
 		[_radioUnit, 300, 100, 6000, 200, _callerTexMarker] execvm "dropSupportTeam.sqf";
-		saveGame;
 	};
 };

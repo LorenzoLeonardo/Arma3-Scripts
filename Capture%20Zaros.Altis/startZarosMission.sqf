@@ -1,9 +1,9 @@
 
 //Created By : Lorenzo Leonardo
-/* [300,100,6000,250,"alpha_dropzone","target_1", "Alpha"] execvm "initializeTeam.sqf"; 
-   [300,100,6000,250,"bravo_dropzone","target_1", "Bravo"] execvm "initializeTeam.sqf"; 
-   [300,100,6000,250,"charlie_dropzone","target_1", "Charlie"] execvm "initializeTeam.sqf"; 
-   [300,100,6000,250,"delta_dropzone","target_1", "Delta"] execvm "initializeTeam.sqf"; 
+/* [300,100,6000,250,"alpha_dropzone","target_1", "Alpha"] execvm "startZarosMission.sqf"; 
+   [300,100,6000,250,"bravo_dropzone","target_1", "Bravo"] execvm "startZarosMission.sqf"; 
+   [300,100,6000,250,"charlie_dropzone","target_1", "Charlie"] execvm "startZarosMission.sqf"; 
+   [300,100,6000,250,"delta_dropzone","target_1", "Delta"] execvm "startZarosMission.sqf"; 
 */
 /***********START SCRIPT*******************************************************************************************************/
 #include "commonFunctions.sqf";
@@ -31,13 +31,12 @@ private _groupPlatoon = [_groupName, _initLocation, _plane] call initialize_grou
 
 if (_groupName == "Alpha") then 
 {
-
 	if (_hasPlayer == true) then {
 		[_plane, _groupPlatoon] call initialize_player;
 	};
-	["lose1"] spawn start_monitoring_mission_status;
-	["lose2"] spawn start_monitoring_mission_status;
-	["end1"] spawn start_monitoring_mission_status;
+	["lose1"] call start_monitoring_mission_status;
+	["lose2"] call start_monitoring_mission_status;
+	["end1"] call start_monitoring_mission_status;
 	[] call start_monitoring_killed_units;
 	sleep 1;
 	(leader _groupPlatoon) sideRadio "RadioAlphaReplyIntroZaros";
@@ -55,7 +54,7 @@ if (_groupName == "Alpha") then
 	playMusic "LeadTrack01_F";
 	((crew _plane) select 0) sideRadio "RadioAirbaseDropPackage";
 };
-[_groupPlatoon, _plane, _defaultBackpacks] call eject_from_plane;
+[_groupPlatoon, _plane, _defaultBackpacks, 0.25] call eject_from_plane;
 _groupArray = units _groupPlatoon;
 _teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE", "RED", 0] call create_waypoint;
 
