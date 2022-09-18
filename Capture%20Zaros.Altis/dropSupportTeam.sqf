@@ -18,6 +18,7 @@ private _plane = ["CUP_B_C47_USA",_callerPosition, _initLocation, _planeSpeed, _
 private _groupPlatoon = ["Support", _initLocation, _plane] call initialize_group_to_plane;
 private _backPack = [_groupPlatoon] call set_parachute_backpack;
 private _groupArrayBeforeJoin = units _groupPlatoon;
+[_groupPlatoon] call start_monitoring_killed_units_group;
 
 hint format ["Reinforcements is coming your way."];
 _groupPlatoon copyWaypoints _groupCaller;
