@@ -1,7 +1,5 @@
 #include "commonFunctions.sqf"
 
-missionNamespace setVariable ["_artillery_group", _this select 0];
-
 fire_artillery_thread =
 {
 	private _group = _this select 0;
@@ -46,20 +44,28 @@ if (isLaserOn player) then {
 	private _group =  _this select 0;
 	private _isReady = true;
 	private _ammoIndex = 0;
-	private _pos = getPosATL laserTarget player;
+	private _targetPos = getPosATL laserTarget player;
+	private _playerPos = getPosATL player;
+	private _minimumRange = 200;
+	private _distance = sqrt(abs((_targetPos select 1) - (_playerPos select 1))^2 +
+										 abs ((_targetPos select 0) - (_playerPos select 0))^2);
+	
+	if (_distance > _minimumRange) then {
+		{
+			if ((unitReady _x) == false) then {
+				_isReady = false;
+				break;
+			};
+		} foreach units _group;
 
-	{
-		if ((unitReady _x) == false) then {
-			_isReady = false;
-			break;
+		if (_isReady == true) then {
+			[_group, _targetPos, _ammoIndex] call fire_artillery_thread;
+		} else {
+			player sideRadio "RadioArtillerySupportAlpha";
+			[west, "Base"] sideRadio "RadioArtillerySupportReplyAlphaBusy";
 		};
-	} foreach units _group;
-
-	if (_isReady == true) then {
-		[_group, _pos, _ammoIndex] call fire_artillery_thread;
 	} else {
-		player sideRadio "RadioArtillerySupportAlpha";
-		[west, "Base"] sideRadio "RadioArtillerySupportReplyAlphaBusy";
+		hint format ["The target is too near from you! It must be %1 meters away.", _minimumRange];		
 	};
 } else {
 	hint format ["Your laser designator device is off!"];
