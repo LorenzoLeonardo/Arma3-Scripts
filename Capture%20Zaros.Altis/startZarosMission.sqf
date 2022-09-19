@@ -51,12 +51,11 @@ private _defaultBackpacks = [_groupPlatoon] call set_parachute_backpack;
 if (_groupName == "Alpha") then 
 {
 	hint format["The plane is dropping paratroopers."];
-	playMusic "LeadTrack01_F";
 	((crew _plane) select 0) sideRadio "RadioAirbaseDropPackage";
 };
 [_groupPlatoon, _plane, _defaultBackpacks, 0.25] call eject_from_plane;
 _groupArray = units _groupPlatoon;
-_teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE", "RED", 0] call create_waypoint;
+_teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE", "YELLOW", 0] call create_waypoint;
 
 // Add way point to the dropzone position
 [_plane] call uninitialize_plane;
@@ -64,8 +63,8 @@ _teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE", "RE
 if (_groupName == "Alpha") then 
 {
 	_teamWP setWaypointStatements ["true", "hint format [""Commence main assault!""];
-	saveGame; [west, ""Base""] sideRadio ""RadioPapaBearCommenceTheAssault"";playMusic ""LeadTrack01_F"";"];
+		saveGame; [west, ""Base""] sideRadio ""RadioPapaBearCommenceTheAssault"";"];
 };
 
-[_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", "RED", 1] call create_waypoint;
+[_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", "YELLOW", 1] call create_waypoint;
 /***********END SCRIPT*******************************************************************************************************/
