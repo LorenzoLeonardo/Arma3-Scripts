@@ -64,8 +64,6 @@ if( alive player ) then
 		default	{
 		};
 	};
-
-	sleep 15;
 	if( count _Array > 0) then {
 		{
 			if(!alive _x) then {
