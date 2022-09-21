@@ -529,3 +529,43 @@ start_monitoring_killed_units_group =
 		}];
 	} foreach units _group;
 };
+
+turn_off_city_lights=
+{
+	private _types = ["Lamps_Base_F",
+					"Land_LampAirport_F",
+					"Land_LampSolar_F",
+					"Land_LampStreet_F",
+					"Land_LampStreet_small_F",
+					"PowerLines_base_F",
+					"Land_LampDecor_F",
+					"Land_LampHalogen_F",
+					"Land_LampHarbour_F",
+					"Land_LampShabby_F",
+					"Land_PowerPoleWooden_L_F",
+					"Land_NavigLight",
+					"Land_runway_edgelight",
+					"Land_runway_edgelight_blue_F",
+					"Land_Flush_Light_green_F",
+					"Land_Flush_Light_red_F",
+					"Land_Flush_Light_yellow_F",
+					"Land_Runway_PAPI",
+					"Land_Runway_PAPI_2",
+					"Land_Runway_PAPI_3",
+					"Land_Runway_PAPI_4",
+					"Land_fs_roof_F",
+					"Land_fs_sign_F"];
+
+	private _onoff = 0.95;
+	private _markerPos = getMarkerPos (_this select 0);
+	private _radiusFromMarker = _this select 1;
+
+	for [{_i=0},{_i < (count _types)},{_i=_i+1}] do
+	{
+		private _lamps = _markerPos nearObjects [_types select _i, _radiusFromMarker];
+		{
+			_x setDamage _onoff;
+		} forEach _lamps;
+
+	}
+};

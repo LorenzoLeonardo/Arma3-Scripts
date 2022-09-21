@@ -18,6 +18,8 @@ private _groupName = _this select 6;
 private _hasPlayer = _this select 7;
 private _initLocation = [_dropPosition select 0,(_dropPosition select 1) - _yDistance, _planeAltitude];
 
+[_this select 5, 10000] call turn_off_city_lights;
+
 if (_groupName == "Alpha") then 
 {
 	hint format ["Your team will start from the air."];
