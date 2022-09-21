@@ -24,7 +24,7 @@ fire_artillery_thread =
 	if (_isInRange == true) then {
 		[west, "Base"] sideRadio "RadioArtillerySupportReplyAlpha";
 		{
-			if ( _theLeader != _x) then {
+			if ( vehicle _x != _x) then {
 				[vehicle _x, _pos, _ammoIndex, _rounds] call fire_artillery;
 			};
 			sleep _fireInterval;

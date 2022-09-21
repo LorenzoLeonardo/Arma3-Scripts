@@ -444,14 +444,15 @@ is_artillery_target_in_range =
 	private _targetPos = _this select 1;
 	private _ammoIndex = _this select 2;
 	private _isInRange = true;
-	private _artilleryRange = 12000;
+	private _maxArtilleryRange = 12000;
+	private _minArtilleryRange = 1000;
 	{
 		if ( _theLeader != _x) then {
 			private _gun = vehicle _x;
 			private _thisGunPos = getPos _gun;
 			private _distance = sqrt(abs((_targetPos select 0) - (_thisGunPos select 0))^2 + 
 									abs((_targetPos select 1) - (_thisGunPos select 1))^2);
-			if (_artilleryRange < _distance) then {
+			if ((_maxArtilleryRange < _distance) || (_minArtilleryRange > _distance)) then {
 				_isInRange = false;
 				break;
 			};
