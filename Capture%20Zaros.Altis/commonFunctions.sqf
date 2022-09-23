@@ -570,3 +570,15 @@ turn_off_city_lights=
 
 	}
 };
+
+attach_unlimited_fire=
+{
+	private _vehicle = _this select 0;
+	while {alive _vehicle} do {
+		sleep 60; 
+		if (!alive _vehicle) then {
+			_smoker = "test_EmptyObjectForFireBig" createVehicle position _vehicle;
+			_smoker attachTo [_vehicle, [0, 1.5, 0]];
+		};
+	};
+};
