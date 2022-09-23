@@ -104,7 +104,7 @@ initialize_plane =
  */
 uninitialize_plane =
 {	
-	sleep 15; 
+	sleep 60; 
 	private _plane = _this select 0;
 	// Delete plane and pilots
 	{
@@ -276,7 +276,7 @@ reload_inventory_when_hit_Ground =
 	};
 	unassignVehicle _paraPlayer;
 	[_paraPlayer, _backPack] call get_backpack;
-	sleep 1;
+	sleep 5;
 	_paraPlayer allowDamage true;
 };
 
@@ -470,21 +470,21 @@ start_monitoring_mission_status =
 		switch (_caseoption) do	{
 			case "lose1": {
 				waitUntil {
-					sleep 1;
+					sleep 10;
 					({(side _x) == west} count allUnits) <= 1
 				};
 				["lose1", false, true] call BIS_fnc_endMission;
 			};
 			case "lose2": {
 				waitUntil { 
-					sleep 1;
+					sleep 10;
 					(alive player) == false
 				};
 				["lose2", false, true] call BIS_fnc_endMission;	 
 			};
 			case "end1": {
 				waitUntil {
-					sleep 1;
+					sleep 10;
 					({(side _x) == east} count allUnits) == 0
 				};
 				(leader (group player)) sideRadio "RadioGroundToPapaBearVictory";
@@ -507,7 +507,7 @@ start_monitoring_killed_units =
 			_killer = _this select 1;
 			systemChat format["(%1) %2 %3 ======> (%4) %5 %6", side (group _killer), rank _killer, name _killer, side (group _killed), rank _killed, name _killed];
 			[_killed] spawn {
-				sleep 300;
+				sleep 900;
 				deleteVehicle (_this select 0);
 			};
 		}];
@@ -524,7 +524,7 @@ start_monitoring_killed_units_group =
 			_killer = _this select 1;
 			systemChat format["(%1) %2 %3 ======> (%4) %5 %6", side (group _killer), rank _killer, name _killer, side (group _killed), rank _killed, name _killed];
 			[_killed] spawn {
-				sleep 60;
+				sleep 900;
 				deleteVehicle (_this select 0);
 			};
 		}];

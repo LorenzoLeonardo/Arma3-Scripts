@@ -34,28 +34,28 @@ if( alive player ) then
 
 	switch (_grpName) do {
 		case "Alpha": {
-			"SmokeShellBlue" createVehicle (getMarkerPos _callerTexMarker);
+			"SmokeShellArty" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorBlue";
 			_radioUnit sideRadio "RadioAlphaWipedOut";
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
 		};
 
 		case "Bravo": {
-			"SmokeShellRed" createVehicle (getMarkerPos _callerTexMarker);
+			"SmokeShellArty" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorRed";
 			_radioUnit sideRadio "RadioBravoWipedOut";
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
 		};
 
 		case "Charlie":	{
-			"SmokeShellYellow" createVehicle (getMarkerPos _callerTexMarker);
+			"SmokeShellArty" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorYellow";
 			_radioUnit sideRadio "RadioCharlieWipedOut";
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
 		};
 
 		case "Delta": {
-			"SmokeShellOrange" createVehicle (getMarkerPos _callerTexMarker);
+			"SmokeShellArty" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorOrange";
 			_radioUnit sideRadio "RadioDeltaWipedOut";
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
