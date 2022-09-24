@@ -20,7 +20,7 @@ private _backPack = [_groupPlatoon] call set_parachute_backpack;
 private _groupArrayBeforeJoin = units _groupPlatoon;
 [_groupPlatoon] call start_monitoring_killed_units_group;
 
-hint format ["Reinforcements is coming your way."];
+hint format ["Requesting Reinforcements: %1", groupId _groupCaller];
 _groupPlatoon copyWaypoints _groupCaller;
 
 //Wait and Check the plane distance to the marker before starting unloading troops
@@ -28,8 +28,25 @@ _groupPlatoon copyWaypoints _groupCaller;
 
 //hint format ["Paratroopers are now jumping from the air"];
 ((crew _plane) select 0) sideRadio "RadioAirbaseDropPackage";
-[_groupPlatoon, _plane, _backPack, 0.25] call eject_from_plane;
+[_groupPlatoon, _plane, _backPack, 0.5] call eject_from_plane;
 (units _groupPlatoon) join _groupCaller;
+switch (groupId _groupCaller) do {
+	case "Alpha": {
+		(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportAlpha";
+	};
+	case "Bravo": {
+		(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportBravo";
+	};
+	case "Charlie":	{
+		(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportCharlie";	
+	};
+	case "Delta": {
+		(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportDelta";	
+	};
+
+	default	{
+	};
+};
 
 deleteMarkerLocal _seizeMarkerName;
 [_plane] call uninitialize_plane;

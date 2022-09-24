@@ -305,5 +305,98 @@ class CfgRadio
 
 		// radio caption
 		title	= "That's a negative Alpha, the target is out of range!";	
+	}
+
+
+
+	class RequestingFireSupportAtTheTargetLocationWilliePeteInEffectHowCopyQ
+	{
+		name	= "RequestingFireSupportAtTheTargetLocationWilliePeteInEffectHowCopyQ";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\artillery\RequestingFireSupportAtTheTargetLocationWilliePeteInEffectHowCopyQ.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Requesting fire support at the target location. Willie pete in effect how copy?";			
+	}
+	class BeAdvisedArtilleryIsUnavailableAtThisTimeOut
+	{
+		name	= "BeAdvisedArtilleryIsUnavailableAtThisTimeOut";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\artillery\BeAdvisedArtilleryIsUnavailableAtThisTimeOut.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Be advised, artillery is unavailable at this time. Out!";			
+	}
+	class CannotExecuteThatsOutsideOurFiringEnvelope
+	{
+		name	= "CannotExecuteThatsOutsideOurFiringEnvelope";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\artillery\CannotExecuteThatsOutsideOurFiringEnvelope.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Cannot execute. That's outside our firing envelope!";			
+	}
+	class WeCopyYouLoudAndClear
+	{
+		name	= "WeCopyYouLoudAndClear";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\artillery\WeCopyYouLoudAndClear.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "We copy you loud and clear!";			
+	}
+	class RoundsComplete
+	{
+		name	= "RoundsComplete";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\artillery\RoundsComplete.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Rounds complete!";			
+	}	
+	class WeLinkedUpWithTheReinforcementsThanksForTheSupportAlpha
+	{
+		name	= "WeLinkedUpWithTheReinforcementsThanksForTheSupportAlpha";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\reinforcements\WeLinkedUpWithTheReinforcementsThanksForTheSupportAlpha.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "We linked up with the reinforcements, thanks for the support!";			
+	}	
+	class WeLinkedUpWithTheReinforcementsThanksForTheSupportBravo
+	{
+		name	= "WeLinkedUpWithTheReinforcementsThanksForTheSupportBravo";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\reinforcements\WeLinkedUpWithTheReinforcementsThanksForTheSupportBravo.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "We linked up with the reinforcements, thanks for the support!";			
+	}	
+	class WeLinkedUpWithTheReinforcementsThanksForTheSupportCharlie
+	{
+		name	= "WeLinkedUpWithTheReinforcementsThanksForTheSupportCharlie";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\reinforcements\WeLinkedUpWithTheReinforcementsThanksForTheSupportCharlie.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "We linked up with the reinforcements, thanks for the support!";			
+	}	
+	class WeLinkedUpWithTheReinforcementsThanksForTheSupportDelta
+	{
+		name	= "WeLinkedUpWithTheReinforcementsThanksForTheSupportDelta";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\reinforcements\WeLinkedUpWithTheReinforcementsThanksForTheSupportDelta.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "We linked up with the reinforcements, thanks for the support!";			
 	}	
 };

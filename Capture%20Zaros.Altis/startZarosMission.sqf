@@ -16,6 +16,7 @@ private _dropPosition = getMarkerPos (_this select 4);
 private _objectivePosition = getMarkerPos (_this select 5);
 private _groupName = _this select 6;
 private _hasPlayer = _this select 7;
+private _artilleryGroup = _this select 8;
 private _initLocation = [_dropPosition select 0,(_dropPosition select 1) - _yDistance, _planeAltitude];
 
 [_this select 5, 10000] call turn_off_city_lights;
@@ -46,8 +47,6 @@ if (_groupName == "Alpha") then
 
 private _defaultBackpacks = [_groupPlatoon] call set_parachute_backpack;
 
-[_groupPlatoon] execVM "checkCompanyStatus.sqf";
-
 [_plane, _dropPosition, _yDroppingRadius] call wait_until_reach_dropzone;
 
 if (_groupName == "Alpha") then 
@@ -55,18 +54,20 @@ if (_groupName == "Alpha") then
 	hint format["The plane is dropping paratroopers."];
 	((crew _plane) select 0) sideRadio "RadioAirbaseDropPackage";
 };
-[_groupPlatoon, _plane, _defaultBackpacks, 0.25] call eject_from_plane;
+[_groupPlatoon, _plane, _defaultBackpacks, 0.5] call eject_from_plane;
 _groupArray = units _groupPlatoon;
-_teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "DIAMOND", "AWARE", "YELLOW", 0] call create_waypoint;
+_teamWP = [_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", "RED", 0] call create_waypoint;
+
+if (_groupName == "Alpha") then 
+{
+	saveGame; [west, "Base"] sideRadio "RadioPapaBearCommenceTheAssault";
+};
+
+[_groupPlatoon] execVM "checkCompanyStatus.sqf";
 
 // Add way point to the dropzone position
 [_plane] call uninitialize_plane;
 
-if (_groupName == "Alpha") then 
-{
-	_teamWP setWaypointStatements ["true", "hint format [""Commence main assault!""];
-		saveGame; [west, ""Base""] sideRadio ""RadioPapaBearCommenceTheAssault"";"];
-};
 
-[_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", "YELLOW", 1] call create_waypoint;
+
 /***********END SCRIPT*******************************************************************************************************/
