@@ -40,10 +40,11 @@ if (_groupName == "Alpha") then
 	["lose1"] call start_monitoring_mission_status;
 	["lose2"] call start_monitoring_mission_status;
 	["end1"] call start_monitoring_mission_status;
-	[] call start_monitoring_killed_units;
-	sleep 1;
-	(leader _groupPlatoon) sideRadio "RadioAlphaReplyIntroZaros";
 };
+
+{
+	_x setSkill 1;
+} foreach allUnits;
 
 private _defaultBackpacks = [_groupPlatoon] call set_parachute_backpack;
 
@@ -68,7 +69,4 @@ _groupPlatoon setCombatMode "RED";
 
 // Add way point to the dropzone position
 [_plane] call uninitialize_plane;
-
-
-
 /***********END SCRIPT*******************************************************************************************************/
