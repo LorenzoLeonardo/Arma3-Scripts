@@ -21,6 +21,8 @@ private _groupArrayBeforeJoin = units _groupPlatoon;
 [_groupPlatoon] call start_monitoring_killed_units_group;
 
 hint format ["Requesting Reinforcements: %1", groupId _groupCaller];
+((crew _plane) select 0) sideRadio "SupportOnWayStandBy";
+
 _groupPlatoon copyWaypoints _groupCaller;
 
 //Wait and Check the plane distance to the marker before starting unloading troops

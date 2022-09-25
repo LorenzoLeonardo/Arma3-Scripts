@@ -505,6 +505,8 @@ call_artillery_fire_mission =
 	if (_isReady) then {
 		if (_isInRange == true) then {
 			[west, "Base"] sideRadio "WeCopyYouLoudAndClear";
+			sleep 1;
+			[west, "Base"] sideRadio "FiringAtTargetLocation";
 			{
 				if ( _theLeader != _x) then {
 					[vehicle _x, _pos, _ammoIndex, _rounds] call fire_artillery;

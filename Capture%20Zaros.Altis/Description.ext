@@ -349,6 +349,16 @@ class CfgRadio
 		// radio caption
 		title	= "We copy you loud and clear!";			
 	}
+	class FiringAtTargetLocation
+	{
+		name	= "FiringAtTargetLocation";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\artillery\FiringAtTargetLocation.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Firing at target location";			
+	}
 	class RoundsComplete
 	{
 		name	= "RoundsComplete";
@@ -398,5 +408,15 @@ class CfgRadio
 
 		// radio caption
 		title	= "We linked up with the reinforcements, thanks for the support!";			
+	}	
+	class SupportOnWayStandBy
+	{
+		name	= "SupportOnWayStandBy";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\reinforcements\SupportOnWayStandBy.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Support on way, standby!";			
 	}	
 };

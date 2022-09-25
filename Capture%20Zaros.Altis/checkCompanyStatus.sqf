@@ -3,11 +3,6 @@ private _group = _this select 0;
 private _Array = units _group;
 private _totalUnits = count _Array;
 private _radioUnit = _Array select 0;
-
-//private _text = toArray(str(_group));
-//_text set[0,"**DELETE**"];
-//_text set[1,"**DELETE**"];
-//_text = _text - ["**DELETE**"];
 private _grpName = groupId _group;
 
 while{ (count _Array > (_totalUnits/3)) && (alive player) } do {
@@ -71,6 +66,7 @@ if( alive player ) then
 				_radioUnit = _Array select 0;
 			};
 		} foreach _Array;
+		sleep 2;
 		[_radioUnit, 1000, 100, 3000, 400, _callerTexMarker] execvm "dropSupportTeam.sqf";
 	};
 };
