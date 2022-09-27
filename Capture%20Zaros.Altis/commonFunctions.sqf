@@ -212,13 +212,13 @@ initialize_player =
 set_parachute_backpack =
 {
 	private _groupPlatoon = _this select 0;
-	_backPack = [];
+	private _oldbackPack = [];
 	{
-		_backPack pushBack [_x, getUnitLoadout _x];
+		_oldbackPack pushBack [_x, getUnitLoadout _x];
 		_x addBackpack "B_parachute";
 	} foreach units _groupPlatoon;
 
-	_backPack
+	_oldbackPack
 };
 
 /*
@@ -241,7 +241,6 @@ get_backpack =
 {
 	private _unit = _this select 0;
 	private _backPack = _this select 1;
-
 	{
 		if (_x select 0 == _unit) then {
 			_unit setUnitLoadout (_x select 1);
@@ -648,4 +647,97 @@ attach_unlimited_fire=
 			_smoker attachTo [_vehicle, [0, 1.5, 0]];
 		};
 	};
+};
+
+initialize_landing_craft =
+{
+	// CUP_B_LCU1600_USMC
+	private _vehicleModel = _this select 0;
+	private _initLocation = _this select 1;
+	private _dropPosition = _this select 2;
+	private _craftSpeed = _this select 3;
+	private _craftGroupName = _this select 4;
+	//create a group of the boat
+	private _groupLandingCraft = createGroup west;
+	//create C130
+	private _returnLandingCraft = createVehicle [_vehicleModel, _initLocation, [], 0, "CARGO"];
+	//create Pilot
+	private _driver = _groupLandingCraft createUnit ["CUP_B_USMC_Crew", _initLocation, [], 0, "CARGO"];
+	_returnLandingCraft setPosASL [(_initLocation select 0), (_initLocation select 1), (_initLocation select 2)];
+	//move crew as boat driver
+	_driver moveInDriver _returnLandingCraft; //move pilot as driver of the plane
+
+	_groupLandingCraft setGroupID [_craftGroupName];
+
+	//_returnLandingCraft setVelocity [( sin (direction _returnLandingCraft) * _craftSpeed),( cos (direction _returnLandingCraft) * _craftSpeed),0];
+
+	[_groupLandingCraft, _dropPosition, "FULL", "TR UNLOAD", "DIAMOND", "AWARE", "BLUE", 0] call create_waypoint;
+
+	_returnLandingCraft
+
+};
+
+initialize_group_to_landing_craft =
+{
+	private _groupName = _this select 0;
+	private _initLocation = _this select 1;
+	private _boat = _this select 2;
+	private _groupPlatoon = createGroup west; 
+	private _initializeMen = "this moveInCargo _boat;";
+	
+	_groupPlatoon setGroupId [_groupName];
+	"CUP_B_USMC_Officer_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "MAJOR"];
+	"CUP_B_USMC_Soldier_TL_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "LIEUTENANT"];
+	"CUP_B_USMC_Soldier_TL_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "LIEUTENANT"];
+	"CUP_B_USMC_Soldier_TL_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "LIEUTENANT"];
+	"CUP_B_USMC_Soldier_SL_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "SERGEANT"];
+	"CUP_B_USMC_Soldier_SL_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "SERGEANT"];
+	"CUP_B_USMC_Soldier_SL_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "SERGEANT"];
+	"CUP_B_USMC_Soldier_MG_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_MG_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_MG_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_MG_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_MG_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_AT_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_AT_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_AT_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_AT_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_AT_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_GL_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_GL_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_GL_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_GL_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_GL_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_GL_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Medic_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Medic_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Medic_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Medic_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+	"CUP_B_USMC_Soldier_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
+
+	
+	setPlayable ((units _groupPlatoon) select 33);
+	 _groupPlatoon
 };
