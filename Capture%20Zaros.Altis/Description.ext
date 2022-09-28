@@ -418,5 +418,67 @@ class CfgRadio
 
 		// radio caption
 		title	= "Support on way, standby!";			
-	}	
+	}
+
+	class CharlieLandedBeach
+	{
+		name	= "CharlieLandedBeach";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\CharlieLandedBeach.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Papa bear this is Charlie, we have just landed on the beach. Going to the main objective after we all disembarked.";			
+	}
+	class CharlieLandedBeachPapaBearReply
+	{
+		name	= "CharlieLandedBeachPapaBearReply";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\CharlieLandedBeachPapaBearReply.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Good to hear you Charlie, proceed immediately to the main objective. We need that town for the success of our invasion. Papa bear out!";			
+	}
+	class CharlieMovingToObjective
+	{
+		name	= "CharlieMovingToObjective";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\CharlieMovingToObjective.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Everyone, please be advised. Charlie team is now going to the main objective. Charlie out!";			
+	}
+	class DeltaLandedBeach
+	{
+		name	= "DeltaLandedBeach";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\DeltaLandedBeach.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Papa bear this is Delta, we have just landed on the beach. Going to the main objective after we all disembarked.";			
+	}
+	class DeltaLandedBeachPapaBearReply
+	{
+		name	= "DeltaLandedBeachPapaBearReply";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\DeltaLandedBeachPapaBearReply.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "We hear you loud and clear Delta, proceed immediately to the main objective. We need that town for the success of our invasion. Papa bear out!";			
+	}
+	class DeltaMovingToObjective
+	{
+		name	= "DeltaMovingToObjective";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\DeltaMovingToObjective.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Everyone, please be advised. Delta team is now moving to the main objective. Delta out!";			
+	}
+	
 };

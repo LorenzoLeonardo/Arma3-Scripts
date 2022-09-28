@@ -39,6 +39,25 @@ create_waypoint =
 	_teamWP
 };
 
+create_waypoint_with_statements =
+{
+	private _groupPlatoon = _this select 0;
+	private _destinationPosition = _this select 1;
+	private _wayPointSpeed = _this select 2;
+	private _wayPointType = _this select 3;
+	private _wayPointFormation = _this select 4;
+	private _wayPointBehaviour = _this select 5;
+	private _wayPointCombatMode = _this select 6;
+	private _wayPointNumber = _this select 7;
+	private _statement = _this select 8;
+	private _teamWP = _groupPlatoon addWaypoint [_destinationPosition, _wayPointNumber];
+	_teamWP setWaypointSpeed _wayPointSpeed;
+	_teamWP setWaypointType _wayPointType; 
+	_teamWP setWaypointFormation _wayPointFormation;
+	_teamWP setWaypointBehaviour _wayPointBehaviour;
+	_teamWP setWaypointStatements ["true", _statement];
+	_teamWP
+};
 /*
  * Author: Lorenzo Leonardo
  * Email: enzotechcomputersolutions@gmail.com
@@ -270,7 +289,7 @@ reload_inventory_when_hit_Ground =
 	private _backPack = _this select 1;
 
     waitUntil { 
-		sleep 0.1;
+		sleep 1;
 		isTouchingGround _paraPlayer
 	};
 	unassignVehicle _paraPlayer;
@@ -378,7 +397,7 @@ wait_until_reach_dropzone =
 	private _droppingRadius = _this select 2;
 
 	waitUntil {
-		sleep 0.1;
+		sleep 1;
 		_distance = sqrt(abs((_dropPosition select 1) - (getpos _plane select 1))^2 + abs ((_dropPosition select 0) - (getpos _plane select 0))^2);
 		_distance <= _droppingRadius 
 	};
@@ -740,4 +759,36 @@ initialize_group_to_landing_craft =
 	
 	setPlayable ((units _groupPlatoon) select 33);
 	 _groupPlatoon
+};
+
+get_assigned_landing_craft =
+{
+	private _teamName = _this select 0;
+	private _craftAssigned="";
+	switch (_teamName) do {
+		case "Alpha": {
+			_craftAssigned = "Golf 1";
+		};
+		case "Bravo": {
+			_craftAssigned = "Golf 2";
+		};
+		case "Charlie": {
+			_craftAssigned = "Golf 3";
+		};
+		case "Delta": {
+			_craftAssigned = "Golf 4";
+		};
+		default {
+			hint format["%1 is not a valid squad name. Please use Alpha, Bravo, Charlie, Delta", _teamName];
+		};
+	};
+	_craftAssigned
+};
+
+radio_has_landed_conversation =
+{
+	private _group = _this select 0;
+	
+
+
 };

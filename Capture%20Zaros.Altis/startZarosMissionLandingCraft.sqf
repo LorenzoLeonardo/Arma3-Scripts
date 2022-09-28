@@ -18,15 +18,60 @@ private _groupName = _this select 6;
 private _hasPlayer = _this select 7;
 private _artilleryGroup = _this select 8;
 
-private _landingCraftGroupName = "Golf";
+private _landingCraftGroupName = [_groupName] call get_assigned_landing_craft;
 private _landingCraft = ["CUP_B_LCU1600_USMC", _initLocation, _dropPosition, _landingCraftSpeed, _landingCraftGroupName] call initialize_landing_craft;
 private _groupPlatoon = [_groupName, _initLocation, _landingCraft] call initialize_group_to_landing_craft;
 
 if (_hasPlayer == true) then {
 	[_landingCraft, _groupPlatoon] call initialize_player;
 };
-_teamWP = [_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", "RED", 0] call create_waypoint;
-_groupPlatoon setCombatMode "RED";
 [_groupPlatoon] execVM "checkCompanyStatus.sqf";
+_teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "LINE", "AWARE", "RED", 0] call create_waypoint;
+_groupPlatoon setCombatMode "RED";
+
+sleep 2;
+ waitUntil { unitReady (driver _landingCraft) };
+
+switch(groupId _groupPlatoon) do {
+   case "Alpha": {
+   };
+   case "Bravo": {
+   };
+   case "Charlie": {
+      (leader _groupPlatoon) sideRadio "CharlieLandedBeach";
+      sleep 2;
+      [west, "Base"] sideRadio "CharlieLandedBeachPapaBearReply";
+      sleep 2;
+   };
+   case "Delta": {
+      (leader _groupPlatoon) sideRadio "DeltaLandedBeach";
+      sleep 2;
+      [west, "Base"] sideRadio "DeltaLandedBeachPapaBearReply";
+      sleep 2;
+   };
+};
+
+{
+   waitUntil { 
+      sleep 1;
+      (_x in _landingCraft) == false
+   };
+} foreach units _groupPlatoon;
+
+switch(groupId _groupPlatoon) do {
+		case "Alpha": {
+		};
+		case "Bravo": {
+		};
+		case "Charlie": {
+			(leader _groupPlatoon) sideRadio "CharlieMovingToObjective";
+
+		};
+		case "Delta": {
+			(leader _groupPlatoon) sideRadio "DeltaMovingToObjective";
+		};
+	};
+
+_teamWP = [_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", "RED", 0] call create_waypoint;
 
 /***********END SCRIPT*******************************************************************************************************/

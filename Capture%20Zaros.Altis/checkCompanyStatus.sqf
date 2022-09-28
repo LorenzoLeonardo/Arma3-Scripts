@@ -32,6 +32,7 @@ if( alive player ) then
 			"SmokeShellArty" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorBlue";
 			_radioUnit sideRadio "RadioAlphaWipedOut";
+			sleep 2;
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
 		};
 
@@ -39,6 +40,7 @@ if( alive player ) then
 			"SmokeShellArty" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorRed";
 			_radioUnit sideRadio "RadioBravoWipedOut";
+			sleep 2;
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
 		};
 
@@ -46,6 +48,7 @@ if( alive player ) then
 			"SmokeShellArty" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorYellow";
 			_radioUnit sideRadio "RadioCharlieWipedOut";
+			sleep 2;
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
 		};
 
@@ -53,6 +56,7 @@ if( alive player ) then
 			"SmokeShellArty" createVehicle (getMarkerPos _callerTexMarker);
 			_callerMarker setMarkerColorLocal "ColorOrange";
 			_radioUnit sideRadio "RadioDeltaWipedOut";
+			sleep 2;
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
 		};
 
