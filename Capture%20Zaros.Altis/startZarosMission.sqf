@@ -57,7 +57,7 @@ if (_groupName == "Alpha") then
 };
 [_groupPlatoon, _plane, _defaultBackpacks, 0.5] call eject_from_plane;
 _groupArray = units _groupPlatoon;
-_teamWP = [_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", "RED", 0] call create_waypoint;
+_teamWP = [_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", 0] call create_waypoint;
 
 if (_groupName == "Alpha") then 
 {

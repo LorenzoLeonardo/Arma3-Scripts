@@ -12,7 +12,7 @@ while{ (count _Array > (_totalUnits/3)) && (alive player) } do {
 			_radioUnit = _Array select 0;
 		};
 	} foreach _Array;
-	sleep 1;
+	sleep 2;
 };
 
 if( alive player ) then
@@ -34,6 +34,7 @@ if( alive player ) then
 			_radioUnit sideRadio "RadioAlphaWipedOut";
 			sleep 2;
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
+			sleep 2;
 		};
 
 		case "Bravo": {
@@ -42,6 +43,7 @@ if( alive player ) then
 			_radioUnit sideRadio "RadioBravoWipedOut";
 			sleep 2;
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
+			sleep 2;
 		};
 
 		case "Charlie":	{
@@ -50,6 +52,7 @@ if( alive player ) then
 			_radioUnit sideRadio "RadioCharlieWipedOut";
 			sleep 2;
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
+			sleep 2;
 		};
 
 		case "Delta": {
@@ -58,6 +61,7 @@ if( alive player ) then
 			_radioUnit sideRadio "RadioDeltaWipedOut";
 			sleep 2;
 			[west, "Base"] sideRadio "RadioPapaBearReplyWipedOut";
+			sleep 2;
 		};
 
 		default	{
@@ -71,6 +75,6 @@ if( alive player ) then
 			};
 		} foreach _Array;
 		sleep 2;
-		[_radioUnit, 300, 100, 3000, 400, _callerTexMarker] execvm "dropSupportTeam.sqf";
+		[_radioUnit, 600, 100, 6000, 400, _callerTexMarker] execvm "dropSupportTeam.sqf";
 	};
 };

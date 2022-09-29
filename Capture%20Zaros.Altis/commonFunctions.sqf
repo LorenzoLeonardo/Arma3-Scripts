@@ -10,13 +10,12 @@
  * 3: _wayPointType this is a waypont type "MOVE" "SAD" <STRING>
  * 4: _wayPointFormation this is a waypoint formation "LINE "DIAMOND" <STRING>
  * 5: _wayPointBehaviour this is a behaviour of the units "AWARE" "CARELESS" "DANGER" <STRING>
- * 6: _wayPointCombatMode this is a combat mode of the group/unit "GREEN" "RED" "BLUE" <STRING>
- * 7: _wayPointNumber this is the waypoint number, you can set from 0 to n waypoints <INTEGER>
+ * 6: _wayPointNumber this is the waypoint number, you can set from 0 to n waypoints <INTEGER>
  * Return Value:
  * The return value Array format Waypoint - [Group, index]
  *
  * Example:
- * _wayPoint = [_group, [0,0,0], "LIMITED", "MOVE", "DIAMOND", "AWARE", "BLUE", 0] call create_waypoint;
+ * _wayPoint = [_group, [0,0,0], "LIMITED", "MOVE", "DIAMOND", "AWARE",  0] call create_waypoint;
  *
  * Public: [Yes/No]
  */
@@ -28,36 +27,16 @@ create_waypoint =
 	private _wayPointType = _this select 3;
 	private _wayPointFormation = _this select 4;
 	private _wayPointBehaviour = _this select 5;
-	private _wayPointCombatMode = _this select 6;
-	private _wayPointNumber = _this select 7;
+	private _wayPointNumber = _this select 6;
 	private _teamWP = _group addWaypoint [_destinationPosition, _wayPointNumber];
 	_teamWP setWaypointSpeed _wayPointSpeed;
 	_teamWP setWaypointType _wayPointType; 
 	_teamWP setWaypointFormation _wayPointFormation;
 	_teamWP setWaypointBehaviour _wayPointBehaviour;
-	_teamWP setWaypointStatements ["true", format["_group setCombatMode %1", _wayPointCombatMode]];
+
 	_teamWP
 };
 
-create_waypoint_with_statements =
-{
-	private _groupPlatoon = _this select 0;
-	private _destinationPosition = _this select 1;
-	private _wayPointSpeed = _this select 2;
-	private _wayPointType = _this select 3;
-	private _wayPointFormation = _this select 4;
-	private _wayPointBehaviour = _this select 5;
-	private _wayPointCombatMode = _this select 6;
-	private _wayPointNumber = _this select 7;
-	private _statement = _this select 8;
-	private _teamWP = _groupPlatoon addWaypoint [_destinationPosition, _wayPointNumber];
-	_teamWP setWaypointSpeed _wayPointSpeed;
-	_teamWP setWaypointType _wayPointType; 
-	_teamWP setWaypointFormation _wayPointFormation;
-	_teamWP setWaypointBehaviour _wayPointBehaviour;
-	_teamWP setWaypointStatements ["true", _statement];
-	_teamWP
-};
 /*
  * Author: Lorenzo Leonardo
  * Email: enzotechcomputersolutions@gmail.com
@@ -101,7 +80,7 @@ initialize_plane =
 	_returnPlane setVelocity [( sin (direction _returnPlane) * _planeSpeed),( cos (direction _returnPlane) * _planeSpeed),0];
 	//set plane waypoint yDistance ahead of the dropzone position.
 	_planeWPPos =  [ _dropPosition select 0, (_dropPosition select 1) + 30000, _planeAltitude];
-	[_groupC130J, _planeWPPos, "LIMITED", "MOVE", "DIAMOND", "AWARE", "BLUE", 0] call create_waypoint;
+	[_groupC130J, _planeWPPos, "LIMITED", "MOVE", "DIAMOND", "CARELESS", 0] call create_waypoint;
 
 	_returnPlane
 };
@@ -182,7 +161,7 @@ initialize_group_to_plane =
 	"CUP_B_US_Soldier_Backpack_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
 	"CUP_B_US_Soldier_Backpack_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
 	"CUP_B_US_Medic_OCP" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "CORPORAL"];
-
+	addSwitchableUnit ((units _groupPlatoon) select 23);
 	 _groupPlatoon
 };
 
@@ -690,7 +669,7 @@ initialize_landing_craft =
 
 	//_returnLandingCraft setVelocity [( sin (direction _returnLandingCraft) * _craftSpeed),( cos (direction _returnLandingCraft) * _craftSpeed),0];
 
-	[_groupLandingCraft, _dropPosition, "FULL", "TR UNLOAD", "DIAMOND", "AWARE", "BLUE", 0] call create_waypoint;
+	[_groupLandingCraft, _dropPosition, "FULL", "TR UNLOAD", "DIAMOND", "AWARE", 0] call create_waypoint;
 
 	_returnLandingCraft
 
@@ -757,7 +736,7 @@ initialize_group_to_landing_craft =
 	"CUP_B_USMC_Soldier_AT_des" createUnit [_initLocation, _groupPlatoon, _initializeMen, 1, "PRIVATE"];
 
 	
-	setPlayable ((units _groupPlatoon) select 33);
+	addSwitchableUnit ((units _groupPlatoon) select 49);
 	 _groupPlatoon
 };
 

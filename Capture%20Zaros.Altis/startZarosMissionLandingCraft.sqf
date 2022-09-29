@@ -26,7 +26,7 @@ if (_hasPlayer == true) then {
 	[_landingCraft, _groupPlatoon] call initialize_player;
 };
 [_groupPlatoon] execVM "checkCompanyStatus.sqf";
-_teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "LINE", "AWARE", "RED", 0] call create_waypoint;
+_teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "LINE", "AWARE", 0] call create_waypoint;
 _groupPlatoon setCombatMode "RED";
 
 sleep 2;
@@ -72,6 +72,6 @@ switch(groupId _groupPlatoon) do {
 		};
 	};
 
-_teamWP = [_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", "RED", 0] call create_waypoint;
+_teamWP = [_groupPlatoon, _objectivePosition, "FULL", "SAD", "LINE", "AWARE", 0] call create_waypoint;
 
 /***********END SCRIPT*******************************************************************************************************/
