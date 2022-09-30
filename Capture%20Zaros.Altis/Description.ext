@@ -421,7 +421,7 @@ class CfgRadio
 	}
 
 	class CharlieLandedBeach
-	{
+	{// display name Lee (Australia)
 		name	= "CharlieLandedBeach";
 
 		// filename, volume, pitch
@@ -481,4 +481,47 @@ class CfgRadio
 		title	= "Everyone, please be advised. Delta team is now moving to the main objective. Delta out!";			
 	}
 	
+	class EngagingWithEnemyAlpha
+	{
+		name	= "EngagingWithEnemyAlpha";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\EngagingWithEnemyAlpha.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Please be advised that we are now engaging with the enemy! Alpha out!";			
+	}
+
+	class EngagingWithEnemyBravo
+	{
+		name	= "EngagingWithEnemyBravo";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\EngagingWithEnemyBravo.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Please be advised that we are now engaging with the enemy! Bravo out!";			
+	}
+
+	class EngagingWithEnemyCharlie
+	{
+		name	= "EngagingWithEnemyCharlie";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\EngagingWithEnemyCharlie.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Please be advised that we are now engaging with the enemy! Charlie out!";			
+	}
+
+	class EngagingWithEnemyDelta
+	{
+		name	= "EngagingWithEnemyDelta";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\EngagingWithEnemyDelta.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Please be advised that we are now engaging with the enemy! Delta out!";			
+	}
 };

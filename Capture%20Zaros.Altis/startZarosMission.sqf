@@ -42,6 +42,31 @@ if (_groupName == "Alpha") then
 	["end1"] call start_monitoring_mission_status;
 };
 
+// Radio once when engaging the enemy for the first time
+{
+   _x addEventHandler["Fired", {
+         params ["_unit", "_weapon", "_muzzle", "_mode", "_ammo", "_magazine", "_projectile", "_gunner"];
+         switch (groupId (group _unit)) do {
+            case "Alpha": {
+               (leader _unit) sideRadio "EngagingWithEnemyAlpha";
+            };
+            case "Bravo": {
+               (leader _unit) sideRadio "EngagingWithEnemyBravo";
+            };
+            case "Charlie": {
+               (leader _unit) sideRadio "EngagingWithEnemyCharlie";
+            };
+            case "Delta": {
+               (leader _unit) sideRadio "EngagingWithEnemyDelta";
+            };
+         };
+
+         {
+            _x removeEventHandler ["Fired", 0];
+         } foreach units (group _unit);
+   }];
+} foreach units _groupPlatoon;
+
 {
 	_x setSkill 1;
 } foreach allUnits;

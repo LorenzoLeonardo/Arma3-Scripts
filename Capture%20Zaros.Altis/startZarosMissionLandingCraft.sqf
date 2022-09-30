@@ -29,6 +29,31 @@ if (_hasPlayer == true) then {
 _teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "LINE", "AWARE", 0] call create_waypoint;
 _groupPlatoon setCombatMode "RED";
 
+// Radio once when engaging the enemy for the first time
+{
+   _x addEventHandler["Fired", {
+         params ["_unit", "_weapon", "_muzzle", "_mode", "_ammo", "_magazine", "_projectile", "_gunner"];
+         switch (groupId (group _unit)) do {
+            case "Alpha": {
+               (leader _unit) sideRadio "EngagingWithEnemyAlpha";
+            };
+            case "Bravo": {
+               (leader _unit) sideRadio "EngagingWithEnemyBravo";
+            };
+            case "Charlie": {
+               (leader _unit) sideRadio "EngagingWithEnemyCharlie";
+            };
+            case "Delta": {
+               (leader _unit) sideRadio "EngagingWithEnemyDelta";
+            };
+         };
+
+         {
+            _x removeEventHandler ["Fired", 0];
+         } foreach units (group _unit);
+   }];
+} foreach units _groupPlatoon;
+
 sleep 2;
  waitUntil { unitReady (driver _landingCraft) };
 
