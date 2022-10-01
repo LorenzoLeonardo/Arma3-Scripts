@@ -55,7 +55,7 @@ _groupPlatoon setCombatMode "RED";
 } foreach units _groupPlatoon;
 
 sleep 2;
- waitUntil { unitReady (driver _landingCraft) };
+waitUntil { unitReady (driver _landingCraft) };
 
 switch(groupId _groupPlatoon) do {
    case "Alpha": {

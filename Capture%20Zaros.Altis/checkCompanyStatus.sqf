@@ -75,6 +75,6 @@ if( alive player ) then
 			};
 		} foreach _Array;
 		sleep 2;
-		[_radioUnit, 600, 100, 6000, 400, _callerTexMarker] execvm "dropSupportTeam.sqf";
+		[_radioUnit, 350, 300, 8000, 400, _callerTexMarker] execvm "dropSupportTeam.sqf";
 	};
 };

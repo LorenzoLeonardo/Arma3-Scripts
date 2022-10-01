@@ -88,7 +88,7 @@ if (_groupName == "Alpha") then
 {
 	saveGame; [west, "Base"] sideRadio "RadioPapaBearCommenceTheAssault";
 };
-_groupPlatoon setCombatMode "RED";
+_groupPlatoon setCombatMode "YELLOW";
 [_groupPlatoon] execVM "checkCompanyStatus.sqf";
 
 // Add way point to the dropzone position
