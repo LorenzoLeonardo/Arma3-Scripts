@@ -524,4 +524,15 @@ class CfgRadio
 		// radio caption
 		title	= "Please be advised that we are now engaging with the enemy! Delta out!";			
 	}
+
+	class EnemyTanksSpotted
+	{
+		name	= "EnemyTanksSpotted";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\EnemyTanksSpotted.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Everyone, please be advised that according to our infrared signals, enemy tanks are spotted near your position. These are T90 or T70 tanks by the looks of it. Be careful, Papa bear out!";			
+	}
 };
