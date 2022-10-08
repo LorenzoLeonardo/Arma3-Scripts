@@ -91,6 +91,4 @@ if (_groupName == "Alpha") then
 _groupPlatoon setCombatMode "YELLOW";
 [_groupPlatoon] execVM "checkCompanyStatus.sqf";
 
-// Add way point to the dropzone position
-[_plane] call uninitialize_plane;
 /***********END SCRIPT*******************************************************************************************************/

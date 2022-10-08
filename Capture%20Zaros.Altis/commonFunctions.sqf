@@ -37,19 +37,62 @@ create_waypoint =
 	_teamWP
 };
 
-change_speed =
+/*
+ * Author: Lorenzo Leonardo
+ * Email: enzotechcomputersolutions@gmail.com
+ * This will delete the plane and its crew members.
+ *
+ * Arguments:
+ * 0: _plane is the plane's object <OBJECT>
+ * Return Value:
+ * The return value None
+ *
+ * Example:
+ * [_plane] call uninitialize_plane;
+ *
+ * Public: [Yes/No]
+ */
+uninitialize_plane =
+{	
+	private _plane = _this select 0;
+	// Delete plane and pilots
+	{
+		deleteVehicle _x;
+	} foreach crew _plane;
+	deleteVehicle _plane;
+};
+
+set_plane_way_points =
 {
 	private _plane = _this select 0;
 	private _group = _this select 1;
-	private _destinationPos = _this select 2;
-	private _distanceFromDestination = _this select 3;
+	private _initLocation = _this select 2;
+	private _dropPosition = _this select 3;
 	private _planeSpeed = _this select 4;
 
-	[_plane, _destinationPos, _distanceFromDestination] call wait_until_reach_dropzone;
-
-	_planeWPPos =  [ _destinationPos select 0, (_destinationPos select 1) + 30000, _destinationPos select 2];
-	[_group, _planeWPPos, "LIMITED", "MOVE", "DIAMOND", "CARELESS", 0] call create_waypoint;
+	private _slowDownPlaneAtDistance = 3000;
+	private _planeAltitude = _initLocation select 2;
+	// initialize plane in the right altitude
+	_plane flyInHeightASL [(_initLocation select 2), (_initLocation select 2), (_initLocation select 2)];
 	_plane setVelocity [( sin (direction _plane) * _planeSpeed),( cos (direction _plane) * _planeSpeed),0];
+	//set plane waypoint yDistance ahead of the dropzone position.
+	_planeWPPos =  [ _dropPosition select 0, (_dropPosition select 1) - _slowDownPlaneAtDistance, _planeAltitude];
+	[_group, _planeWPPos, "FULL", "MOVE", "DIAMOND", "CARELESS", 0] call create_waypoint;
+	//[_plane, _destinationPos, _distanceFromDestination] call wait_until_reach_dropzone;
+
+	_planeWPPos =  [ _dropPosition select 0, (_dropPosition select 1) + 1000, _dropPosition select 2];
+	[_group, _planeWPPos, "LIMITED", "MOVE", "DIAMOND", "CARELESS", 1] call create_waypoint;
+	//_plane setVelocity [( sin (direction _plane) * _planeSpeed),( cos (direction _plane) * _planeSpeed),0];
+
+	//Change plane course back to the starting location
+	_planeWPPos = [_group, _initLocation, "FULL", "MOVE", "DIAMOND", "CARELESS", 2] call create_waypoint;
+
+	waitUntil {
+		sleep 1;
+		_distance = sqrt(abs((_initLocation select 1) - (getpos _plane select 1))^2 + abs ((_initLocation select 0) - (getpos _plane select 0))^2);
+		_distance <= 100 
+	};
+	[_plane] call uninitialize_plane;
 };
 /*
  * Author: Lorenzo Leonardo
@@ -77,7 +120,7 @@ initialize_plane =
 	private _initLocation = _this select 2;
 	private _planeSpeed = _this select 3;
 	private _planeGroupName = _this select 4;
-	private _slowDownPlaneAtDistance = 3000;
+
 	//create a group of the plane
 	private _groupC130J = createGroup west;
 	//create C130
@@ -89,44 +132,14 @@ initialize_plane =
 	//move Pilot as plane driver
 	_pilot moveInDriver _returnPlane; //move pilot as driver of the plane
 	_copilot moveInAny _returnPlane;
+	addSwitchableUnit _copilot;
 	_groupC130J setGroupID [_planeGroupName];
-	// initialize plane in the right altitude
-	_returnPlane flyInHeightASL [(_initLocation select 2), (_initLocation select 2), (_initLocation select 2)];
-	_returnPlane setVelocity [( sin (direction _returnPlane) * _planeSpeed),( cos (direction _returnPlane) * _planeSpeed),0];
-	//set plane waypoint yDistance ahead of the dropzone position.
-	_planeWPPos =  [ _dropPosition select 0, (_dropPosition select 1) - _slowDownPlaneAtDistance, _planeAltitude];
-	[_groupC130J, _planeWPPos, "FULL", "MOVE", "DIAMOND", "CARELESS", 0] call create_waypoint;
 
 	// change speed when almost reach drop zone
-    [_returnPlane, _groupC130J, _dropPosition, _slowDownPlaneAtDistance, 100] spawn change_speed;
+    [_returnPlane, _groupC130J, _initLocation, _dropPosition, _planeSpeed] spawn set_plane_way_points;
 	_returnPlane
 };
 
-/*
- * Author: Lorenzo Leonardo
- * Email: enzotechcomputersolutions@gmail.com
- * This will delete the plane and its crew members.
- *
- * Arguments:
- * 0: _plane is the plane's object <OBJECT>
- * Return Value:
- * The return value None
- *
- * Example:
- * [_plane] call uninitialize_plane;
- *
- * Public: [Yes/No]
- */
-uninitialize_plane =
-{	
-	sleep 60; 
-	private _plane = _this select 0;
-	// Delete plane and pilots
-	{
-		deleteVehicle _x;
-	} foreach crew _plane;
-	deleteVehicle _plane;
-};
 
 /*
  * Author: Lorenzo Leonardo

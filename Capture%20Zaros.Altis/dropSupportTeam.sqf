@@ -50,4 +50,3 @@ switch (groupId _groupCaller) do {
 };
 
 deleteMarkerLocal _seizeMarkerName;
-[_plane] call uninitialize_plane;
