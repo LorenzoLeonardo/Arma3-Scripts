@@ -802,7 +802,7 @@ monitor_group_status =
 	private _groupID = groupId _group;
 	waitUntil {
 		sleep 1;
-		{alive _x } count units _groupCaller == 0
+		{alive _x } count units _group == 0
 	};
 
 	switch (_teamName) do {

@@ -547,17 +547,6 @@ class CfgRadio
 		title	= "Papa bear to all units. Please be advised that we've lost contact with alpha team. Do your job well because we cannot afford to lose that town.";			
 	}
 
-	class LostContactWithAlphaTeam
-	{
-		name	= "LostContactWithAlphaTeam";
-
-		// filename, volume, pitch
-		sound[]	= { "\sounds\monitoring\LostContactWithAlphaTeam.ogg", db + 100, 1.0 };
-
-		// radio caption
-		title	= "Papa bear to all units. Please be advised that we've lost contact with alpha team. Do your job well because we cannot afford to lose that town.";			
-	}
-
 	class LostContactWithBravoTeam
 	{
 		name	= "LostContactWithBravoTeam";
