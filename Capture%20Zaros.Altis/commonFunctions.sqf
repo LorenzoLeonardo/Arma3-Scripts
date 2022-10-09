@@ -796,10 +796,31 @@ get_assigned_landing_craft =
 	_craftAssigned
 };
 
-radio_has_landed_conversation =
+monitor_group_status =
 {
 	private _group = _this select 0;
-	
+	private _groupID = groupId _group;
+	waitUntil {
+		sleep 1;
+		{alive _x } count units _groupCaller == 0
+	};
 
+	switch (_teamName) do {
+		case "Alpha": {
+			[west, "Base"] sideRadio "LostContactWithAlphaTeam";
+		};
+		case "Bravo": {
+			[west, "Base"] sideRadio "LostContactWithBravoTeam";
+		};
+		case "Charlie": {
+			[west, "Base"] sideRadio "LostContactWithCharlieTeam";
+		};
+		case "Delta": {
+			[west, "Base"] sideRadio "LostContactWithDeltaTeam";
+		};
+		default {
+			hint format["%1 is not a valid squad name. Please use Alpha, Bravo, Charlie, Delta", _teamName];
+		};
+	};
 
 };

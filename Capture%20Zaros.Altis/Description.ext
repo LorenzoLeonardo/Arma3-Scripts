@@ -535,4 +535,59 @@ class CfgRadio
 		// radio caption
 		title	= "Everyone, please be advised that according to our infrared signals, enemy tanks are spotted near your position. These are T90 or T70 tanks by the looks of it. Be careful, Papa bear out!";			
 	}
+
+	class LostContactWithAlphaTeam
+	{
+		name	= "LostContactWithAlphaTeam";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\monitoring\LostContactWithAlphaTeam.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Papa bear to all units. Please be advised that we've lost contact with alpha team. Do your job well because we cannot afford to lose that town.";			
+	}
+
+	class LostContactWithAlphaTeam
+	{
+		name	= "LostContactWithAlphaTeam";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\monitoring\LostContactWithAlphaTeam.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Papa bear to all units. Please be advised that we've lost contact with alpha team. Do your job well because we cannot afford to lose that town.";			
+	}
+
+	class LostContactWithBravoTeam
+	{
+		name	= "LostContactWithBravoTeam";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\monitoring\LostContactWithBravoTeam.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Papa bear to all units. Please be advised that we've lost contact with bravo team. Do your job well because we cannot afford to lose that town.";			
+	}
+
+	class LostContactWithCharlieTeam
+	{
+		name	= "LostContactWithCharlieTeam";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\monitoring\LostContactWithCharlieTeam.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Papa bear to all units. Please be advised that we've lost contact with charlie team. Do your job well because we cannot afford to lose that town.";			
+	}
+
+	class LostContactWithDeltaTeam
+	{
+		name	= "LostContactWithDeltaTeam";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\monitoring\LostContactWithDeltaTeam.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Papa bear to all units. Please be advised that we've lost contact with delta team. Do your job well because we cannot afford to lose that town.";			
+	}
 };

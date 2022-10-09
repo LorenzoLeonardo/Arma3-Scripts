@@ -18,7 +18,7 @@ private _plane = ["CUP_B_C47_USA",_callerPosition, _initLocation, _planeSpeed, _
 private _groupPlatoon = ["Support", _initLocation, _plane] call initialize_group_to_plane;
 private _backPack = [_groupPlatoon] call set_parachute_backpack;
 private _groupArrayBeforeJoin = units _groupPlatoon;
-
+private _groupCallerID = groupId _groupCaller;
 hint format ["Requesting Reinforcements: %1", groupId _groupCaller];
 ((crew _plane) select 0) sideRadio "SupportOnWayStandBy";
 
@@ -30,23 +30,27 @@ _groupPlatoon copyWaypoints _groupCaller;
 //hint format ["Paratroopers are now jumping from the air"];
 ((crew _plane) select 0) sideRadio "RadioAirbaseDropPackage";
 [_groupPlatoon, _plane, _backPack, 0.5] call eject_from_plane;
-(units _groupPlatoon) join _groupCaller;
-switch (groupId _groupCaller) do {
-	case "Alpha": {
-		(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportAlpha";
-	};
-	case "Bravo": {
-		(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportBravo";
-	};
-	case "Charlie":	{
-		(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportCharlie";	
-	};
-	case "Delta": {
-		(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportDelta";	
-	};
 
-	default	{
+if  ({alive _x } count units _groupCaller == 0) then {
+	_groupPlatoon setGroupId [_groupCallerID];
+} else {
+	(units _groupPlatoon) join _groupCaller;
+	switch (_groupCallerID) do {
+		case "Alpha": {
+			(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportAlpha";
+		};
+		case "Bravo": {
+			(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportBravo";
+		};
+		case "Charlie":	{
+			(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportCharlie";	
+		};
+		case "Delta": {
+			(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportDelta";	
+		};
+
+		default	{
+		};
 	};
 };
-
 deleteMarkerLocal _seizeMarkerName;

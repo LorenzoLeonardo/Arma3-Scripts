@@ -42,6 +42,7 @@ if (_groupName == "Alpha") then
 	["end1"] call start_monitoring_mission_status;
 };
 
+[_groupPlatoon] spawn monitor_group_status;
 // Radio once when engaging the enemy for the first time
 {
    _x addEventHandler["Fired", {

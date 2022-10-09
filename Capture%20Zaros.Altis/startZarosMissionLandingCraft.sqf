@@ -29,6 +29,7 @@ if (_hasPlayer == true) then {
 _teamWP = [_groupPlatoon, _dropPosition, "FULL", "MOVE", "LINE", "AWARE", 0] call create_waypoint;
 _groupPlatoon setCombatMode "RED";
 
+[_groupPlatoon] spawn monitor_group_status;
 // Radio once when engaging the enemy for the first time
 {
    _x addEventHandler["Fired", {
