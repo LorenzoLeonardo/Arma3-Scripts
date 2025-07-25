@@ -1,6 +1,18 @@
 _gun50cal = _this select 0;
 _groupName = _this select 1;
 
+// Make .50 cal invincible
+_gun50cal allowDamage false;
+
+// Ensure it never runs out of ammo
+[_gun50cal] spawn {
+    params ["_gun50cal"];
+    while {alive _gun50cal} do {
+        _gun50cal setVehicleAmmo 1;  // Refill ammo continuously
+        sleep 1;                     // Check every second
+    };
+};
+
 _newStartIndex = 1;
 // Mission will fail if only one left
 while{({ alive _x } count (units _groupName)) > 1} do
