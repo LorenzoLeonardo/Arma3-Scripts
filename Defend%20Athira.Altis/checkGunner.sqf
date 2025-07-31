@@ -34,7 +34,11 @@ while{({ alive _x } count (units _groupName)) > 1} do
 			// Proceed to next unit
 			while {(_groupmember in _gun50cal) or (!_hasAssignedVehicle) or (isPlayer _groupmember)} do
 			{
-				_index=_index+1;	
+				_index=_index+1;
+				if (_index >= count _groupArray) exitWith {
+					// No suitable member found, break loop
+					_groupmember = objNull;
+				};
 			    _groupmember = _groupArray select _index;
 				_hasAssignedVehicle = isNull (assignedVehicle _groupmember);
 			};
