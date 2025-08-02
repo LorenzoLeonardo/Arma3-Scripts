@@ -353,17 +353,17 @@ get_assigned_plane =
 {
 	private _teamName = _this select 0;
 	private _planeAssigned="";
-	switch (_teamName) do {
-		case "Alpha": {
+	switch (toLower _teamName) do {
+		case "alpha": {
 			_planeAssigned = "November 1";
 		};
-		case "Bravo": {
+		case "bravo": {
 			_planeAssigned = "November 2";
 		};
-		case "Charlie": {
+		case "charlie": {
 			_planeAssigned = "November 3";
 		};
-		case "Delta": {
+		case "delta": {
 			_planeAssigned = "November 4";
 		};
 		default {
@@ -826,4 +826,148 @@ monitor_group_status =
 			hint format["%1 is not a valid squad name. Please use Alpha, Bravo, Charlie, Delta", _teamName];
 		};
 	};
+};
+
+save_original_loadouts = {
+	params ["_group"];
+
+	private _originalLoadouts = [];
+
+	{
+		_originalLoadouts pushBack [typeOf _x, getUnitLoadout _x];
+	} forEach units _group;
+
+	_originalLoadouts
+};
+
+wait_until_group_on_ground = {
+	params ["_grp"];
+	waitUntil {
+		sleep 1;
+		private _onGround = {
+			alive _x && (getPosATL _x select 2) < 3
+		} count units _grp;
+		_onGround >= (count units _grp * 0.7)
+	};
+};
+
+create_group_from_template = {
+	params ["_side", "_spawnPos", "_plane", "_template"];
+	private _group = createGroup _side;
+	{
+		private _type = _x select 0;
+		private _loadout = _x select 1;
+		private _unit = _group createUnit [_type, _spawnPos, [], 0, "NONE"];
+		_unit setUnitLoadout _loadout;
+		_unit moveInCargo _plane;
+	} forEach _template;
+	_group
+};
+
+// Helper: set marker and radio message
+set_support_marker_and_radio = {
+	params ["_unit", "_grpName"];
+	private _markerName = format ["marker_%1", toLower _grpName];
+	private _markerText = format ["Requesting Paradrop Support (%1)", _grpName];
+	private _marker = createMarkerLocal [_markerName, position _unit];
+	_marker setMarkerSizeLocal [1, 1];
+	_marker setMarkerShapeLocal "ICON";
+	_marker setMarkerTypeLocal "mil_objective";
+	_marker setMarkerDirLocal 0;
+	_marker setMarkerTextLocal _markerText;
+
+	switch (toLower _grpName) do {
+		case "alpha": {
+			_marker setMarkerColorLocal "ColorBlue";
+			_unit sideRadio "RadioAlphaWipedOut";
+		};
+		case "bravo": {
+			_marker setMarkerColorLocal "ColorRed";
+			_unit sideRadio "RadioBravoWipedOut";
+		};
+		case "charlie":{
+			_marker setMarkerColorLocal "ColorYellow";
+			_unit sideRadio "RadioCharlieWipedOut";
+		};
+		case "delta": {
+			_marker setMarkerColorLocal "ColorOrange";
+			_unit sideRadio "RadioDeltaWipedOut";
+		};
+		default {
+			_marker setMarkerColorLocal "ColorWhite";
+			_unit sideRadio "RadioUnknownGroupWipedOut";
+		};
+	};
+	_markerName
+};
+
+call_support_team = {
+	params ["_caller", "_planeAltitude", "_planeSpeed", "_yDistance", "_yDroppingRadius", "_seizeMarkerName", "_savedLoadouts"];
+
+	private _groupCaller = group _caller;
+	private _callerPosition = getMarkerPos _seizeMarkerName;
+	private _planeGroupName = [groupId _groupCaller] call get_assigned_plane;
+	private _initLocation = [_callerPosition select 0, (_callerPosition select 1) - _yDistance, _planeAltitude];
+	private _plane = ["CUP_B_C47_USA", _callerPosition, _initLocation, _planeSpeed, _planeGroupName] call initialize_plane;
+	private _groupPlatoon = [west, _initLocation, _plane, _savedLoadouts] call create_group_from_template;
+	private _backPack = [_groupPlatoon] call set_parachute_backpack;
+	private _groupBeforeJoin = units _groupPlatoon;
+	private _groupCallerID = groupId _groupCaller;
+
+	hint format ["Requesting Reinforcements: %1", groupId _groupCaller];
+	((crew _plane) select 0) sideRadio "SupportOnWayStandBy";
+	_groupPlatoon copyWaypoints _groupCaller;
+
+	// Wait until plane reaches drop zone
+	[_plane, _callerPosition, _yDroppingRadius, _planeAltitude] call wait_until_reach_dropzone;
+
+	// drop troops
+	((crew _plane) select 0) sideRadio "RadioAirbaseDropPackage";
+	[_groupPlatoon, _plane, _backPack, 0.5] call eject_from_plane;
+
+	// Optional: Add timeout here to verify drop success
+
+	// join or rename group
+	if (({
+		alive _x
+	} count units _groupCaller) == 0) then {
+		_groupPlatoon setGroupId [_groupCallerID];
+	} else {
+		(units _groupPlatoon) join _groupCaller;
+		switch (toLower _groupCallerID) do {
+			case "alpha": {
+				(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportAlpha";
+			};
+			case "bravo": {
+				(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportBravo";
+			};
+			case "charlie": {
+				(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportCharlie";
+			};
+			case "delta": {
+				(leader _groupCaller) sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportDelta";
+			};
+			default {
+				(leader _groupCaller) sideRadio "Reinforcements have linked up.";
+			};
+		};
+	};
+
+	[_groupPlatoon] call wait_until_group_on_ground;
+	deleteMarkerLocal _seizeMarkerName;
+};
+
+get_quiet_unit = {
+	params ["_group"];
+
+	private _leader = leader _group;
+	private _quietUnit = objNull;
+
+	{
+		if ((alive _x) && !isPlayer _x && (_x != _leader) && !(_x getVariable ["isRadioBusy", false])) exitWith {
+			_quietUnit = _x;
+		};
+	} forEach (units _group);
+
+	_quietUnit
 };
