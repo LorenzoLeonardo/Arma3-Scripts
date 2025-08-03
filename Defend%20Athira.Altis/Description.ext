@@ -578,7 +578,7 @@ class CfgRadio
 		sound[]	= { "\sounds\RadioPapaBearDefendTheCityWithArtillerySupport.ogg", db + 100, 1.0 };
 
 		// radio caption
-		title	= "Papa bear to all units, please defend the city at all cost. You can use our artillery to get rid of the invaders. Papa Bear out!";			
+		title	= "Papa bear to all units, please defend the city at all cost. You can use our artillery to get rid of the invaders. Papa Bear out!";
 	}
 
 	class RadioArtilleryRequest
