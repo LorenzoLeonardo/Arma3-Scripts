@@ -3,6 +3,7 @@
 // nul=[calling unit = player, altitude = 300, planespeed = 50, plane yDistance From caller = 1000, startdropping radius = 100, _seizemarkerName] execvm "dropSupportTeam.sqf";
 // parameters
 #include "commonFunctions.sqf"
+#include "reviveSystem.sqf"
 
 params["_caller", "_planeAltitude", "_planeSpeed", "_yDistance", "_yDroppingRadius", "_seizeMarkerName"];
 
@@ -26,6 +27,8 @@ _groupPlatoon copyWaypoints _groupCaller;
 // hint format ["Paratroopers are now jumping from the air"];
 ((crew _plane) select 0) sideRadio "RadioAirbaseDropPackage";
 [_groupPlatoon, _plane, _backPack, 0.5] call eject_from_plane;
+
+[_groupPlatoon] execVM "reviveSystem.sqf";
 
 if ({
 	alive _x
