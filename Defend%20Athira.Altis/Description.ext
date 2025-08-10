@@ -635,4 +635,15 @@ class CfgRadio
 		// radio caption
 		title	= "Falcon to ground units, we are en route to your position. ETA three mikes. Out!";
 	}
+
+	class RadioPapaBearToAllUnitsClearArea
+	{
+		name	= "RadioPapaBearToAllUnitsClearArea";
+
+		// filename, volume, pitch
+		sound[]	= { "\sounds\RadioPapaBearToAllUnitsClearArea.ogg", db + 100, 1.0 };
+
+		// radio caption
+		title	= "Attention all units, new orders. Eliminate all remaining forces in the vacinity. Clearing the rest of the area will be a child's play. Papa Bear out!";	
+	}
 };

@@ -69,9 +69,9 @@ fnc_getBestMedic = {
 		_x distance _injured
 	}, "ASCEND"] call BIS_fnc_sortBy;
 	private _medic = _candidates select 0;
- 	if (!isNull _medic) then {
-        _medic globalChat format ["%1 will heal %2", name _medic, name _injured];
-    };
+	if (!isNull _medic) then {
+		_medic globalChat format ["%1 will revive %2", name _medic, name _injured];
+	};
 	_medic
 };
 
@@ -180,7 +180,7 @@ fnc_reviveLoop = {
 		_medic = [_injured] call fnc_getBestMedic;
 		if (isNull _medic || !alive _medic) then {
 			if (!isNull _medic) then {
-				_medic globalChat format ["%1 has failed to heal %2", name _medic, name _injured];
+				_medic globalChat format ["%1, a chosen medic to revive %2 has died.", name _medic, name _injured];
 			};
 			continue
 		};
@@ -202,7 +202,7 @@ fnc_reviveLoop = {
 		// If medic didn't arrive in time or died or incapacitated
 		if (!_arrived) then {
 			if (!isNull _medic) then {
-				_medic globalChat format ["%1 failed to come to heal %2", name _medic, name _injured];
+				_medic globalChat format ["%1 has failed to come to revive %2.", name _medic, name _injured];
 			};
 			[_medic, _injured] call fnc_resetReviveState;
 			continue;
@@ -233,26 +233,14 @@ fnc_reviveLoop = {
 			};
 			if (!alive _medic || lifeState _medic == "INCAPACITATED") then {
 				if (!isNull _medic) then {
-					_medic globalChat format ["%1 was injured or died while reviving %2", name _medic, name _injured];
+					_medic globalChat format ["%1 was incapacitated or died while reviving %2.", name _medic, name _injured];
 				};
 				[_medic, _injured] call fnc_resetReviveState;
 				continue;
 			};
 
 			// SUCCESS: Revive and heal
-			_injured setUnconscious false;
-			{
-				_injured enableAI _x
-			} forEach ["MOVE", "ANIM"];
-			_injured setCaptive false;
-			_injured setDamage 0; // FULL heal
-			_injured setUnitPos "AUTO";
-			_injured playMoveNow "AmovPknlMstpSrasWrflDnon";
-
-			_injured setVariable ["revived", true, true];
-			if (!isNull _medic) then {
-				_medic globalChat format ["%1 has successfully heal %2", name _medic, name _injured];
-			};
+			[_medic, _injured] call fnc_handleHeal;
 		};
 		// Always reset states after attempt
 		[_medic, _injured] call fnc_resetReviveState;
@@ -269,39 +257,80 @@ fnc_reviveLoop = {
 };
 
 // ===============================
+// FUNCTION: Check if projectile is heavy explosive
+// ===============================
+fnc_isHeavyExplosive = {
+	params ["_projectile"];
+
+	if (_projectile isEqualTo "") exitWith {
+		false
+	};
+
+	private _projLower = toLower _projectile;
+
+	private _explosiveKeywords = [
+		"_he", "_shell", "_bomb", "_satchel", "_mine", "_rocket",
+		"gbu", "mk82", "mo_", "rpg", "at_", "_missile", "_howitzer",
+		"_mortar", "_demolition"
+	];
+
+	private _ignoreKeywords = [
+		"chemlight", "helmet", "wheel", "cheese" // safety words
+	];
+
+	{
+		if ((_projLower find _x) > -1) exitWith {
+			false
+		}; // Ignore takes priority
+	} forEach _ignoreKeywords;
+
+	{
+		if ((_projLower find _x) > -1) exitWith {
+			true
+		};
+	} forEach _explosiveKeywords;
+
+	false
+};
+
+// ===============================
 // FUNCTION: Handle damage
 // ===============================
 fnc_handleDamage = {
 	params ["_unit", "_selection", "_damage", "_source", "_projectile"];
-	private _newDamage = (_damage + damage _unit);
+	private _currentDamage = damage _unit;
+	private _newDamage = _currentDamage + _damage;
 
-	// if already unconscious, allow lethal hits to finish them
+	// Allow lethal finishers if already down
 	if (lifeState _unit == "INCAPACITATED") exitWith {
-		if ((_selection == "head" && _damage > 0.5) || _damage > 2) then {
-			_unit setDamage 1;
-		};
-		0
+		_damage
 	};
 
-	// Overkill or lethal headshot before incapacitation
-	if (_damage > 2) exitWith {
-		_unit setDamage 1;
-		0
+	// Instant kill for high-caliber headshots
+	if (_selection == "head" && _damage >= 0.85) exitWith {
+		1
 	};
 
-	// if the head is hit and damage is lethal, kill instantly
-	if (_selection == "head" && _damage > 0.5) exitWith {
-		_unit setDamage 1;  // Immediate death
-		0                   // Prevent further damage handling
+	private _isHeavyExplosive = [_projectile] call fnc_isHeavyExplosive;
+
+	if (_isHeavyExplosive) then {
+		private _dist = _unit distance _source;
+
+		if (_dist <= 3) exitWith {
+			1
+		}; // lethal
+		if (_dist <= 6) exitWith {
+			0.95 max _damage
+		}; // near-lethal
 	};
 
-	if (_newDamage >= 1) then {
+	// Incapacitate on near-lethal total damage
+	if (_newDamage >= 0.95) then {
 		// if the injured is in a vehicle or static weapon, remove them
 		if (!isNull objectParent _unit) then {
 			moveOut _unit;
 		};
 		// Make unit unconscious
-		_unit setDamage 0.9;
 		_unit setUnconscious true;
 		{
 			_unit disableAI _x
@@ -329,7 +358,7 @@ fnc_handleDamage = {
 			};
 		};
 
-		0
+		0.9
 	} else {
 		_damage
 	};
@@ -339,17 +368,60 @@ fnc_handleDamage = {
 // FUNCTION: Handle Heal
 // ===============================
 fnc_handleHeal = {
-	params ["_healer", "_patient", "_amount"];
+	params ["_medic", "_injured"];
 
-	_patient setDamage 0;
-	_patient setUnconscious false;
+	_injured setUnconscious false;
 	{
-		_patient enableAI _x
+		_injured enableAI _x
 	} forEach ["MOVE", "ANIM"];
-	_patient setCaptive false;
-	_patient setVariable ["revived", true, true];
-	_patient setUnitPos "AUTO";
-	_patient playMoveNow "AmovPknlMstpSrasWrflDnon";
+	_injured setCaptive false;
+	_injured setDamage 0; // FULL heal
+	_injured setUnitPos "AUTO";
+	_injured playMoveNow "AmovPknlMstpSrasWrflDnon";
+
+	// if revived by an enemy, drop the weapon become a captive
+	if (((side _medic) getFriend (side _injured)) < 0.6) then {
+		_medic globalChat format ["%1 has become captive", name _injured];
+		[_injured] call fnc_surrender;
+		[_injured] call fnc_dropAllWeapons;
+	};
+
+	_injured setVariable ["revived", true, true];
+	if (!isNull _medic) then {
+		_medic globalChat format ["%1 has successfully revive %2", name _medic, name _injured];
+	};
+};
+
+// ===============================
+// FUNCTION: drop All weapons
+// ===============================
+fnc_dropAllWeapons = {
+	params ["_unit"];
+	private _pos = getPosATL _unit;
+	private _holder = createVehicle ["GroundWeaponHolder", _pos, [], 0, "CAN_COLLIDE"];
+
+	// move all weapons to the ground
+	{
+		_unit removeWeapon _x;
+		_holder addWeaponCargoGlobal [_x, 1];
+	} forEach weapons _unit;
+
+	// move all magazines for those weapons
+	{
+		_unit removeMagazine _x;
+		_holder addMagazineCargoGlobal [_x, 1];
+	} forEach magazines _unit;
+};
+
+// ===============================
+// FUNCTION: Surrender
+// ===============================
+fnc_surrender = {
+	params ["_unit"];
+	_unit setCaptive true;              // AI won’t target them
+	_unit disableAI "MOVE";            // Prevent movement
+	_unit disableAI "ANIM";            // Prevent animation changes
+	_unit switchMove "Acts_AidlPsitMstpSsurWnonDnon01"; // Kneeling with hands on head
 };
 
 // ===============================
@@ -359,13 +431,11 @@ fnc_handleHeal = {
 	_x addEventHandler ["HandleDamage", {
 		_this call fnc_handleDamage
 	}];
-	_x addEventHandler ["HandleHeal", {
-		_this call fnc_handleHeal
-	}];
 	_x addEventHandler ["Killed", {
 		params ["_unit"];
 		_unit setVariable ["isInReviveProcess", false];
 		_unit setVariable ["beingRevived", false];
 		_unit setVariable ["reviving", false];
-	}]
+		_unit setVariable ["revived", false];
+	}];
 } forEach units _group;
