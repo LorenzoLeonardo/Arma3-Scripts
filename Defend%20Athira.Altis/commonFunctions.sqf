@@ -467,7 +467,7 @@ is_artillery_target_in_range =
 	private _maxArtilleryRange = 12000;
 	private _minArtilleryRange = 500;
 	{
-		if (_theLeader != _x) then {
+		if ((leader _group) != _x) then {
 			private _gun = vehicle _x;
 			private _thisGunPos = getPos _gun;
 			private _distance = sqrt(abs((_targetPos select 0) - (_thisGunPos select 0))^2 +
@@ -809,21 +809,21 @@ monitor_group_status =
 		} count units _group == 0
 	};
 
-	switch (_teamName) do {
-		case "Alpha": {
+	switch (toLower _groupID) do {
+		case "alpha": {
 			[west, "Base"] sideRadio "LostContactWithAlphaTeam";
 		};
-		case "Bravo": {
+		case "bravo": {
 			[west, "Base"] sideRadio "LostContactWithBravoTeam";
 		};
-		case "Charlie": {
+		case "charlie": {
 			[west, "Base"] sideRadio "LostContactWithCharlieTeam";
 		};
-		case "Delta": {
+		case "delta": {
 			[west, "Base"] sideRadio "LostContactWithDeltaTeam";
 		};
 		default {
-			hint format["%1 is not a valid squad name. Please use Alpha, Bravo, Charlie, Delta", _teamName];
+			hint format["%1 is not a valid squad name. Please use Alpha, Bravo, Charlie, Delta", _groupID];
 		};
 	};
 };
@@ -872,7 +872,7 @@ set_support_marker_and_radio = {
 	private _marker = createMarkerLocal [_markerName, position _unit];
 	_marker setMarkerSizeLocal [1, 1];
 	_marker setMarkerShapeLocal "ICON";
-	_marker setMarkerTypeLocal "respawn_para";
+	_marker setMarkerTypeLocal "mil_objective";
 	_marker setMarkerDirLocal 0;
 	_marker setMarkerTextLocal _markerText;
 
@@ -886,11 +886,11 @@ set_support_marker_and_radio = {
 			_unit sideRadio "RadioBravoWipedOut";
 		};
 		case "charlie":{
-			_marker setMarkerColorLocal "ColorYellow";
+			_marker setMarkerColorLocal "ColorGreen";
 			_unit sideRadio "RadioCharlieWipedOut";
 		};
 		case "delta": {
-			_marker setMarkerColorLocal "ColorOrange";
+			_marker setMarkerColorLocal "ColorYellow";
 			_unit sideRadio "RadioDeltaWipedOut";
 		};
 		default {
