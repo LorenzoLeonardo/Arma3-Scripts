@@ -14,7 +14,7 @@ switch (_caseoption) do
 		(leader (group player)) sideRadio "RadioGroundToPapaBearVictory";
 		sleep 10;
 		[west, "Base"] sideRadio "RadioPapaBearVictory";
-		sleep 10;
+		sleep 60;
 		["end1", false, true] call BIS_fnc_endMission;
 	};
 	default { hint "default" };
