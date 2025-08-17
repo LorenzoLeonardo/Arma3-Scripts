@@ -19,4 +19,3 @@ switch (_caseoption) do
 	};
 	default { hint "default" };
 };
-
