@@ -1,28 +1,178 @@
-#include "commonFunctions.sqf"
+#include "paraDropHelpers.sqf"
+#include "reviveSystem.sqf"
 
 params ["_group"];
 
 // Save original unit types and loadouts
-private _originalLoadouts = [_group] call save_original_loadouts;
+private _originalGroupTemplate = [_group] call fnc_saveOriginalGroupTemplates;
 private _totalUnits = count units _group;
 
-while { true } do {
-	waitUntil {
-		sleep 2;
-		private _aliveCount = {
-			alive _x && (lifeState _x != "INCAPACITATED")
-		} count units _group;
-		_aliveCount <= (_totalUnits / 3)
+fnc_getQuietUnit = {
+	params ["_group"];
+
+	private _leader = leader _group;
+	private _quietUnit = objNull;
+
+	{
+		if ((alive _x) && !isPlayer _x && (_x != _leader) && !(_x getVariable ["isRadioBusy", false])) exitWith {
+			_quietUnit = _x;
+		};
+	} forEach (units _group);
+
+	if (isNull _quietUnit) then {
+		_quietUnit = leader _group;
 	};
+	_quietUnit
+};
 
-	private _radioUnit = [_group] call get_quiet_unit;
-	private _markerName = [_radioUnit, groupId _group] call set_support_marker_and_radio;
+missionNamespace setVariable [CALLBACK_PARA_DROP_STATUS, {
+	params ["_requestor", "_responder", "_phase"];
+	private _groupCallerID = groupId (group _requestor);
+	switch (_phase) do {
+		case PARA_DROP_PHASE_ACKNOWLEDGED: {
+			hint format ["Requesting Reinforcements: %1", _groupCallerID];
+			_responder sideRadio "SupportOnWayStandBy";
+		};
+		case PARA_DROP_PHASE_DROPPING: {
+			_responder sideRadio "RadioAirbaseDropPackage";
+		};
+		case PARA_DROP_PHASE_DONE: {
+			private _quietUnit = [group _requestor] call fnc_getQuietUnit;
+			switch (toLower _groupCallerID) do {
+				case "alpha": {
+					_quietUnit sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportAlpha";
+				};
+				case "bravo": {
+					_quietUnit sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportBravo";
+				};
+				case "charlie": {
+					_quietUnit sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportCharlie";
+				};
+				case "delta": {
+					_quietUnit sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportDelta";
+				};
+				case "echo": {
+					_quietUnit sideRadio "WeLinkedUpWithTheReinforcementsThanksForTheSupportEcho";
+				};
+				default {
+					_quietUnit sideRadio "Reinforcements have linked up.";
+				};
+			};
+		};
+		default {
+			hint "Unsupported phase!";
+		};
+	};
+}];
 
-	// Signal: Flare & Smoke
-	private _flrObj = "F_40mm_Red" createVehicle (_radioUnit modelToWorld [0, 0, 200]);
-	_flrObj setVelocity [0, 0, -1];
-	"SmokeShellRed" createVehicle (position _radioUnit);
+fnc_getAssignedPlane = {
+	private _teamName = _this select 0;
+	private _planeAssigned="";
+	switch (toLower _teamName) do {
+		case "alpha": {
+			_planeAssigned = "November 1";
+		};
+		case "bravo": {
+			_planeAssigned = "November 2";
+		};
+		case "charlie": {
+			_planeAssigned = "November 3";
+		};
+		case "delta": {
+			_planeAssigned = "November 4";
+		};
+		case "echo": {
+			_planeAssigned = "November 5";
+		};
+		default {
+			hint format["%1 is not a valid squad name. Please use Alpha, Bravo, Charlie, Delta", _teamName];
+		};
+	};
+	_planeAssigned
+};
 
-	// call support
-	[_radioUnit, 200, 300, 8000, 400, _markerName, _originalLoadouts] call call_support_team;
+fnc_setSupportMarkerAndRadio = {
+	params ["_unit", "_grpName"];
+	private _markerName = format ["paraDropMarker_%1", diag_tickTime];
+	private _markerText = format ["Requesting Paradrop Support (%1)", _grpName];
+	private _marker = createMarkerLocal [_markerName, position _unit];
+	_marker setMarkerSizeLocal [1, 1];
+	_marker setMarkerShapeLocal "ICON";
+	_marker setMarkerTypeLocal "mil_objective";
+	_marker setMarkerDirLocal 0;
+	_marker setMarkerTextLocal _markerText;
+
+	switch (toLower _grpName) do {
+		case "alpha": {
+			_marker setMarkerColorLocal "ColorBlue";
+			_unit sideRadio "RadioAlphaWipedOut";
+		};
+		case "bravo": {
+			_marker setMarkerColorLocal "ColorRed";
+			_unit sideRadio "RadioBravoWipedOut";
+		};
+		case "charlie":{
+			_marker setMarkerColorLocal "ColorGreen";
+			_unit sideRadio "RadioCharlieWipedOut";
+		};
+		case "delta": {
+			_marker setMarkerColorLocal "ColorYellow";
+			_unit sideRadio "RadioDeltaWipedOut";
+		};
+		case "echo": {
+			_marker setMarkerColorLocal "ColorOrange";
+			_unit sideRadio "RadioEchoWipedOut";
+		};
+		default {
+			_marker setMarkerColorLocal "ColorWhite";
+			_unit sideRadio "RadioUnknownGroupWipedOut";
+		};
+	};
+	_markerName
+};
+
+[_group, _originalGroupTemplate, _totalUnits] spawn {
+	params ["_group", "_originalGroupTemplate", "_totalUnits"];
+	sleep 5;
+
+	while { true } do {
+		waitUntil {
+			sleep 2;
+			private _aliveCount = {
+				alive _x && (lifeState _x != "INCAPACITATED")
+			} count units _group;
+			_aliveCount <= (_totalUnits / 3)
+		};
+
+		private _radioUnit = [_group] call fnc_getQuietUnit;
+		private _paraDropMarkerName = [_radioUnit, groupId _group] call fnc_setSupportMarkerAndRadio;
+
+		// Signal: Flare & Smoke
+		private _flrObj = "F_40mm_Red" createVehicle (_radioUnit modelToWorld [0, 0, 200]);
+		_flrObj setVelocity [0, 0, -1];
+		"SmokeShellRed" createVehicle (position _radioUnit);
+
+		// Plane's cruising altitude
+		private _planeAltitude = 200;
+		// Plan starts at 8, 000 meters south of the drop zone
+		private _yDistance = 8000;
+		// Plane's speed
+		private _planeSpeed = 300;
+		// Radius of from the center of the drop where to start dropping troops.
+		private _yDroppingRadius = 400;
+		// Get Assigned plane's name
+		private _planeGroupName = [groupId _group] call fnc_getAssignedPlane;
+		private _callerPosition = getMarkerPos _paraDropMarkerName;
+		// Initial location of the plane
+		private _initLocation = [_callerPosition select 0, (_callerPosition select 1) - _yDistance, _planeAltitude];
+		// Create the plane
+		private _plane = [west, "CUP_B_US_Pilot", "CUP_B_C47_USA", _callerPosition, _initLocation, _planeSpeed, _planeGroupName] call fnc_initializePlane;
+		// Create group to be drop from Template or original group. This can be an arbitrary group too.
+		private _groupToBeDropped = [west, _initLocation, _plane, _originalGroupTemplate] call fnc_createGroupFromTemplate;
+		// Add reviving characteristic of the newly created group.
+		[_groupToBeDropped] execVM "reviveSystem.sqf";
+		// Start executing the paradrop system.
+		[_radioUnit, _plane, _planeAltitude, _yDroppingRadius, _paraDropMarkerName, _groupToBeDropped] call fnc_executeParaDrop;
+		deleteMarkerLocal _paraDropMarkerName;
+	};
 };
