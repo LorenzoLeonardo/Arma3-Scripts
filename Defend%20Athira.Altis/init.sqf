@@ -41,7 +41,7 @@
 	private _guns = (units papabear) select {
 		!isNull objectParent _x && (objectParent _x isKindOf "StaticWeapon")
 	};
-	private _grpCallArty = [alpha, bravo, charlie, delta];
+	private _grpCallArty = [alpha, bravo, charlie];
 	private _val = 0;
 	{
 		private _index = _val % (count _grpCallArty);
