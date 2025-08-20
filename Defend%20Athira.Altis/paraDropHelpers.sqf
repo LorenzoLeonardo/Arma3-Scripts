@@ -4,43 +4,32 @@
 #define PARA_DROP_PHASE_DONE "Done"
 
 fnc_callBackParaDropStatus = {
-	params ["_requestor", "_responder", "_phase"];
+	params ["_requestor", "_responder", "_paraDropGroup", "_phase"];
 
 	private _callBack = missionNamespace getVariable [CALLBACK_PARA_DROP_STATUS, nil];
 	if (! isNil "_callBack") then {
-		[_requestor, _responder, _phase] call (missionNamespace getVariable CALLBACK_PARA_DROP_STATUS);
+		[_requestor, _responder, _paraDropGroup, _phase] call (missionNamespace getVariable CALLBACK_PARA_DROP_STATUS);
 	};
 };
 
 fnc_executeParaDrop = {
-	params ["_caller", "_plane", "_planeAltitude", "_yDroppingRadius", "_paraDropMarkerName", "_groupToBeDropped"];
+	params ["_caller", "_plane", "_planeAltitude", "_yDroppingRadius", "_dropDropLocation", "_groupToBeDropped"];
 
-	private _groupCaller = group _caller;
-	private _callerPosition = getMarkerPos _paraDropMarkerName;
-	private _groupBeforeJoin = units _groupToBeDropped;
-	private _groupCallerID = groupId _groupCaller;
-
-	[_caller, driver _plane, PARA_DROP_PHASE_ACKNOWLEDGED] call fnc_callBackParaDropStatus;
-	_groupToBeDropped copyWaypoints _groupCaller;
-
-	// Wait until plane reaches drop zone
-	[_plane, _callerPosition, _yDroppingRadius, _planeAltitude] call fnc_waitUntilReachDropzone;
+	// save the original backpack after swapping for a parachute backpack.
 	private _backPack = [_groupToBeDropped] call fnc_setParachuteBackpack;
 
-	// drop troops
-	[_caller, driver _plane, PARA_DROP_PHASE_DROPPING] call fnc_callBackParaDropStatus;
+	// acknowledge the request for para drop.
+	[_caller, driver _plane, _groupToBeDropped, PARA_DROP_PHASE_ACKNOWLEDGED] call fnc_callBackParaDropStatus;
 
+	// wait until plane reaches drop zone
+	[_plane, _dropDropLocation, _yDroppingRadius, _planeAltitude] call fnc_waitUntilReachDropzone;
+
+	// drop troops
+	[_caller, driver _plane, _groupToBeDropped, PARA_DROP_PHASE_DROPPING] call fnc_callBackParaDropStatus;
 	[_groupToBeDropped, _plane, _backPack, 0.5] call fnc_ejectFromPlane;
 
-	// join or rename group
-	if (({
-		alive _x
-	} count units _groupCaller) == 0) then {
-		_groupToBeDropped setGroupId [_groupCallerID];
-	} else {
-		(units _groupToBeDropped) join _groupCaller;
-		[_caller, driver _plane, PARA_DROP_PHASE_DONE] call fnc_callBackParaDropStatus;
-	};
+	// ejecting from plane done
+	[_caller, driver _plane, _groupToBeDropped, PARA_DROP_PHASE_DONE] call fnc_callBackParaDropStatus;
 
 	[_groupToBeDropped] call fnc_waitUntilGroupOnGround;
 };
@@ -160,9 +149,10 @@ fnc_setPlaneWayPoints = {
 	// initialize plane in the right altitude
 	_plane flyInHeightASL [(_initLocation select 2), (_initLocation select 2), (_initLocation select 2)];
 	_plane setVelocity [(sin (direction _plane) * _planeSpeed), ( cos (direction _plane) * _planeSpeed), 0];
+
 	// set plane waypoint yDistance ahead of the dropzone position.
 	_planeWPPos = [ _dropPosition select 0, (_dropPosition select 1) - _distanceBeforeAndAfterDroplocation, _planeAltitude];
-	[_group, _planeWPPos, "FULL", "MOVE", "DIAMOND", "CARELESS", 0] call fnc_createWaypoint;
+	[_group, _planeWPPos, "LIMITED", "MOVE", "DIAMOND", "CARELESS", 0] call fnc_createWaypoint;
 
 	// set plane waypoint at exact location of the drop zone.
 	_planeWPPos = [ _dropPosition select 0, (_dropPosition select 1), _dropPosition select 2];
@@ -232,4 +222,27 @@ fnc_waitUntilGroupOnGround = {
 		} count units _grp;
 		_onGround >= (count units _grp * 0.7)
 	};
+};
+
+fnc_loadGroupToPlane = {
+	params ["_plane", "_group"];
+	if (isNull _plane || isNull _group || !alive _plane) exitWith {
+		false
+	};
+
+	private _freeSeatCount = {
+		isNull (_x select 0)
+	} count (fullCrew [_plane, "cargo", true]);
+
+	private _groupCount = count (units _group);
+
+	if (_groupCount > _freeSeatCount) exitWith {
+		false
+	};
+
+	{
+		_x moveInCargo _plane;
+	} forEach (units _group);
+
+	true
 };

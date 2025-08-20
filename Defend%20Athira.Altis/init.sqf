@@ -26,7 +26,7 @@
 	{
 		[_x] execVM "reviveSystem.sqf";
 		if (_x != papabear) then {
-            [_x] execVM "checkCompanyStatus.sqf";
+            [_x, papabear] execVM "checkCompanyStatus.sqf";
 			[_x] execVM "huntRemainingEnemies.sqf";
 		};
 	} forEach _teams;
