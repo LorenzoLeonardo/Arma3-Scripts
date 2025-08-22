@@ -1,7 +1,5 @@
 [] spawn {
 	// Put delay here to make sure all variable where initialized.
-    systemChat "Waiting for groups...";
-
     waitUntil {
         !(isNil "alpha") &&
         !(isNil "bravo") &&
@@ -19,8 +17,6 @@
 	delta setGroupId ["Delta"];
 	papabear setGroupId ["Papa Bear"];
 	november setGroupId ["November"];
-
-    systemChat "All groups initialized!";
 
 	private _teams = [alpha, bravo, charlie, delta, papabear];
 	{
@@ -45,8 +41,9 @@
 	private _val = 0;
 	{
 		private _index = _val % (count _grpCallArty);
-		[objectParent _x, _grpCallArty select _index, 8, 50, 8, 60, false, 75] execVM "unifiedArtilleryFire.sqf";
+		[objectParent _x, _grpCallArty select _index, 8, 50, 8, 60, false, 100] execVM "unifiedArtilleryFire.sqf";
 		[objectParent _x, papabear] execVM "manageGunCrew.sqf";
+		[objectParent _x] execVM "trackProjectile.sqf";
 		_val = _val + 1;
 	} forEach _guns;
 };

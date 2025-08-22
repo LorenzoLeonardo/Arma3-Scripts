@@ -52,12 +52,6 @@ fnc_removeCargoFromGroup = {
 	{
 		if (tolower((assignedVehicleRole _x) select 0) == "cargo") then {
 			[_x] joinSilent _replacementGrp;
-			_x disableAI "MOVE";
-			_x disableAI "AUTOCOMBAT";
-			_x disableAI "TARGET";
-			_x disableAI "FSM";
-			_x assignAsCargo _chopper;
-			_x moveInCargo _chopper;
 		};
 	} forEach (crew _chopper);
 };
@@ -110,7 +104,8 @@ fnc_engageEnemies = {
 		alive _chopper &&
 		(({
 			alive _x
-		} count crew _chopper) > 1)
+		} count units (group _chopper)) > 1) &&
+		canMove _chopper
 	} do {
 		_heliPilot = driver _chopper;
 		_aiPilotGroup = group _heliPilot;
@@ -139,7 +134,11 @@ fnc_engageEnemies = {
 			] call fnc_createMarker;
 
 			waitUntil {
-				(!alive _target) || (lifeState _target == "INCAPACITATED")
+				(!alive _target) || (lifeState _target == "INCAPACITATED") ||
+				(({
+					alive _x
+				} count units (group _chopper)) <= 1) ||
+				!(canMove _chopper)
 			};
 			deleteMarker _markerName;
 		};
@@ -151,6 +150,7 @@ fnc_flyInChopper = {
 	params ["_chopper", "_heliPilot", "_aiPilotGroup", "_sideEnemy", "_basePos", "_rtbAltitude"];
 
 	private _threshHoldCount = floor (([_sideEnemy] call fnc_getEnemyCount) * 0.75);
+	_chopper allowCrewInImmobile true;
 
 	// Remove cargo from group
 	[_chopper] call fnc_removeCargoFromGroup;
@@ -189,10 +189,11 @@ fnc_flyInChopper = {
 			// Engage loop
 			[_chopper, _sideEnemy] call fnc_engageEnemies;
 
-			if (alive _chopper) then {
+			if (alive _chopper && canMove _chopper) then {
 				_heliPilot = driver _chopper;
 				_aiPilotGroup = group _heliPilot;
 				[_aiPilotGroup] call fnc_clearWaypoints;
+				_heliPilot sideRadio "RadioHeliMissionAccomplished";
 				private _markerName = [
 					_basePos,
 					"mil_end",
@@ -241,10 +242,6 @@ fnc_swapPositions = {
 	// Place them
 	[_unit, _veh, _unitNewRole, _unitTurretSeat] call fnc_moveToRole;
 	[_replacement, _veh, _replacementNewRole, _replacementTurretSeat] call fnc_moveToRole;
-
-	{
-		_replacement enableAI _x
-	} forEach ["MOVE", "AUTOCOMBAT", "TARGET", "FSM"];
 };
 
 // find a valid replacement matching any of the allowed role types
@@ -316,16 +313,22 @@ fnc_startDamageHandlers = {
 				lifeState _unit == "INCAPACITATED"
 			}
 			) then {
-				private _veh = vehicle _unit;
-				private _roleType = toLower ((assignedVehicleRole _unit) select 0);
+				if (!(missionNamespace getVariable["isStillSwapping", false])) then {
+					missionNamespace setVariable["isStillSwapping", true, true];
+					private _veh = vehicle _unit;
+					private _roleType = toLower ((assignedVehicleRole _unit) select 0);
 
-				switch (_roleType) do {
-					case "driver": {
-						[_unit, _veh] call fnc_handleDriverDown
+					switch (_roleType) do {
+						case "driver": {
+							[_unit, _veh] call fnc_handleDriverDown;
+						};
+						case "turret": {
+							[_unit, _veh] call fnc_handleTurretDown;
+						};
 					};
-					case "turret": {
-						[_unit, _veh] call fnc_handleTurretDown
-					};
+					missionNamespace setVariable["isStillSwapping", false, true];
+				} else {
+					_newDamage = 0;
 				};
 			};
 			_newDamage
@@ -336,11 +339,11 @@ fnc_startDamageHandlers = {
 // When all units are dead, destroy the heli
 fnc_startMonitoringHeliStatus = {
 	params ["_chopper"];
-
+	private _heliUnits = units (group _chopper);
 	waitUntil {
 		({
 			alive _x
-		} count crew _chopper == 0) || !(alive _chopper)
+		} count _heliUnits == 0) || !(alive _chopper) || !(canMove _chopper)
 	};
 	_chopper setDamage 1;
 

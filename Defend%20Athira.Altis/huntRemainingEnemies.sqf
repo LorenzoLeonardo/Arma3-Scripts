@@ -25,13 +25,17 @@ private _initialEnemies = allUnits select {
 private _initialCount = count _initialEnemies;
 if (_initialCount <= 0) exitWith {};
 
-// Wait until enemy count drops to 50% or less
+fnc_getEnemyCount = {
+	params ["_sideEnemy"];
+	count (allUnits select {
+		side _x == _sideEnemy && alive _x
+	})
+};
+
+// Wait until enemy count drops to 75% or less
+private _threshHoldCount = floor (([_enemySide] call fnc_getEnemyCount) * 0.75);
 waitUntil {
-	sleep 5;
-	private _aliveCount = {
-		side _x == _enemySide && alive _x
-	} count allUnits;
-	(_aliveCount > 0 && _aliveCount <= (_initialCount / 2)) || (_aliveCount == 0)
+	([_enemySide] call fnc_getEnemyCount) <= _threshHoldCount
 };
 
 // exit early if no enemies left
@@ -39,7 +43,11 @@ if ({
 	side _x == _enemySide && alive _x
 } count allUnits == 0) exitWith {};
 
-[west, "Base"] sideRadio "RadioPapaBearToAllUnitsClearArea";
+// Radio only once
+if (!(missionNamespace getVariable["DoneRadioRadioPapaBearToAllUnitsClearArea", false])) then {
+	[west, "Base"] sideRadio "RadioPapaBearToAllUnitsClearArea";
+	missionNamespace setVariable["DoneRadioRadioPapaBearToAllUnitsClearArea", true, true];
+};
 
 // Dynamic hunt loop
 while {
@@ -72,13 +80,15 @@ while {
 		};
 		hint format ["Objective Updated: Hunt %1 remaining enemies.", count _aliveEnemies];
 		// Wait until that specific target is dead before moving on
+		private _timeNow = time;
 		waitUntil {
 			sleep 2;
 			!alive _target ||
 			(lifeState _target == "INCAPACITATED") ||
 			(({
 				alive _x && side _x == _enemySide
-			} count allUnits) == 0)
+			} count allUnits) == 0) ||
+			(time > (_timeNow + 60))
 		};
 	};
 };
