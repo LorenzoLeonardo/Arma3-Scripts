@@ -33,6 +33,7 @@
 
 	[tank] execVM "manageJeepCrew.sqf";
 	[heli] execVM "flyInChopper.sqf";
+	[getMarkerPos "captives_area", 280] execVM "moveCaptives.sqf";
 
 	private _guns = (units papabear) select {
 		!isNull objectParent _x && (objectParent _x isKindOf "StaticWeapon")
@@ -41,7 +42,7 @@
 	private _val = 0;
 	{
 		private _index = _val % (count _grpCallArty);
-		[objectParent _x, _grpCallArty select _index, 8, 50, 8, 60, false, 100] execVM "unifiedArtilleryFire.sqf";
+		[objectParent _x, _grpCallArty select _index, 8, 50, 8, 60, true, 150] execVM "unifiedArtilleryFire.sqf";
 		[objectParent _x, papabear] execVM "manageGunCrew.sqf";
 		[objectParent _x] execVM "trackProjectile.sqf";
 		_val = _val + 1;
