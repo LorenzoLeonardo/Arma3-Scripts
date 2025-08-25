@@ -6,17 +6,21 @@
         !(isNil "charlie") &&
         !(isNil "delta") &&
         !(isNil "papabear") &&
-        !(isNil "november") &&
+        !(isNil "november1") &&
+		!(isNil "november2") &&
 		!(isNil "tank") &&
-		!(isNil "heli")
+		!(isNil "heli1") &&
+		!(isNil "heli2")
     };
+	hint "Initialization OK!";
 
 	alpha setGroupId ["Alpha"];
 	bravo setGroupId ["Bravo"];
 	charlie setGroupId ["Charlie"];
 	delta setGroupId ["Delta"];
 	papabear setGroupId ["Papa Bear"];
-	november setGroupId ["November"];
+	november1 setGroupId ["November (1)"];
+	november2 setGroupId ["November (2)"];
 
 	private _teams = [alpha, bravo, charlie, delta, papabear];
 	{
@@ -32,7 +36,9 @@
 	} forEach ["lose1", "lose2", "end1"];
 
 	[tank] execVM "manageJeepCrew.sqf";
-	[heli] execVM "flyInChopper.sqf";
+	[heli1, 80, 0.75] execVM "flyInChopper.sqf";
+	[heli2, 120, 0.5] execVM "flyInChopper.sqf";
+
 	[getMarkerPos "captives_area", 280] execVM "moveCaptives.sqf";
 
 	private _guns = (units papabear) select {

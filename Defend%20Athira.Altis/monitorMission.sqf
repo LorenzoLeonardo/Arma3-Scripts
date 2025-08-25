@@ -15,7 +15,7 @@ switch (_caseoption) do
 		sleep 10;
 		[west, "Base"] sideRadio "RadioPapaBearVictory";
 		sleep 60;
-		["end1", false, true] call BIS_fnc_endMission;
+		["end1", true, true] call BIS_fnc_endMission;
 	};
 	default { hint "default" };
 };
