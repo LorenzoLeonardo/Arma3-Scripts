@@ -127,6 +127,7 @@ fnc_setSupportMarkerAndRadio = {
 fnc_joinReinforcementToGroup = {
 	params ["_group", "_groupCallerID", "_reinforcements"];
 	private _quietUnit = [_group] call fnc_getQuietUnit;
+	_quietUnit setVariable ["isRadioBusy", true];
 	if (({
 		alive _x
 	} count units _group) == 0) then {
@@ -156,12 +157,35 @@ fnc_joinReinforcementToGroup = {
 			_quietUnit sideRadio "Reinforcements have linked up.";
 		};
 	};
+	_quietUnit setVariable ["isRadioBusy", false];
 	_group
+};
+
+fnc_spawnDistressSmokeSignal = {
+	params ["_radioUnit"];
+	private _pos = position _radioUnit;
+	private _posFlare = _pos vectorAdd [0, 0, 150];
+	{
+		private _flrObj = "F_40mm_red" createVehicle _posFlare;
+		_flrObj setVelocity [0, 0, -1];
+		"SmokeShellRed" createVehicle _pos;
+		sleep 30;
+	} forEach [1, 2, 3];
+};
+
+fnc_isGroupAlive = {
+	params ["_group"];
+	private _aliveCount = {
+		alive _x && {
+			lifeState _x != "INCAPACITATED"
+		}
+	} count (units _group);
+	_aliveCount > 0
 };
 
 [_group, _originalGroupTemplate, _totalUnits, _papaBear] spawn {
 	params ["_group", "_originalGroupTemplate", "_totalUnits", "_papaBear"];
-	sleep 5;
+	private _groupCallerID = groupId _group;
 
 	while { true } do {
 		waitUntil {
@@ -169,16 +193,16 @@ fnc_joinReinforcementToGroup = {
 			private _aliveCount = {
 				alive _x && (lifeState _x != "INCAPACITATED")
 			} count units _group;
-			_aliveCount <= (_totalUnits / 3)
+			_aliveCount <= (_totalUnits / 4)
+		};
+
+		if (!([_group] call fnc_isGroupAlive)) exitWith {
+			hint format ["Lost contact with %1 team!", _groupCallerID];
 		};
 
 		private _radioUnit = [_group] call fnc_getQuietUnit;
-		private _groupCallerID = groupId _group;
 		// Signal: Flare & Smoke
-		private _flrObj = "F_40mm_Red" createVehicle (_radioUnit modelToWorld [0, 0, 200]);
-
-		_flrObj setVelocity [0, 0, -1];
-		"SmokeShellRed" createVehicle (position _radioUnit);
+		[_radioUnit] spawn fnc_spawnDistressSmokeSignal;
 
 		private _paraDropMarkerName = [_radioUnit, groupId _group, _papaBear] call fnc_setSupportMarkerAndRadio;
 		// Plane's cruising altitude
@@ -214,4 +238,34 @@ fnc_joinReinforcementToGroup = {
 		hint format ["Reinforcements has arrived for %1.", _groupCallerID];
 		deleteMarkerLocal _paraDropMarkerName;
 	};
+};
+
+[_group, _papaBear] spawn {
+	params ["_group", "_papaBear"];
+	private _groupCallerID = groupId _group;
+	waitUntil {
+		!([_group] call fnc_isGroupAlive)
+	};
+	private _hqUnit = [_papaBear] call fnc_getQuietUnit;
+	_hqUnit setVariable ["isRadioBusy", true];
+
+	switch (toLower _groupCallerID) do {
+		case "alpha": {
+			_hqUnit sideRadio "LostContactWithAlphaTeam";
+		};
+		case "bravo": {
+			_hqUnit sideRadio "LostContactWithBravoTeam";
+		};
+		case "charlie": {
+			_hqUnit sideRadio "LostContactWithCharlieTeam";
+		};
+		case "delta": {
+			_hqUnit sideRadio "LostContactWithDeltaTeam";
+		};
+		default {
+			_hqUnit sideRadio "LostContactWithUnknownTeam";
+		};
+	};
+	sleep 5;
+	_hqUnit setVariable ["isRadioBusy", false];
 };

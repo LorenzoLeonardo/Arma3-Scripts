@@ -20,6 +20,13 @@ class CfgDebriefing
 		subtitle = "You have died";
 		description = "";
 	};
+
+	class loading_error
+	{
+		title = "Initialization Error";
+		subtitle = "Error loading game . . .";
+		description = "";
+	};
 };
 
 class CfgRadio
