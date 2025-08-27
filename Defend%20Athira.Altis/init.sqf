@@ -1,3 +1,56 @@
+fnc_getGunsWithType = {
+	params ["_grp", "_kind"];
+	(units _grp) select {
+		!isNull objectParent _x && (objectParent _x isKindOf _kind)
+	}
+};
+
+{
+	_x addEventHandler ["Killed", {
+		params ["_unit", "_killer", "_instigator"];
+
+		private _unitSide = side (group _unit);
+
+		private _killerSide = if (isNull _instigator) then {
+			side (group _killer)
+		} else {
+			side (group _instigator)
+		};
+
+		private _unitName = name _unit;
+		private _killerName = if (isNull _instigator) then {
+			name _killer
+		} else {
+			name _instigator
+		};
+
+		private _unitGroup = if (isNull group _unit) then {
+			"No Group"
+		} else {
+			groupId (group _unit)
+		};
+		private _killerGroup = if (isNull _instigator) then {
+			if (isNull group _killer) then {
+				"No Group"
+			} else {
+				groupId (group _killer)
+			}
+		} else {
+			if (isNull group _instigator) then {
+				"No Group"
+			} else {
+				groupId (group _instigator)
+			}
+		};
+
+		systemChat format [
+			"[%1 | %2] %3 killed [%4 | %5] %6",
+			_killerSide, _killerGroup, _killerName,
+			_unitSide, _unitGroup, _unitName
+		];
+	}];
+} forEach allUnits;
+
 [] spawn {
 	// Put delay here to make sure all variable where initialized.
 	private _time = time;
@@ -45,7 +98,7 @@
 	{
 		[_x, papabear] execVM "checkCompanyStatus.sqf";
 		if (_x != delta) then {
-			[_x] execVM "huntRemainingEnemies.sqf";
+			[_x, 0.5] execVM "huntRemainingEnemies.sqf";
 		};
 	} forEach _teams;
 
@@ -59,7 +112,7 @@
 	{
 		private _index = _val % (count _grpCallArty);
 		[objectParent _x, _grpCallArty select _index, 3, 50, 8, 5, false, 75] execVM "unifiedArtilleryFire.sqf";
-		[objectParent _x, true] execVM "trackProjectile.sqf";
+		[objectParent _x, false] execVM "trackProjectile.sqf";
 		_val = _val + 1;
 	} forEach _guns;
 
@@ -78,12 +131,11 @@
 		_x setCombatMode "RED";
 	} forEach units delta;
 
+	sleep 3;
 	(leader papabear) sideRadio "RadioPapaBearDefendTheCityWithArtillerySupport";
-};
+	["TaskAssigned", ["Defend Athira", "Defend this city at all cost."]] call BIS_fnc_showNotification;
 
-fnc_getGunsWithType = {
-	params ["_grp", "_kind"];
-	(units _grp) select {
-		!isNull objectParent _x && (objectParent _x isKindOf _kind)
-	}
-}
+	//TaskFailed
+	//TaskAssigned
+	//TaskSucceeded
+};
