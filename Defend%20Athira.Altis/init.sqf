@@ -86,7 +86,7 @@ fnc_getGunsWithType = {
 	november1 setGroupId ["November (1)"];
 	november2 setGroupId ["November (2)"];
 
-	private _teams = [alpha, bravo, charlie, delta, echo_mech];
+	private _teams = [alpha, bravo, charlie, echo_mech];
 	private _special = [papabear];
 
 	// Everyone runs revive
@@ -96,8 +96,8 @@ fnc_getGunsWithType = {
 
 	// Only regular teams run the extra scripts
 	{
-		[_x, papabear] execVM "checkCompanyStatus.sqf";
 		if (_x != delta) then {
+			[_x, papabear] execVM "checkCompanyStatus.sqf";
 			[_x, 0.5] execVM "huntRemainingEnemies.sqf";
 		};
 	} forEach _teams;
@@ -108,12 +108,11 @@ fnc_getGunsWithType = {
 
 	private _guns = [papabear, "StaticWeapon"] call fnc_getGunsWithType;
 	private _grpCallArty = [alpha, bravo, charlie, delta];
-	private _val = 0;
 	{
-		private _index = _val % (count _grpCallArty);
-		[objectParent _x, _grpCallArty select _index, 3, 50, 8, 5, false, 75] execVM "unifiedArtilleryFire.sqf";
+		private _index = _forEachIndex % (count _grpCallArty);
+
+		[objectParent _x, _grpCallArty select _index, 12, 50, 8, 5, true, 75] execVM "unifiedArtilleryFire.sqf";
 		[objectParent _x, false] execVM "trackProjectile.sqf";
-		_val = _val + 1;
 	} forEach _guns;
 
 	[tank] execVM "manageJeepCrew.sqf";
@@ -126,7 +125,6 @@ fnc_getGunsWithType = {
 		_x disableAI "COVER";
 		_x disableAI "SUPPRESSION";
 		_x setUnitPos "UP";
-		_x setUnitPosWeak "MIDDLE";
 		_x setBehaviour "COMBAT";
 		_x setCombatMode "RED";
 	} forEach units delta;
@@ -135,7 +133,7 @@ fnc_getGunsWithType = {
 	(leader papabear) sideRadio "RadioPapaBearDefendTheCityWithArtillerySupport";
 	["TaskAssigned", ["Defend Athira", "Defend this city at all cost."]] call BIS_fnc_showNotification;
 
-	//TaskFailed
-	//TaskAssigned
-	//TaskSucceeded
+	// TaskFailed
+	// TaskAssigned
+	// TaskSucceeded
 };
