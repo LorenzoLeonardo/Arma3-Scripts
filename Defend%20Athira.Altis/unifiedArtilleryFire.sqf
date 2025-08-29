@@ -299,17 +299,44 @@ fnc_getCluster = {
 // =========================
 fnc_getClusterCenter = {
 	params ["_cluster"];
-	if ((count _cluster) == 0) exitWith {
+
+	if (_cluster isEqualTo []) exitWith {
 		[0, 0, 0]
 	};
+
+	// --- step 1: Compute centroid (average)
 	private _sumX = 0;
 	private _sumY = 0;
+	private _sumZ = 0;
+
 	{
-		private _pos = getPos _x;
+		private _pos = getPosASL _x;
 		_sumX = _sumX + (_pos select 0);
-		_sumY = _sumY + (_pos select 1)
+		_sumY = _sumY + (_pos select 1);
+		_sumZ = _sumZ + (_pos select 2);
 	} forEach _cluster;
-	[_sumX / (count _cluster), _sumY / (count _cluster), 0]
+
+	private _center = [
+		_sumX / (count _cluster),
+		_sumY / (count _cluster),
+		_sumZ / (count _cluster)
+	];
+
+	// --- step 2: find the unit nearest to that centroid
+	private _nearest = objNull;
+	private _nearestDist = 1e10;
+
+	{
+		private _pos = getPosASL _x;
+		private _dist = _pos vectorDistance _center;
+		if (_dist < _nearestDist) then {
+			_nearest = _x;
+			_nearestDist = _dist;
+		};
+	} forEach _cluster;
+
+	// --- step 3: Return position of that nearest unit
+	getPosASL _nearest
 };
 
 fnc_getIndexOfGroup = {

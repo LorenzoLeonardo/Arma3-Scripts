@@ -1,7 +1,16 @@
 fnc_getGunsWithType = {
 	params ["_grp", "_kind"];
 	(units _grp) select {
-		!isNull objectParent _x && (objectParent _x isKindOf _kind)
+		!isNull objectParent _x && {
+			private _veh = objectParent _x;
+			if (typeName _kind == "ARRAY") then {
+				_kind findIf {
+					_veh isKindOf _x
+				} > -1
+			} else {
+				_veh isKindOf _kind
+			};
+		}
 	}
 };
 
@@ -86,7 +95,7 @@ fnc_getGunsWithType = {
 	november1 setGroupId ["November (1)"];
 	november2 setGroupId ["November (2)"];
 
-	private _teams = [alpha, bravo, charlie, echo_mech];
+	private _teams = [alpha, bravo, charlie, delta, echo_mech];
 	private _special = [papabear];
 
 	// Everyone runs revive
@@ -106,13 +115,13 @@ fnc_getGunsWithType = {
 		[_x] execVM "monitorMission.sqf";
 	} forEach ["lose1", "lose2", "end1"];
 
-	private _guns = [papabear, "StaticWeapon"] call fnc_getGunsWithType;
+	private _guns = [papabear, ["StaticMortar", "StaticWeapon"]] call fnc_getGunsWithType;
 	private _grpCallArty = [alpha, bravo, charlie, delta];
 	{
 		private _index = _forEachIndex % (count _grpCallArty);
 
-		[objectParent _x, _grpCallArty select _index, 12, 50, 8, 5, true, 75] execVM "unifiedArtilleryFire.sqf";
-		[objectParent _x, false] execVM "trackProjectile.sqf";
+		[objectParent _x, _grpCallArty select _index, 12, 50, 12, 5, true, 75] execVM "unifiedArtilleryFire.sqf";
+		[objectParent _x, true] execVM "trackProjectile.sqf";
 	} forEach _guns;
 
 	[tank] execVM "manageJeepCrew.sqf";
@@ -124,7 +133,7 @@ fnc_getGunsWithType = {
 		_x disableAI "PATH";
 		_x disableAI "COVER";
 		_x disableAI "SUPPRESSION";
-		_x setUnitPos "UP";
+		_x setUnitPos "MIDDLE";
 		_x setBehaviour "COMBAT";
 		_x setCombatMode "RED";
 	} forEach units delta;
