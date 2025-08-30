@@ -130,13 +130,24 @@ fnc_getGunsWithType = {
 	[getMarkerPos "captives_area", 280] execVM "moveCaptives.sqf";
 
 	{
-		_x disableAI "PATH";
-		_x disableAI "COVER";
-		_x disableAI "SUPPRESSION";
-		_x setUnitPos "MIDDLE";
-		_x setBehaviour "COMBAT";
-		_x setCombatMode "RED";
-	} forEach units delta;
+		{
+			_x disableAI "PATH";
+			_x disableAI "COVER";
+			_x disableAI "SUPPRESSION";
+			_x setUnitPos "UP";
+			_x setBehaviour "COMBAT";
+			_x setCombatMode "RED";
+			_x setSkill 1;
+			_x setSkill ["aimingAccuracy", 1];
+			_x setSkill ["aimingShake", 1];
+			_x setSkill ["aimingSpeed", 1];
+			_x setSkill ["spotDistance", 0.85];
+			_x setSkill ["spotTime", 0.80];
+			_x setSkill ["courage", 0.90];
+			_x setSkill ["commanding", 0.75];
+			_x setSkill ["general", 0.85];
+		} forEach units _x;
+	} forEach [delta];
 
 	sleep 3;
 	(leader papabear) sideRadio "RadioPapaBearDefendTheCityWithArtillerySupport";
@@ -146,3 +157,56 @@ fnc_getGunsWithType = {
 	// TaskAssigned
 	// TaskSucceeded
 };
+
+private _all = allUnits;
+
+{
+	_x addEventHandler ["Killed", {
+		params ["_victim", "_killer"];
+
+		if (_victim == player && !isNull _killer) then {
+			private _cam = "camera" camCreate (position _killer);
+			_cam cameraEffect ["INTERNAL", "BACK"];
+			_cam camSetTarget _killer;
+
+			// Get killer's facing direction in radians
+			private _dir = getDir _killer;
+			private _dirRad = _dir * (pi / 180);
+
+			// Place camera 6m behind, 2.5m up
+			private _backX = -(6 * sin _dirRad);
+			private _backY = -(6 * cos _dirRad);
+			private _height = 5;
+
+			_cam camSetRelPos [_backX, _backY, _height];
+			_cam camCommit 0;
+
+			cutText [format ["%1 killed %2", name _killer, name _victim], "PLAIN DOWN"];
+
+			// Orbit camera in background
+			[_killer, _cam] spawn {
+				params ["_killer", "_cam"];
+				private _angle = 0;
+
+				for "_i" from 0 to 100 do {
+					if (isNull _cam || isNull _killer) exitWith {};
+					_angle = _angle + 5;
+
+					// Orbit in a circle around killer
+					private _xPos = 3 * cos _angle;
+					private _yPos = 3 * sin _angle;
+
+					_cam camSetRelPos [_xPos, _yPos, 1.5];
+					_cam camCommit 0.1;
+
+					sleep 0.1;
+				};
+				sleep 5;
+				// Release camera after ~10s
+				camDestroy _cam;
+
+				player switchCamera "INTERNAL";
+			};
+		};
+	}];
+} forEach _all;

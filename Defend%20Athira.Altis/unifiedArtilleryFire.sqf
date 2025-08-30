@@ -103,21 +103,18 @@ private _scoutGroup = objNull;
 
 switch (typeName _genericParam) do {
 	case "SCALAR": {
-		sleep 3; // Allow time for the gun to initialize
 		_mode = MODE_AUTO;
 		_detectionRange = _genericParam;
 		_scoutGroup = objNull; // No scout group in AUTO mode
 		hint format ["Artillery AUTO mode activated with detection range: %1 meters", _detectionRange];
 	};
 	case "GROUP": {
-		sleep 3; // Allow time for the gun to initialize
 		_mode = MODE_SCOUT;
 		_detectionRange = 0; // No detection range in SCOUT mode
 		_scoutGroup = _genericParam; // Use the provided object as the scout group
 		hint format ["Artillery SCOUT mode activated with scout group: %1", groupId _scoutGroup];
 	};
 	case "OBJECT": {
-		sleep 3; // Allow time for the gun to initialize
 		_mode = MODE_MAP;
 		_detectionRange = 0; // No detection range in SCOUT mode
 		_scoutGroup = objNull; // Use the provided object as the scout group
@@ -158,15 +155,19 @@ fnc_dynamicAccuracyRadius = {
 		private _maxScatter = 200;  // worst accuracy
 		private _minScatter = 5;    // best accuracy
 		if (_gun isKindOf "StaticMortar") then {
-			_maxScatter = 100;
-			_minScatter = 3;
+			_minScatter = 8;   // skilled mortar team
+			_maxScatter = 80;  // poorly trained / max range
 		} else {
-			_maxScatter = 200;
-			_minScatter = 10;
+			_minScatter = 15;  // skilled artillery crew
+			_maxScatter = 150; // poor crew / max range
 		};
 
-		// Map skill to scatter (higher skill → smaller radius)
-		_dynamicAccuracyRadius = _maxScatter - (_skill * (_maxScatter - _minScatter));
+		// skill reduces scatter (linear mapping)
+		private _baseScatter = _maxScatter - (_skill * (_maxScatter - _minScatter));
+
+		// Add random human imperfection (±20%)
+		private _variation = random [0.8, 1, 1.2];
+		_dynamicAccuracy = _baseScatter * _variation;
 	} else {
 		_dynamicAccuracyRadius = _accuracyRadius; // use specified radius
 	};
@@ -387,7 +388,13 @@ missionNamespace setVariable [GUN_FIRE_CALLBACK, {
 			sleep 3;
 		};
 		case GUN_BARRAGE_PHASE_SHOT : {
-			_responder sideRadio format["ArtyResponse%1", _index select 1];
+			private _response = selectRandom [
+				format["ArtyResponse%1", _index select 1],
+				format["ArtyResponse%1_%1", _index select 1, _index select 1],
+				format["ArtyResponse%1_%1_%1", _index select 1, _index select 1, _index select 1],
+				format["ArtyResponse%1_%1_%1_%1", _index select 1, _index select 1, _index select 1, _index select 1]
+			];
+			_responder sideRadio _response;
 			sleep 2;
 		};
 		case GUN_BARRAGE_PHASE_SPLASH : {
@@ -458,8 +465,11 @@ fnc_fireGun = {
 	};
 
 	private _finalPos = _targetPos;
+	// Create temporary "X" marker
+	private _marker = [_caller, _finalPos] call (missionNamespace getVariable GUN_MARKER_CALLBACK);
+
 	if (_accuracyRadius > 0) then {
-		private _angle = random (2 * pi);
+		private _angle = random 360;
 		private _dist = random _accuracyRadius;
 		_finalPos = _targetPos vectorAdd [(sin _angle * _dist), (cos _angle * _dist), 0];
 	};
@@ -467,8 +477,6 @@ fnc_fireGun = {
 	private _base = [group _gun] call fnc_getQuietUnit;
 	private _grid = mapGridPosition _finalPos;
 
-	// Create temporary "X" marker
-	private _marker = [_caller, _finalPos] call (missionNamespace getVariable GUN_MARKER_CALLBACK);
 	// --- 1. Standby call ---
 	[_caller, _base, GUN_BARRAGE_PHASE_REQUEST, _grid] call (missionNamespace getVariable GUN_FIRE_CALLBACK);
 
