@@ -14,52 +14,6 @@ fnc_getGunsWithType = {
 	}
 };
 
-{
-	_x addEventHandler ["Killed", {
-		params ["_unit", "_killer", "_instigator"];
-
-		private _unitSide = side (group _unit);
-
-		private _killerSide = if (isNull _instigator) then {
-			side (group _killer)
-		} else {
-			side (group _instigator)
-		};
-
-		private _unitName = name _unit;
-		private _killerName = if (isNull _instigator) then {
-			name _killer
-		} else {
-			name _instigator
-		};
-
-		private _unitGroup = if (isNull group _unit) then {
-			"No Group"
-		} else {
-			groupId (group _unit)
-		};
-		private _killerGroup = if (isNull _instigator) then {
-			if (isNull group _killer) then {
-				"No Group"
-			} else {
-				groupId (group _killer)
-			}
-		} else {
-			if (isNull group _instigator) then {
-				"No Group"
-			} else {
-				groupId (group _instigator)
-			}
-		};
-
-		systemChat format [
-			"[%1 | %2] %3 killed [%4 | %5] %6",
-			_killerSide, _killerGroup, _killerName,
-			_unitSide, _unitGroup, _unitName
-		];
-	}];
-} forEach allUnits;
-
 [] spawn {
 	// Put delay here to make sure all variable where initialized.
 	private _time = time;
@@ -121,7 +75,7 @@ fnc_getGunsWithType = {
 		private _index = _forEachIndex % (count _grpCallArty);
 
 		[objectParent _x, _grpCallArty select _index, 12, 50, 12, 5, true, 75] execVM "unifiedArtilleryFire.sqf";
-		[objectParent _x, true] execVM "trackProjectile.sqf";
+		[objectParent _x, false] execVM "trackProjectile.sqf";
 	} forEach _guns;
 
 	[tank] execVM "manageJeepCrew.sqf";
@@ -153,9 +107,7 @@ fnc_getGunsWithType = {
 	(leader papabear) sideRadio "RadioPapaBearDefendTheCityWithArtillerySupport";
 	["TaskAssigned", ["Defend Athira", "Defend this city at all cost."]] call BIS_fnc_showNotification;
 
-	// TaskFailed
-	// TaskAssigned
-	// TaskSucceeded
+	[] spawn fnc_monitorSaveGame;
 };
 
 private _all = allUnits;
@@ -210,3 +162,30 @@ private _all = allUnits;
 		};
 	}];
 } forEach _all;
+
+fnc_monitorSaveGame = {
+	private _originalEnemyCount = count (allUnits select {
+		(side _x == east) && (alive _x) && (lifeState _x != "INCAPACITATED")
+	});
+	private _threshHoldCount = floor(_originalEnemyCount * 0.75);
+
+	waitUntil {
+		sleep 0.5;
+		([east] call fnc_enemyCount) <= _threshHoldCount
+	};
+	saveGame;
+
+	_threshHoldCount = floor(_originalEnemyCount * 0.5);
+	waitUntil {
+		sleep 0.5;
+		([east] call fnc_enemyCount) <= _threshHoldCount
+	};
+	saveGame;
+
+	_threshHoldCount = floor(_originalEnemyCount * 0.25);
+	waitUntil {
+		sleep 0.5;
+		([east] call fnc_enemyCount) <= _threshHoldCount
+	};
+	saveGame;
+};

@@ -352,9 +352,9 @@ fnc_handleHeal = {
 	_injured setUnconscious false;
 	{
 		_injured enableAI _x
-	} forEach ["MOVE", "ANIM"];
+	} forEach ["MOVE"];
 	_injured setCaptive false;
-	_injured setDamage 0; // FULL heal
+	_injured setDamage 0.25; // 75% health
 	_injured setUnitPos "AUTO";
 	_injured playMoveNow "AmovPknlMstpSrasWrflDnon";
 
@@ -611,9 +611,10 @@ fnc_handleDamage = {
 		_unit setUnconscious true;
 		{
 			_unit disableAI _x
-		} forEach ["MOVE", "ANIM"];
+		} forEach ["MOVE"];
 		_unit setCaptive true;
-		_unit playMoveNow "AinjPpneMstpSnonWrflDnon"; // Flat injured
+		// animate injury
+		_unit playMoveNow "AinjPpneMstpSnonWrflDnon";
 
 		// Bleeding out timer
 		[_unit] spawn fnc_bleedoutTimer;
