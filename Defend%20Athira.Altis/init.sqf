@@ -59,7 +59,7 @@ fnc_getGunsWithType = {
 	// Only regular teams run the extra scripts
 	{
 		if (_x != delta) then {
-			[_x, 1] execVM "checkCompanyStatus.sqf";
+			[_x, papabear, 1] execVM "checkCompanyStatus.sqf";
 			[_x, 0.5] execVM "huntRemainingEnemies.sqf";
 		};
 	} forEach _teams;
