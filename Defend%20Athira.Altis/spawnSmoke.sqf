@@ -1,4 +1,4 @@
-fnc_spawnSmokeCircle = {
+ETCS_fnc_spawnSmokeCircle = {
 	params [
 		["_smokeType", "SmokeShell", [""]],
 		["_centerPos", [0, 0, 0], [[]]],
@@ -24,7 +24,7 @@ fnc_spawnSmokeCircle = {
 	};
 };
 
-fnc_spawnSmokeArc = {
+ETCS_fnc_spawnSmokeArc = {
 	params [
 		["_smokeType", "SmokeShell", [""]],
 		["_centerPos", [0, 0, 0], [[]]],
@@ -53,7 +53,7 @@ fnc_spawnSmokeArc = {
 	};
 };
 
-fnc_spawnSmokeRandomWithinRadius = {
+ETCS_fnc_spawnSmokeRandomWithinRadius = {
 	params [
 		["_smokeType", "SmokeShell", [""]],
 		["_centerPos", [0, 0, 0], [[]]],
