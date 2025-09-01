@@ -1,6 +1,6 @@
 private _gun = _this param [0];
 
-fnc_destroyNearbyVegetation = {
+ETCS_fnc_destroyNearbyVegetation = {
 	params ["_pos", "_radius"];
 	if (isNil "_radius") then {
 		_radius = 30
@@ -53,18 +53,18 @@ fnc_destroyNearbyVegetation = {
 _gun addEventHandler ["Fired", {
 	params ["_unit", "_weapon", "_muzzle", "_mode", "_ammo", "_magazine", "_projectile"];
 
-	fnc_monitorProjectile = {
+	ETCS_fnc_monitorProjectile = {
 		params ["_proj"];
 		waitUntil {
 			sleep 0.05;
 			isNull _proj
 		};
 		private _pos = getPosATL _proj;
-		[_pos] spawn fnc_destroyNearbyVegetation;
+		[_pos] spawn ETCS_fnc_destroyNearbyVegetation;
 	};
 
 	    // Only process explosive shells
 	if (_projectile isKindOf "ShellBase") then {
-		[_projectile] spawn fnc_monitorProjectile;
+		[_projectile] spawn ETCS_fnc_monitorProjectile;
 	};
 }];

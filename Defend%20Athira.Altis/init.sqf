@@ -1,6 +1,6 @@
 #include "spawnSmoke.sqf"
 
-fnc_getGunsWithType = {
+ETCS_fnc_getGunsWithType = {
 	params ["_grp", "_kind"];
 	(units _grp) select {
 		!isNull objectParent _x && {
@@ -68,7 +68,7 @@ fnc_getGunsWithType = {
 		[_x] execVM "monitorMission.sqf";
 	} forEach ["lose1", "lose2", "end1"];
 
-	private _guns = [papabear, ["StaticMortar", "StaticWeapon"]] call fnc_getGunsWithType;
+	private _guns = [papabear, ["StaticMortar", "StaticWeapon"]] call ETCS_fnc_getGunsWithType;
 	private _grpCallArty = [alpha, bravo, charlie, delta];
 	{
 		private _index = _forEachIndex % (count _grpCallArty);
@@ -105,7 +105,7 @@ fnc_getGunsWithType = {
 	(leader papabear) sideRadio "RadioPapaBearDefendTheCityWithArtillerySupport";
 	["TaskAssigned", ["Defend Athira", "Defend this city at all cost."]] call BIS_fnc_showNotification;
 
-	[] spawn fnc_monitorSaveGame;
+	[] spawn ETCS_fnc_monitorSaveGame;
 
 	[] execVM "smokeSuppressed.sqf";
 };
@@ -163,7 +163,7 @@ private _all = allUnits;
 	}];
 } forEach _all;
 
-fnc_monitorSaveGame = {
+ETCS_fnc_monitorSaveGame = {
 	private _originalEnemyCount = count (allUnits select {
 		(side _x == east) && (alive _x) && (lifeState _x != "INCAPACITATED")
 	});
@@ -171,21 +171,21 @@ fnc_monitorSaveGame = {
 
 	waitUntil {
 		sleep 0.5;
-		([east] call fnc_enemyCount) <= _threshHoldCount
+		([east] call ETCS_fnc_enemyCount) <= _threshHoldCount
 	};
 	saveGame;
 
 	_threshHoldCount = floor(_originalEnemyCount * 0.5);
 	waitUntil {
 		sleep 0.5;
-		([east] call fnc_enemyCount) <= _threshHoldCount
+		([east] call ETCS_fnc_enemyCount) <= _threshHoldCount
 	};
 	saveGame;
 
 	_threshHoldCount = floor(_originalEnemyCount * 0.25);
 	waitUntil {
 		sleep 0.5;
-		([east] call fnc_enemyCount) <= _threshHoldCount
+		([east] call ETCS_fnc_enemyCount) <= _threshHoldCount
 	};
 	saveGame;
 };
