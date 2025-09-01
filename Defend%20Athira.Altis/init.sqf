@@ -29,10 +29,8 @@ fnc_getGunsWithType = {
 		!(isNil "echo_mech")) &&
 		!(isNil "papabear") &&
 		!(isNil "november1") &&
-		!(isNil "november2") &&
 		!(isNil "tank") &&
-		!(isNil "heli1") &&
-		!(isNil "heli2") ||
+		!(isNil "heli1") ||
 		_isTimeout
 	};
 
@@ -48,8 +46,7 @@ fnc_getGunsWithType = {
 	delta setGroupId ["Delta"];
 	echo_mech setGroupId ["Echo"];
 	papabear setGroupId ["Papa Bear"];
-	november1 setGroupId ["November (1)"];
-	november2 setGroupId ["November (2)"];
+	november1 setGroupId ["November"];
 
 	private _teams = [alpha, bravo, charlie, delta, echo_mech];
 	private _special = [papabear];
@@ -62,7 +59,7 @@ fnc_getGunsWithType = {
 	// Only regular teams run the extra scripts
 	{
 		if (_x != delta) then {
-			[_x, papabear] execVM "checkCompanyStatus.sqf";
+			[_x, 1] execVM "checkCompanyStatus.sqf";
 			[_x, 0.5] execVM "huntRemainingEnemies.sqf";
 		};
 	} forEach _teams;
@@ -81,8 +78,7 @@ fnc_getGunsWithType = {
 	} forEach _guns;
 
 	[tank] execVM "manageJeepCrew.sqf";
-	[heli1, 80, 0.75] execVM "flyInChopper.sqf";
-	[heli2, 120, 0.25] execVM "flyInChopper.sqf";
+	[heli1, 80, 0.25] execVM "flyInChopper.sqf";
 	[getMarkerPos "captives_area", 280] execVM "moveCaptives.sqf";
 
 	{
