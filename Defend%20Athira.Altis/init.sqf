@@ -1,3 +1,5 @@
+#include "spawnSmoke.sqf"
+
 fnc_getGunsWithType = {
 	params ["_grp", "_kind"];
 	(units _grp) select {
@@ -108,6 +110,8 @@ fnc_getGunsWithType = {
 	["TaskAssigned", ["Defend Athira", "Defend this city at all cost."]] call BIS_fnc_showNotification;
 
 	[] spawn fnc_monitorSaveGame;
+
+	[] execVM "smokeSuppressed.sqf";
 };
 
 private _all = allUnits;

@@ -6,7 +6,7 @@
 // 
 // Description:
 // This script implements a fully AI-driven revive system for incapacitated units, allowing friendly (and in some
-// cases enemy) AI to revive downed soldiers under combat conditions. It includes intelligent medic selection, 
+// cases enemy) AI to revive downed soldiers under combat conditions. It includes intelligent medic selection,  
 // realistic bleedout timers, headshot and explosive damage handling, and dynamic prioritization of medics
 // based on proximity, threat levels, and availability.
 // 
@@ -160,21 +160,22 @@ fnc_bleedoutTimer = {
 	params ["_injured"];
 	private _startTime = time;
 
+	// Wait until unit dies, is revived, or bleedout time expires
 	waitUntil {
 		sleep 1;
-		!alive _injured                                    // Dead
-		|| ([_injured] call fnc_isRevived)       // Revived
-		|| (lifeState _injured != "INCAPACITATED")         // No longer incapacitated
-		|| ((time - _startTime) >= BLEEDOUT_TIME)          // Timer expired
+		!alive _injured
+		|| (lifeState _injured != "INCAPACITATED")
+		|| ((time - _startTime) >= BLEEDOUT_TIME);
 	};
 
-	// exit if revived or dead
-	if (!alive _injured || ([_injured] call fnc_isRevived)) exitWith {};
-
-	// if still incapacitated after bleedout time, kill them
-	if (lifeState _injured == "INCAPACITATED" && !([_injured] call fnc_isBeingRevived)) then {
+	// Determine what happened
+	if (alive _injured && (lifeState _injured == "INCAPACITATED") && ((time - _startTime) >= BLEEDOUT_TIME)) then {
+		// Bleedout expired → kill the unit
 		[_injured, false] call fnc_setReviveProcess;
-		_injured setDamage 1; // Bleed out
+		_injured setDamage 1;
+	} else {
+		// Unit was revived or died naturally → just stop revive process
+		[_injured, false] call fnc_setReviveProcess;
 	};
 };
 
@@ -269,40 +270,41 @@ fnc_waitForMedicArrival = {
 };
 
 // ===============================
-// FUNCTION: Check if projectile is heavy explosive
+// FUNCTION: Make Unconscious
 // ===============================
-fnc_isHeavyExplosive = {
-	params ["_projectile"];
+fnc_makeUnconscious = {
+	params ["_unit"];
 
-	if (_projectile isEqualTo "") exitWith {
-		false
+	[_unit, true] call fnc_setReviveProcess;
+	// Reset revive state for NEW incapacitation
+	[_unit, false] call fnc_setRevived;
+	[_unit, false] call fnc_setBeingRevived;
+
+	// if the injured is in a vehicle or static weapon, remove them
+	private _vehicle = objectParent _unit;
+	if (!(isNull _vehicle) && isTouchingGround (_vehicle)) then {
+		moveOut _unit;
 	};
-
-	private _projLower = toLower _projectile;
-
-	private _explosiveKeywords = [
-		"_he", "_shell", "_bomb", "_satchel", "_mine", "_rocket",
-		"gbu", "mk82", "mo_", "rpg", "at_", "_missile", "_howitzer",
-		"_mortar", "_demolition"
-	];
-
-	private _ignoreKeywords = [
-		"chemlight", "helmet", "wheel", "cheese" // safety words
-	];
-
+	// Make unit unconscious
+	_unit setUnconscious true;
 	{
-		if ((_projLower find _x) > -1) exitWith {
-			false
-		}; // Ignore takes priority
-	} forEach _ignoreKeywords;
+		_unit disableAI _x
+	} forEach ["MOVE"];
+	_unit setCaptive true;
+	// animate injury
+	_unit playMoveNow "AinjPpneMstpSnonWrflDnon";
 
-	{
-		if ((_projLower find _x) > -1) exitWith {
-			true
-		};
-	} forEach _explosiveKeywords;
+	// Bleeding out timer
+	[_unit] spawn fnc_bleedoutTimer;
 
-	false
+	// AI revive logic
+	[_unit] spawn {
+		params ["_injured"];
+		[_injured] call fnc_reviveLoop;
+
+		// Reset the process flag after loop ends
+		[_injured, false] call fnc_setReviveProcess;
+	};
 };
 
 // ===============================
@@ -311,35 +313,145 @@ fnc_isHeavyExplosive = {
 fnc_headshotDamageHandling = {
 	params ["_unit", "_damage"];
 
-	// Base chance to survive headshot
-	private _baseSurviveChance = 0.3;
-	// Minimum damage to always kill
+	// ----- CONFIG -----
+	// default survival chance without helmet
+	private _baseSurviveChance = 0.2;
+	// threshold for instant-kill
 	private _minDamageToAlwaysKill = 0.85;
-	// Check if unit has a helmet
+	// helmet protection bonus
+	private _helmetBonus = 0.3;
+
+	// ----- HELMET CHECK -----
 	private _headgearClass = toLower (headgear _unit);
-	private _isHelmet = ((_headgearClass find "helmet" != -1) ||   // generic helmets
-	(_headgearClass find "cup_h" == 0) ||     // CUP helmets
-	(_headgearClass find "6b" != -1) ||       // Russian 6b helmets
-	(_headgearClass find "rus" != -1) ||      // Russian related helmets
-	(_headgearClass find "spetsnaz" != -1));    // Special forces helmets);
+	private _isHelmet = (
+	// vanilla helmets
+	(_headgearClass find "helmet" != -1) ||
+	// CUP helmets
+	(_headgearClass find "cup_h" == 0) ||
+	// Russian 6b series
+	(_headgearClass find "6b" != -1) ||
+	// Russian patterns
+	(_headgearClass find "rus" != -1) ||
+	// Special forces
+	(_headgearClass find "spetsnaz" != -1));
 
-	// if no headgear, no protection
-	private _helmetProtection = if (_isHelmet) then {
-		0.2
+	private _adjustedSurviveChance = if (_isHelmet) then {
+		_baseSurviveChance + _helmetBonus
 	} else {
-		0
+		_baseSurviveChance
 	};
-	private _adjustedSurviveChance = _baseSurviveChance + _helmetProtection;
 
-	if (_damage >= _minDamageToAlwaysKill) then {
+	// Clamp survival chance between 0 and 0.95 (avoid immortals)
+	_adjustedSurviveChance = _adjustedSurviveChance min 0.95 max 0;
+
+	// ----- damage OUTCOME -----
+	if (_damage >= _minDamageToAlwaysKill) exitWith {
+		// lethal
 		1
+	};
+
+	// Roll survival
+	private _roll = random 1;
+	if (_roll < _adjustedSurviveChance) then {
+		[_unit] call fnc_makeUnconscious;
+		// heavily injured, unconscious
+		0.9
 	} else {
-		private _roll = random 1;
-		if (_roll < _adjustedSurviveChance) then {
-			_damage
+		// failed survival roll = lethal
+		1
+	};
+};
+
+// ===============================
+// FUNCTION: Torso damage Handling
+// ===============================
+fnc_torsoDamageHandling = {
+	params ["_unit", "_damage"];
+
+	// ----- CONFIG -----
+	// default survival chance without vest
+	private _baseSurviveChance = 0.3;
+	// torso shots are a bit more survivable than head
+	private _minDamageToAlwaysKill = 0.9;
+	// ballistic vest bonus
+	private _vestBonus = 0.4;
+
+	// ----- vest CHECK -----
+	private _vestClass = toLower (vest _unit);
+	private _isVest = ((_vestClass find "vest" != -1) ||
+	(_vestClass find "plate" != -1) ||
+	(_vestClass find "armor" != -1) ||
+	(_vestClass find "carrier" != -1) ||
+	(_vestClass find "6b" != -1) ||
+	(_vestClass find "spetsnaz" != -1) ||
+	(_vestClass find "cup_v" == 0) ||
+	(_vestClass find "v_" == 0));
+
+	private _adjustedSurviveChance = if (_isVest) then {
+		_baseSurviveChance + _vestBonus
+	} else {
+		_baseSurviveChance
+	};
+
+	// Clamp survival chance
+	_adjustedSurviveChance = _adjustedSurviveChance min 0.95 max 0;
+
+	// ----- damage OUTCOME -----
+	if (_damage >= _minDamageToAlwaysKill) exitWith {
+		// lethal torso hit
+		1
+	};
+
+	    // Roll survival
+	private _roll = random 1;
+	if (_roll < _adjustedSurviveChance) then {
+		[_unit] call fnc_makeUnconscious;
+		// very injured, unconscious
+		0.85
+	} else {
+		// failed survival roll = lethal
+		1
+	};
+};
+
+// ================================
+// FUNCTION: Arms damage Handling
+// ================================
+fnc_armDamageHandling = {
+	params ["_unit", "_damage"];
+
+	if (_damage >= 0.8) then {
+		// 20% chance to get knocked out from shock
+		if (random 1 < 0.2) then {
+			[_unit] call fnc_makeUnconscious;
+			// not dead, but badly hurt
+			0.7
 		} else {
-			1
+			// normal severe arm injury
+			0.8
 		};
+	} else {
+		_damage
+	};
+};
+
+// ================================
+// FUNCTION: Legs damage Handling
+// ================================
+fnc_legDamageHandling = {
+	params ["_unit", "_damage"];
+
+	if (_damage >= 0.8) then {
+		// 15% chance to get knocked out from shock
+		if (random 1 < 0.15) then {
+			[_unit] call fnc_makeUnconscious;
+			0.75
+		} else {
+			// serious leg injury, but still alive
+			0.8
+		};
+	} else {
+		_damage
 	};
 };
 
@@ -576,58 +688,32 @@ fnc_handleDamage = {
 		_damage
 	};
 
-	// Compute probability of chance to survive if hit in the head
-	if (_selection == "head") exitWith {
-		[_unit, _damage] call fnc_headshotDamageHandling
-	};
-
-	private _isHeavyExplosive = [_projectile] call fnc_isHeavyExplosive;
-
-	if (_isHeavyExplosive) then {
-		private _dist = _unit distance2D _source;
-
-		if (_dist <= 3) exitWith {
-			1
-		}; // lethal
-		if (_dist <= 6) exitWith {
-			0.95 max _damage
-		}; // near-lethal
-	};
-
-	// Incapacitate on near-lethal total damage and
-	// Prevent multiple revive loops from stacking
-	if (_damage >= 0.95 && !([_unit] call fnc_isInReviveProcess)) then {
-		[_unit, true] call fnc_setReviveProcess;
-		// Reset revive state for NEW incapacitation
-		[_unit, false] call fnc_setRevived;
-		[_unit, false] call fnc_setBeingRevived;
-
-		// if the injured is in a vehicle or static weapon, remove them
-		private _vehicle = objectParent _unit;
-		if (!(isNull _vehicle) && isTouchingGround (_vehicle)) then {
-			moveOut _unit;
+	switch (true) do {
+		// ----- HEAD -----
+		case (_selection == "head" && !([_unit] call fnc_isInReviveProcess)): {
+			_result = [_unit, _damage] call fnc_headshotDamageHandling;
 		};
-		// Make unit unconscious
-		_unit setUnconscious true;
-		{
-			_unit disableAI _x
-		} forEach ["MOVE"];
-		_unit setCaptive true;
-		// animate injury
-		_unit playMoveNow "AinjPpneMstpSnonWrflDnon";
 
-		// Bleeding out timer
-		[_unit] spawn fnc_bleedoutTimer;
-
-		// AI revive logic
-		[_unit] spawn {
-			params ["_injured"];
-			[_injured] call fnc_reviveLoop;
-
-			// Reset the process flag after loop ends
-			[_injured, false] call fnc_setReviveProcess;
+		// ----- TORSO -----
+		case (_selection == "body" && !([_unit] call fnc_isInReviveProcess)): {
+			_result = [_unit, _damage] call fnc_torsoDamageHandling;
 		};
-		_result = 0.9
+
+		// ----- ARMS -----
+		case ((_selection in ["hand_l", "hand_r", "arm_l", "arm_r"]) && !([_unit] call fnc_isInReviveProcess)): {
+			_result = [_unit, _damage] call fnc_armDamageHandling;
+		};
+
+		// ----- LEGS -----
+		case ((_selection in ["leg_l", "leg_r", "foot_l", "foot_r"]) && !([_unit] call fnc_isInReviveProcess)): {
+			_result = [_unit, _damage] call fnc_legDamageHandling;
+		};
+
+		// ----- GLOBAL NEAR-LETHAL CHECK -----
+		case ((_damage >= 0.95) && !([_unit] call fnc_isInReviveProcess)): {
+			[_unit] call fnc_makeUnconscious;
+			_result = 0.9;
+		};
 	};
 	_result
 };
