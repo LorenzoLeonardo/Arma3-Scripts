@@ -30,7 +30,8 @@ ETCS_fnc_getGunsWithType = {
 		!(isNil "papabear") &&
 		!(isNil "november1") &&
 		!(isNil "tank") &&
-		!(isNil "heli1") ||
+		!(isNil "heli1") &&
+		!(isNil "heli2") ||
 		_isTimeout
 	};
 
@@ -46,7 +47,8 @@ ETCS_fnc_getGunsWithType = {
 	delta setGroupId ["Delta"];
 	echo_mech setGroupId ["Echo"];
 	papabear setGroupId ["Papa Bear"];
-	november1 setGroupId ["November"];
+	november1 setGroupId ["November (1)"];
+	november2 setGroupId ["November (2)"];
 
 	private _teams = [alpha, bravo, charlie, delta, echo_mech];
 	private _special = [papabear];
@@ -78,7 +80,8 @@ ETCS_fnc_getGunsWithType = {
 	} forEach _guns;
 
 	[tank] execVM "manageJeepCrew.sqf";
-	[heli1, 80, 0.25] execVM "flyInChopper.sqf";
+	[heli1, 80, 0.75] execVM "flyInChopper.sqf";
+	[heli2, 80, 0.25] execVM "flyInChopper.sqf";
 	[getMarkerPos "captives_area", 280] execVM "moveCaptives.sqf";
 
 	{
@@ -173,6 +176,8 @@ ETCS_fnc_monitorSaveGame = {
 		sleep 0.5;
 		([east] call ETCS_fnc_enemyCount) <= _threshHoldCount
 	};
+	["TaskSucceeded", ["Task Completed", "25% of the hostile forces were eliminated."]] call BIS_fnc_showNotification;
+	sleep 3;
 	saveGame;
 
 	_threshHoldCount = floor(_originalEnemyCount * 0.5);
@@ -180,6 +185,8 @@ ETCS_fnc_monitorSaveGame = {
 		sleep 0.5;
 		([east] call ETCS_fnc_enemyCount) <= _threshHoldCount
 	};
+	["TaskSucceeded", ["Task Completed", "50% of the hostile forces were eliminated."]] call BIS_fnc_showNotification;
+	sleep 3;
 	saveGame;
 
 	_threshHoldCount = floor(_originalEnemyCount * 0.25);
@@ -187,5 +194,7 @@ ETCS_fnc_monitorSaveGame = {
 		sleep 0.5;
 		([east] call ETCS_fnc_enemyCount) <= _threshHoldCount
 	};
+	["TaskSucceeded", ["Task Completed", "75% of the hostile forces were eliminated."]] call BIS_fnc_showNotification;
+	sleep 3;
 	saveGame;
 };
