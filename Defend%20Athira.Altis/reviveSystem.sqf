@@ -564,7 +564,7 @@ ETCS_fnc_reviveLoop = {
 	private _medic = objNull;
 
 	while { (alive _injured) && !([_injured] call ETCS_fnc_isRevived) && (time < _loopTimeout) } do {
-		sleep 3;
+		sleep 0.5;
 		if (!alive _injured || ([_injured] call ETCS_fnc_isRevived)) exitWith {
 			if (!isNull _medic) then {
 				[_medic, _injured] call ETCS_fnc_unlockReviveState;
