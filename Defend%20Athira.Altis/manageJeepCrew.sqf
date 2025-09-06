@@ -99,8 +99,8 @@ ETCS_fnc_startMonitoringVehicle = {
 	params ["_vehicle"];
 	private _group = (group _vehicle);
 	private _groupID = groupId _group;
-	waitUntil {
-		!(alive _vehicle) || !(canMove _vehicle)
+	while { alive _vehicle && canMove _vehicle } do {
+		sleep 0.5; // check twice per second
 	};
 	{
 		if (alive _x) then {
