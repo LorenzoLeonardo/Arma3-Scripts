@@ -40,44 +40,13 @@
 // - Can be adapted for player revive logic by adding custom event handling.
 // - Revive animations and states can be replaced with mod-specific actions for better integration.
 // ==============================================================================================================
+#include "common.sqf"
 
 #define BLEEDOUT_TIME 300 // 5 minutes
 #define REVIVE_RANGE 3 // 3 meters
 #define FRIENDLY_MEDIC_FAR_THRESHOLD 120 // 120 meters
 
 params ["_group"];
-
-// ===============================
-// FUNCTION: Check if unit is ok
-// ===============================
-ETCS_fnc_isUnitGood = {
-	params ["_unit"];
-	!isNull _unit && {
-		alive _unit && {
-			lifeState _unit != "INCAPACITATED"
-		}
-	}
-};
-
-// ===============================
-// FUNCTION: find Nearest Unit
-// ===============================
-ETCS_fnc_findNearestUnit = {
-	params ["_pos", "_candidates"];
-
-	private _nearestUnit = objNull;
-	private _nearestDist = 1e10;  // a very large distance
-
-	{
-		private _dist = _pos distance _x;
-		if (_dist < _nearestDist) then {
-			_nearestDist = _dist;
-			_nearestUnit = _x;
-		};
-	} forEach _candidates;
-
-	_nearestUnit
-};
 
 // ===============================
 // FUNCTION: get Best Medic
@@ -722,18 +691,21 @@ ETCS_fnc_handleDamage = {
 // ===============================
 // apply EVENT HANDLERS to group
 // ===============================
-{
-	_x addEventHandler ["HandleDamage", {
-		_this call ETCS_fnc_handleDamage
-	}];
-	_x addEventHandler ["Killed", {
-		params ["_unit"];
-		[_unit, false] call ETCS_fnc_setReviveProcess;
-		[_unit, false] call ETCS_fnc_setBeingRevived;
-		[_unit, false] call ETCS_fnc_setReviving;
-		[_unit, false] call ETCS_fnc_setRevived;
-	}];
-} forEach units _group;
+ETCS_fnc_registerReviveSystem = {
+	params["_group"];
+	{
+		_x addEventHandler ["HandleDamage", {
+			_this call ETCS_fnc_handleDamage
+		}];
+		_x addEventHandler ["Killed", {
+			params ["_unit"];
+			[_unit, false] call ETCS_fnc_setReviveProcess;
+			[_unit, false] call ETCS_fnc_setBeingRevived;
+			[_unit, false] call ETCS_fnc_setReviving;
+			[_unit, false] call ETCS_fnc_setRevived;
+		}];
+	} forEach units _group;
+};
 
 ETCS_fnc_drawBleedOutTime = {
 	params ["_injured"];
@@ -778,64 +750,70 @@ ETCS_fnc_drawBleedOutTime = {
 	];
 };
 
-addMissionEventHandler ["Draw3D", {
-	// --- case 1: player is reviver
-	private _injured = player getVariable ["injuredToRevive", objNull];
-	if (!isNull _injured && alive _injured) then {
-		private _wpPos = getPosATL _injured;
-		private _wpText = format ["Revive Injured (%1 m)", round (player distance _wpPos)];
+ETCS_fnc_draw3DText = {
+	addMissionEventHandler ["Draw3D", {
+		// --- case 1: player is reviver
+		private _injured = player getVariable ["injuredToRevive", objNull];
+		if (!isNull _injured && alive _injured) then {
+			private _wpPos = getPosATL _injured;
+			private _wpText = format ["Revive Injured (%1 m)", round (player distance _wpPos)];
 
-		drawIcon3D [
-			"\A3\ui_f\data\map\markers\military\arrow2_CA.paa",
-			[0, 1, 1, 1],
-			_wpPos,
-			0.5, 0.5,
-			180,
-			_wpText,
-			2,
-			0.035,
-			"PuristaBold",
-			"center",
-			true,
-			0,
-			-0.04
-		];
-	};
+			drawIcon3D [
+				"\A3\ui_f\data\map\markers\military\arrow2_CA.paa",
+				[0, 1, 1, 1],
+				_wpPos,
+				0.5, 0.5,
+				180,
+				_wpText,
+				2,
+				0.035,
+				"PuristaBold",
+				"center",
+				true,
+				0,
+				-0.04
+			];
+		};
 
-	// --- case 2: player is injured
-	private _reviver = player getVariable ["reviverAssigned", objNull];
-	if (!isNull _reviver && alive _reviver) then {
-		private _revPos = getPosATL _reviver;
-		// +2 meters above head
-		_revPos set [2, (_revPos select 2) + 2];
+		// --- case 2: player is injured
+		private _reviver = player getVariable ["reviverAssigned", objNull];
+		if (!isNull _reviver && alive _reviver) then {
+			private _revPos = getPosATL _reviver;
+			// +2 meters above head
+			_revPos set [2, (_revPos select 2) + 2];
 
-		private _revText = format [
-			"Medic (%1 m)",
-			round (player distance _reviver)
-		];
+			private _revText = format [
+				"Medic (%1 m)",
+				round (player distance _reviver)
+			];
 
-		drawIcon3D [
-			"\A3\ui_f\data\map\markers\military\arrow2_CA.paa",
-			[0, 1, 1, 1],
-			_revPos,
-			0.6, 0.6,
-			180,
-			_revText,
-			2,
-			0.035,
-			"PuristaBold",
-			"center",
-			true,
-			0,
-			-0.04
-		];
-	};
+			drawIcon3D [
+				"\A3\ui_f\data\map\markers\military\arrow2_CA.paa",
+				[0, 1, 1, 1],
+				_revPos,
+				0.6, 0.6,
+				180,
+				_revText,
+				2,
+				0.035,
+				"PuristaBold",
+				"center",
+				true,
+				0,
+				-0.04
+			];
+		};
 
-	private _incap = allUnits select {
-		lifeState _x == "INCAPACITATED" &&
-		side (group _x) == side player
-	};
-	{
-		[_x] call ETCS_fnc_drawBleedOutTime;
-	} forEach _incap;
-}];
+		private _incap = allUnits select {
+			lifeState _x == "INCAPACITATED" &&
+			side (group _x) == side player
+		};
+		{
+			[_x] call ETCS_fnc_drawBleedOutTime;
+		} forEach _incap;
+	}];
+};
+
+// Main triggers
+[_group] call ETCS_fnc_registerReviveSystem;
+[] call ETCS_fnc_draw3DText;
