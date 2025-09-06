@@ -24,14 +24,15 @@ ETCS_fnc_getGunsWithType = {
 		_isTimeout = (time > _time + 5);
 		(!(isNil "alpha") &&
 		!(isNil "bravo") &&
-		!(isNil "charlie") &&
 		!(isNil "delta") &&
 		!(isNil "echo_mech")) &&
 		!(isNil "papabear") &&
 		!(isNil "november1") &&
 		!(isNil "tank") &&
 		!(isNil "heli1") &&
-		!(isNil "heli2") ||
+		!(isNil "heli2") &&
+		!(isNil "mgun1") &&
+		!(isNil "mgun2") ||
 		_isTimeout
 	};
 
@@ -43,15 +44,18 @@ ETCS_fnc_getGunsWithType = {
 
 	alpha setGroupId ["Alpha"];
 	bravo setGroupId ["Bravo"];
-	charlie setGroupId ["Charlie"];
+	// charlie setGroupId ["Charlie"];
 	delta setGroupId ["Delta"];
 	echo_mech setGroupId ["Echo"];
 	papabear setGroupId ["Papa Bear"];
 	november1 setGroupId ["November (1)"];
 	november2 setGroupId ["November (2)"];
 
-	private _teams = [alpha, bravo, charlie, delta, echo_mech];
+	private _teams = [alpha, bravo, delta, echo_mech];
 	private _special = [papabear];
+
+	[mgun1, alpha] execVM "manageGunCrew.sqf";
+	[mgun2, bravo] execVM "manageGunCrew.sqf";
 
 	// Everyone runs revive
 	{
@@ -71,7 +75,7 @@ ETCS_fnc_getGunsWithType = {
 	} forEach ["lose1", "lose2", "end1"];
 
 	private _guns = [papabear, ["StaticMortar", "StaticWeapon"]] call ETCS_fnc_getGunsWithType;
-	private _grpCallArty = [alpha, bravo, charlie, delta];
+	private _grpCallArty = [alpha, bravo];
 	{
 		private _index = _forEachIndex % (count _grpCallArty);
 
