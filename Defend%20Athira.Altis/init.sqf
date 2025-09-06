@@ -78,9 +78,7 @@ ETCS_fnc_getGunsWithType = {
 	private _grpCallArty = [alpha, bravo];
 	{
 		private _index = _forEachIndex % (count _grpCallArty);
-
 		[objectParent _x, _grpCallArty select _index, 12, 50, 12, 5, true, 75] execVM "unifiedArtilleryFire.sqf";
-		[objectParent _x, false] execVM "trackProjectile.sqf";
 	} forEach _guns;
 
 	[tank] execVM "manageJeepCrew.sqf";
