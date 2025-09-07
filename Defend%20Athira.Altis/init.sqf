@@ -181,7 +181,7 @@ ETCS_fnc_monitorSaveGame = {
 		sleep 0.5;
 	};
 	["TaskSucceeded", ["Task Completed", "25% of the hostile forces were eliminated."]] call BIS_fnc_showNotification;
-	sleep 3;
+	sleep 6;
 	saveGame;
 
 	_threshHoldCount = floor(_originalEnemyCount * 0.5);
@@ -189,7 +189,7 @@ ETCS_fnc_monitorSaveGame = {
 		sleep 0.5;
 	};
 	["TaskSucceeded", ["Task Completed", "50% of the hostile forces were eliminated."]] call BIS_fnc_showNotification;
-	sleep 3;
+	sleep 6;
 	saveGame;
 
 	_threshHoldCount = floor(_originalEnemyCount * 0.25);
@@ -197,6 +197,6 @@ ETCS_fnc_monitorSaveGame = {
 		sleep 0.5;
 	};
 	["TaskSucceeded", ["Task Completed", "75% of the hostile forces were eliminated."]] call BIS_fnc_showNotification;
-	sleep 3;
+	sleep 6;
 	saveGame;
 };
