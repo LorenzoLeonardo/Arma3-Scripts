@@ -177,27 +177,24 @@ ETCS_fnc_monitorSaveGame = {
 	});
 	private _threshHoldCount = floor(_originalEnemyCount * 0.75);
 
-	waitUntil {
+	while { ([west] call ETCS_fnc_getEnemyCount) > _threshHoldCount } do {
 		sleep 0.5;
-		([west] call ETCS_fnc_getEnemyCount) <= _threshHoldCount
 	};
 	["TaskSucceeded", ["Task Completed", "25% of the hostile forces were eliminated."]] call BIS_fnc_showNotification;
 	sleep 3;
 	saveGame;
 
 	_threshHoldCount = floor(_originalEnemyCount * 0.5);
-	waitUntil {
+	while { ([west] call ETCS_fnc_getEnemyCount) > _threshHoldCount } do {
 		sleep 0.5;
-		([west] call ETCS_fnc_getEnemyCount) <= _threshHoldCount
 	};
 	["TaskSucceeded", ["Task Completed", "50% of the hostile forces were eliminated."]] call BIS_fnc_showNotification;
 	sleep 3;
 	saveGame;
 
 	_threshHoldCount = floor(_originalEnemyCount * 0.25);
-	waitUntil {
+	while { ([west] call ETCS_fnc_getEnemyCount) > _threshHoldCount } do {
 		sleep 0.5;
-		([west] call ETCS_fnc_getEnemyCount) <= _threshHoldCount
 	};
 	["TaskSucceeded", ["Task Completed", "75% of the hostile forces were eliminated."]] call BIS_fnc_showNotification;
 	sleep 3;
