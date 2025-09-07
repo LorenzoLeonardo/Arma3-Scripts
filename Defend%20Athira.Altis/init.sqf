@@ -1,4 +1,5 @@
 #include "spawnSmoke.sqf"
+#include "runTest.sqf"
 
 ETCS_fnc_getGunsWithType = {
 	params ["_grp", "_kind"];
@@ -41,6 +42,8 @@ ETCS_fnc_getGunsWithType = {
 		endMission "loading_error";
 	};
 	hint "Initialization OK!";
+
+	[] call fnc_runTests;
 
 	alpha setGroupId ["Alpha"];
 	bravo setGroupId ["Bravo"];
