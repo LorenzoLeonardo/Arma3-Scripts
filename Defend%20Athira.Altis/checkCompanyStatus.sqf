@@ -163,12 +163,13 @@ ETCS_fnc_isGroupAlive = {
 	private _groupCallerID = groupId _group;
 
 	for "_i" from 0 to _callRetries do {
-		waitUntil {
-			sleep 2;
+		while {
 			private _aliveCount = {
 				alive _x && (lifeState _x != "INCAPACITATED")
 			} count units _group;
-			_aliveCount <= (_totalUnits / 4)
+			_aliveCount > (_totalUnits / 4)
+		} do {
+			sleep 2;
 		};
 
 		if (!([_group] call ETCS_fnc_isGroupAlive)) exitWith {
