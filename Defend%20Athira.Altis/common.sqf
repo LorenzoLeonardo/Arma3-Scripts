@@ -413,21 +413,26 @@ ETCS_fnc_isHostile = {
 	params ["_a", "_b"];
 
 	private _getSide = {
-		params ["_x"];
+		params ["_sideObj"];
 
-		if (isNull _x) exitWith {
-			sideUnknown
-		};
-
-		switch (typeName _x) do {
+		switch (typeName _sideObj) do {
 			case "SIDE": {
-				_x
+				_sideObj
 			};
 			case "OBJECT": {
-				side _x
+				if (_sideObj isKindOf "Man") then {
+					if (alive _sideObj) then {
+						side _sideObj
+					} else {
+						// Dead unit → resolve original side from config
+						private _s = getNumber (configFile >> "CfgVehicles" >> typeOf _sideObj >> "side");
+						[east, west, resistance, civilian] select _s
+					}
+				} else {
+					side _sideObj
+				}
 			};
 			default {
-				systemChat format["ETCS_fnc_isHostile: Unknown (%1: Type: %2)", _x, typeName _x];
 				sideUnknown
 			};
 		};
