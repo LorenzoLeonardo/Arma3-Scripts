@@ -410,12 +410,37 @@ ETCS_fnc_isClusterDuplicate = {
 // Check if two units are hostile
 // =======================================================================
 ETCS_fnc_isHostile = {
-	params ["_unit1", "_unit2"];
+	params ["_a", "_b"];
 
-	([_unit1] call ETCS_fnc_isUnitGood) &&
-	([_unit2] call ETCS_fnc_isUnitGood) &&
-	(((side _unit1) getFriend (side _unit2)) < 0.6 ||
-	((side _unit2) getFriend (side _unit1)) < 0.6)
+	private _getSide = {
+		params ["_x"];
+
+		if (isNull _x) exitWith {
+			sideUnknown
+		};
+
+		switch (typeName _x) do {
+			case "SIDE": {
+				_x
+			};
+			case "OBJECT": {
+				side _x
+			};
+			default {
+				systemChat format["ETCS_fnc_isHostile: Unknown (%1: Type: %2)", _x, typeName _x];
+				sideUnknown
+			};
+		};
+	};
+
+	private _sideA = [_a] call _getSide;
+	private _sideB = [_b] call _getSide;
+
+	if (_sideA == sideUnknown || _sideB == sideUnknown) exitWith {
+		false
+	};
+
+	(_sideA getFriend _sideB < 0.6) || (_sideB getFriend _sideA < 0.6)
 };
 
 // =======================================================================
