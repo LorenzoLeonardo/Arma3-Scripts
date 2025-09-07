@@ -2,26 +2,30 @@ _caseoption = _this select 0;
 switch (_caseoption) do
 {
 	case "lose1": {
-		waitUntil {
+		while {
 			({
 				(side _x) == west
-			} count allUnits) <= 1
+			} count allUnits) > 1
+		} do {
+			sleep 0.5;
 		};
 		["TaskFailed", ["Mission Failed", "You have been wiped out from the city."]] call BIS_fnc_showNotification;
 		["lose1", false, true] call BIS_fnc_endMission;
 	};
 	case "lose2": {
-		waitUntil {
-			!(alive player)
+		while { alive player } do {
+			sleep 0.5;
 		};
 		["TaskFailed", ["Mission Failed", "Player has died"]] call BIS_fnc_showNotification;
 		["lose2", false, true] call BIS_fnc_endMission;
 	};
 	case "end1": {
-		waitUntil {
+		while {
 			({
 				(side _x) == east
-			} count allUnits) == 0
+			} count allUnits) > 0
+		} do {
+			sleep 0.5;
 		};
 		["TaskSucceeded", ["Mission Accomplished", "All hostile forces are eliminated."]] call BIS_fnc_showNotification;
 		(leader (group player)) sideRadio "RadioGroundToPapaBearVictory";
