@@ -218,8 +218,8 @@ ETCS_fnc_isGroupAlive = {
 [_group, _papaBear] spawn {
 	params ["_group", "_papaBear"];
 	private _groupCallerID = groupId _group;
-	waitUntil {
-		!([_group] call ETCS_fnc_isGroupAlive)
+	while { [_group] call ETCS_fnc_isGroupAlive } do {
+		sleep 1;
 	};
 	private _hqUnit = [_papaBear] call ETCS_fnc_getQuietUnit;
 
