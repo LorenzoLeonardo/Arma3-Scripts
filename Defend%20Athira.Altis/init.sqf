@@ -81,7 +81,17 @@ ETCS_fnc_getGunsWithType = {
 	private _grpCallArty = [alpha, bravo];
 	{
 		private _index = _forEachIndex % (count _grpCallArty);
-		[objectParent _x, _grpCallArty select _index, 12, 50, 12, 5, true, 75] execVM "unifiedArtilleryFire.sqf";
+
+		//   _gun                   - The mortar or artillery object to control.
+		//   _genericParam          - Either a number for AUTO mode (detection range) or an object for SCOUT mode (scout group).
+		//   _rounds                - Number of rounds to fire per cluster (default: 8).
+		//   _clusterRadius         - Radius (in meters) to group nearby enemies into a cluster (default: 50).
+		//   _minUnitsPerCluster    - Minimum number of units in a cluster before engaging (default: 8).
+		//   _coolDownForEffect     - Delay (in seconds) between volleys (default: 60).
+		//   _unlimitedAmmo         - Boolean; true to allow infinite resupply (default: false).
+		//   _claimRadius           - distance to avoid firing if target is claimed by another gun (default: 50).
+		//   _accuracyRadius        - Scatter radius (in meters) for shot inaccuracy (default: 0 = perfect aim).
+		[objectParent _x, _grpCallArty select _index, 6, 50, 8, 5, true, 50] execVM "unifiedArtilleryFire.sqf";
 	} forEach _guns;
 
 	[tank] execVM "manageJeepCrew.sqf";
