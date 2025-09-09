@@ -180,9 +180,7 @@ private _all = allUnits;
 ETCS_fnc_monitorSaveGame = {
 	params ["_papabear"];
 
-	private _originalEnemyCount = count (allUnits select {
-		(side _x == east) && (alive _x) && (lifeState _x != "INCAPACITATED")
-	});
+	private _originalEnemyCount = [west] call ETCS_fnc_getEnemyCount;
 	private _threshHoldCount = floor(_originalEnemyCount * 0.75);
 
 	while { ([west] call ETCS_fnc_getEnemyCount) > _threshHoldCount } do {
