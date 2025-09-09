@@ -1,5 +1,6 @@
 #include "spawnSmoke.sqf"
 #include "runTest.sqf"
+#include "common.sqf"
 
 ETCS_fnc_getGunsWithType = {
 	params ["_grp", "_kind"];
@@ -95,8 +96,8 @@ ETCS_fnc_getGunsWithType = {
 	} forEach _guns;
 
 	[tank] execVM "manageJeepCrew.sqf";
-	[heli1, 80, 0.75] execVM "flyInChopper.sqf";
-	[heli2, 80, 0.25] execVM "flyInChopper.sqf";
+	[heli1, 80, 0.25] execVM "flyInChopper.sqf";
+	// [heli2, 80, 0.25] execVM "flyInChopper.sqf";
 	[getMarkerPos "captives_area", 280] execVM "moveCaptives.sqf";
 
 	{
@@ -141,11 +142,10 @@ private _all = allUnits;
 
 			// Get killer's facing direction in radians
 			private _dir = getDir _killer;
-			private _dirRad = _dir * (pi / 180);
 
-			// Place camera 6m behind, 2.5m up
-			private _backX = -(6 * sin _dirRad);
-			private _backY = -(6 * cos _dirRad);
+			// Place camera 6m behind, 5m up
+			private _backX = -(6 * sin _dir);
+			private _backY = -(6 * cos _dir);
 			private _height = 5;
 
 			_cam camSetRelPos [_backX, _backY, _height];
@@ -191,7 +191,7 @@ ETCS_fnc_monitorSaveGame = {
 		sleep 0.5;
 	};
 	["TaskSucceeded", ["Task Completed", "25% of the hostile forces were eliminated."]] call BIS_fnc_showNotification;
-	sleep 6;
+	sleep 8;
 	saveGame;
 
 	_threshHoldCount = floor(_originalEnemyCount * 0.5);
@@ -199,7 +199,7 @@ ETCS_fnc_monitorSaveGame = {
 		sleep 0.5;
 	};
 	["TaskSucceeded", ["Task Completed", "50% of the hostile forces were eliminated."]] call BIS_fnc_showNotification;
-	sleep 6;
+	sleep 8;
 	saveGame;
 
 	_threshHoldCount = floor(_originalEnemyCount * 0.25);
@@ -207,6 +207,6 @@ ETCS_fnc_monitorSaveGame = {
 		sleep 0.5;
 	};
 	["TaskSucceeded", ["Task Completed", "75% of the hostile forces were eliminated."]] call BIS_fnc_showNotification;
-	sleep 6;
+	sleep 8;
 	saveGame;
 };
