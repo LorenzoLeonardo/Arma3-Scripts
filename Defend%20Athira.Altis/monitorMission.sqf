@@ -1,4 +1,7 @@
-_caseoption = _this select 0;
+#include "common.sqf"
+
+params ["_caseoption", "_papaBear"];
+
 switch (_caseoption) do
 {
 	case "lose1": {
@@ -28,10 +31,8 @@ switch (_caseoption) do
 			sleep 0.5;
 		};
 		["TaskSucceeded", ["Mission Accomplished", "All hostile forces are eliminated."]] call BIS_fnc_showNotification;
-		(leader (group player)) sideRadio "RadioGroundToPapaBearVictory";
-		sleep 10;
-		[west, "Base"] sideRadio "RadioPapaBearVictory";
-		sleep 60;
+		[(group player), "RadioGroundToPapaBearVictory", 10] call ETCS_fnc_callSideRadio;
+		[_papaBear, "RadioPapaBearVictory", 60] call ETCS_fnc_callSideRadio;
 		["end1", true, true] call BIS_fnc_endMission;
 	};
 	default {

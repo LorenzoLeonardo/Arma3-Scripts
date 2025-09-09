@@ -36,13 +36,6 @@ ETCS_fnc_mainLogicHuntRemainingEnemies = {
 	// exit early if no enemies left
 	if (([_squad] call ETCS_fnc_getEnemyCount) == 0) exitWith {};
 
-	// Radio only once
-	if (!(missionNamespace getVariable["DoneRadioRadioPapaBearToAllUnitsClearArea", false])) then {
-		["TaskUpdated", ["Enemy Hunt", "Eliminate all hostile forces in the area."]] call BIS_fnc_showNotification;
-		[west, "Base"] sideRadio "RadioPapaBearToAllUnitsClearArea";
-		missionNamespace setVariable["DoneRadioRadioPapaBearToAllUnitsClearArea", true, true];
-	};
-
 	// Dynamic hunt loop
 	while { ([_squad] call ETCS_fnc_getEnemyCount) > 0 } do {
 		private _aliveEnemies = [_squad] call ETCS_fnc_getAllEnemies;

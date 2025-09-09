@@ -33,8 +33,7 @@ ETCS_fnc_getGunsWithType = {
 		!(isNil "tank") &&
 		!(isNil "heli1") &&
 		!(isNil "heli2") &&
-		!(isNil "mgun1") &&
-		!(isNil "mgun2") ||
+		!(isNil "mgun1") ||
 		_isTimeout
 	};
 
@@ -58,7 +57,7 @@ ETCS_fnc_getGunsWithType = {
 	private _special = [papabear];
 
 	[mgun1, alpha] execVM "manageGunCrew.sqf";
-	[mgun2, bravo] execVM "manageGunCrew.sqf";
+	[mgun1, bravo] execVM "manageGunCrew.sqf";
 
 	// Everyone runs revive
 	{
@@ -72,10 +71,6 @@ ETCS_fnc_getGunsWithType = {
 			[_x, 0.75] execVM "huntRemainingEnemies.sqf";
 		};
 	} forEach _teams;
-
-	{
-		[_x] execVM "monitorMission.sqf";
-	} forEach ["lose1", "lose2", "end1"];
 
 	private _guns = [papabear, ["StaticMortar", "StaticWeapon"]] call ETCS_fnc_getGunsWithType;
 	private _grpCallArty = [alpha, bravo];
@@ -119,13 +114,15 @@ ETCS_fnc_getGunsWithType = {
 		} forEach units _x;
 	} forEach [delta];
 
-	sleep 3;
-	(leader papabear) sideRadio "RadioPapaBearDefendTheCityWithArtillerySupport";
+	[papabear] spawn ETCS_fnc_monitorSaveGame;
+	[] execVM "smokeSuppressed.sqf";
+
+	[papabear, "RadioPapaBearDefendTheCityWithArtillerySupport", 10] call ETCS_fnc_callSideRadio;
 	["TaskAssigned", ["Defend Athira", "Defend this city at all cost."]] call BIS_fnc_showNotification;
 
-	[] spawn ETCS_fnc_monitorSaveGame;
-
-	[] execVM "smokeSuppressed.sqf";
+	{
+		[_x, papabear] execVM "monitorMission.sqf";
+	} forEach ["lose1", "lose2", "end1"];
 };
 
 private _all = allUnits;
@@ -181,6 +178,8 @@ private _all = allUnits;
 } forEach _all;
 
 ETCS_fnc_monitorSaveGame = {
+	params ["_papabear"];
+
 	private _originalEnemyCount = count (allUnits select {
 		(side _x == east) && (alive _x) && (lifeState _x != "INCAPACITATED")
 	});
@@ -189,8 +188,8 @@ ETCS_fnc_monitorSaveGame = {
 	while { ([west] call ETCS_fnc_getEnemyCount) > _threshHoldCount } do {
 		sleep 0.5;
 	};
+	[_papabear, "RadioPapaBearToAllUnitsClearArea", 12] call ETCS_fnc_callSideRadio;
 	["TaskSucceeded", ["Task Completed", "25% of the hostile forces were eliminated."]] call BIS_fnc_showNotification;
-	sleep 8;
 	saveGame;
 
 	_threshHoldCount = floor(_originalEnemyCount * 0.5);

@@ -41,12 +41,25 @@ ETCS_fnc_attachBigFire = {
 // custom call radio with busy flags
 // =======================================================================
 ETCS_fnc_callSideRadio = {
-	params["_unit", "_radioClass", ["_delay", 0]];
+	params["_unitOrGroup", "_radioClass", ["_delay", 0]];
 
-	[_unit] call ETCS_fnc_setUnitRadioBusy;
-	_unit sideRadio _radioClass;
-	sleep _delay;
-	[_unit] call ETCS_fnc_setUnitRadioAvailable;
+	private _radioMan = if (typeName _unitOrGroup == "GROUP") then {
+		[_unitOrGroup] call ETCS_fnc_getQuietUnit
+	} else {
+		_unitOrGroup
+	};
+
+	if (isNull _radioMan) exitWith {
+		diag_log format ["[ETCS] ETCS_fnc_callSideRadio: No valid radioMan for %1", _unitOrGroup];
+	};
+
+	[_radioMan] call ETCS_fnc_setUnitRadioBusy;
+	_radioMan sideRadio _radioClass;
+
+	if (_delay > 0) then {
+		sleep _delay;
+	};
+	[_radioMan] call ETCS_fnc_setUnitRadioAvailable;
 };
 
 // =======================================================================
