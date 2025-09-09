@@ -26,8 +26,8 @@ ETCS_fnc_getGunsWithType = {
 		_isTimeout = (time > _time + 5);
 		(!(isNil "alpha") &&
 		!(isNil "bravo") &&
+		!(isNil "charlie")) &&
 		!(isNil "delta") &&
-		!(isNil "echo_mech")) &&
 		!(isNil "papabear") &&
 		!(isNil "november1") &&
 		!(isNil "tank") &&
@@ -48,14 +48,13 @@ ETCS_fnc_getGunsWithType = {
 
 	alpha setGroupId ["Alpha"];
 	bravo setGroupId ["Bravo"];
-	// charlie setGroupId ["Charlie"];
+	charlie setGroupId ["Charlie"];
 	delta setGroupId ["Delta"];
-	echo_mech setGroupId ["Echo"];
 	papabear setGroupId ["Papa Bear"];
 	november1 setGroupId ["November (1)"];
 	november2 setGroupId ["November (2)"];
 
-	private _teams = [alpha, bravo, delta, echo_mech];
+	private _teams = [alpha, bravo, charlie, delta];
 	private _special = [papabear];
 
 	[mgun1, alpha] execVM "manageGunCrew.sqf";
@@ -70,7 +69,7 @@ ETCS_fnc_getGunsWithType = {
 	{
 		if (_x != delta) then {
 			[_x, papabear, 1] execVM "checkCompanyStatus.sqf";
-			[_x, 0.5] execVM "huntRemainingEnemies.sqf";
+			[_x, 0.75] execVM "huntRemainingEnemies.sqf";
 		};
 	} forEach _teams;
 
