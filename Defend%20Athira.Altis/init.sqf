@@ -24,10 +24,11 @@ ETCS_fnc_getGunsWithType = {
 	private _isTimeout = false;
 	waitUntil {
 		_isTimeout = (time > _time + 5);
-		(!(isNil "alpha") &&
+		!(isNil "alpha") &&
 		!(isNil "bravo") &&
-		!(isNil "charlie")) &&
+		!(isNil "charlie") &&
 		!(isNil "delta") &&
+		!(isNil "echo_sniper") &&
 		!(isNil "papabear") &&
 		!(isNil "november1") &&
 		!(isNil "tank") &&
@@ -49,6 +50,7 @@ ETCS_fnc_getGunsWithType = {
 	bravo setGroupId ["Bravo"];
 	charlie setGroupId ["Charlie"];
 	delta setGroupId ["Delta"];
+	echo_sniper setGroupId ["Echo"];
 	papabear setGroupId ["Papa Bear"];
 	november1 setGroupId ["November (1)"];
 	november2 setGroupId ["November (2)"];
@@ -73,7 +75,7 @@ ETCS_fnc_getGunsWithType = {
 	} forEach _teams;
 
 	private _guns = [papabear, ["StaticMortar", "StaticWeapon"]] call ETCS_fnc_getGunsWithType;
-	private _grpCallArty = [alpha, bravo];
+	private _grpCallArty = [alpha, bravo, delta];
 	{
 		private _index = _forEachIndex % (count _grpCallArty);
 
@@ -86,12 +88,12 @@ ETCS_fnc_getGunsWithType = {
 		//   _unlimitedAmmo         - Boolean; true to allow infinite resupply (default: false).
 		//   _claimRadius           - distance to avoid firing if target is claimed by another gun (default: 50).
 		//   _accuracyRadius        - Scatter radius (in meters) for shot inaccuracy (default: 0 = perfect aim).
-		[objectParent _x, _grpCallArty select _index, 6, 50, 8, 5, true, 50] execVM "unifiedArtilleryFire.sqf";
+		[objectParent _x, _grpCallArty select _index, 8, 50, 8, 5, true, 50] execVM "unifiedArtilleryFire.sqf";
 	} forEach _guns;
 
 	[tank] execVM "manageJeepCrew.sqf";
-	[heli1, 80, 0.25] execVM "flyInChopper.sqf";
-	// [heli2, 80, 0.25] execVM "flyInChopper.sqf";
+	[heli1, 80, 0.75] execVM "flyInChopper.sqf";
+	[heli2, 80, 0.25] execVM "flyInChopper.sqf";
 	[getMarkerPos "captives_area", 280] execVM "moveCaptives.sqf";
 
 	{
@@ -112,7 +114,7 @@ ETCS_fnc_getGunsWithType = {
 			_x setSkill ["commanding", 0.75];
 			_x setSkill ["general", 0.85];
 		} forEach units _x;
-	} forEach [delta];
+	} forEach [delta, echo_sniper];
 
 	[papabear] spawn ETCS_fnc_monitorSaveGame;
 	[] execVM "smokeSuppressed.sqf";
