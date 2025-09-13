@@ -301,7 +301,6 @@ ETCS_fnc_makeUnconscious = {
 	{
 		_unit disableAI _x
 	} forEach ["MOVE"];
-	_unit setCaptive true;
 	// animate injury
 	_unit playMoveNow "AinjPpneMstpSnonWrflDnon";
 
@@ -477,7 +476,6 @@ ETCS_fnc_handleHeal = {
 	{
 		_injured enableAI _x
 	} forEach ["MOVE"];
-	_injured setCaptive false;
 	_injured setDamage 0.25; // 75% health
 	_injured setUnitPos "AUTO";
 	_injured playMoveNow "AmovPknlMstpSrasWrflDnon";
